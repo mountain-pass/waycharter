@@ -85,7 +85,7 @@ Example Output
 
 - [x] setup express wrapper (using proxies)
 - [x] support sub-routes
-- [ ] support adding metadata via a "Metddata" object passed in the route parameters
+- [ ] support adding metadata via a "Metadata" object(/class) passed in the route parameters
 
 ## Questions
 
