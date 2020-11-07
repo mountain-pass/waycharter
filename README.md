@@ -82,3 +82,7 @@ Example Output
 - [x] setup express wrapper (using proxies)
 - [x] support sub-routes
 - [ ] support adding metadata via a "Metddata" object passed in the route parameters
+
+## Questions
+
+- [ ] consider what serverless usage would look like
