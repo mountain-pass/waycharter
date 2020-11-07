@@ -1,0 +1,60 @@
+{
+  "name": "waycharter",
+  "version": "1.0.0",
+  "description": "Server library for level 3 RESTful APIs",
+  "main": "index.js",
+  "scripts": {
+    "sca": "npm run sca:lint && npm run sca:dups",
+    "sca:lint": "eslint ./src --format unix",
+    "sca:dups": "jscpd --pattern \"src/**/*.js\" --reporters console --mode strict --min-lines 8 --threshold 2",
+    "format:all": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\"",
+    "format:staged": "pretty-quick --staged",
+    "test": "npm run test:bdd",
+    "test:bdd": "./node_modules/.bin/cucumber-js",
+    "precommit": "npm run format:staged && npm run sca"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mountain-pass/waycharter.git"
+  },
+  "author": "info@mountain-pass.com.au",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mountain-pass/waycharter/issues"
+  },
+  "homepage": "https://github.com/mountain-pass/waycharter#readme",
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run precommit"
+    }
+  },
+  "prettier": {
+    "semi": false,
+    "singleQuote": true,
+    "printWidth": 120,
+    "trailingComma": "none"
+  },
+  "dependencies": {
+    "mock-require": "3.0.3"
+  },
+  "devDependencies": {
+    "@cucumber/cucumber": "7.0.0-rc.0",
+    "chai": "4.2.0",
+    "cucumber": "7.0.0-rc.0",
+    "eslint": "6.8.0",
+    "eslint-config-standard": "14.1.1",
+    "eslint-plugin-import": "2.20.1",
+    "eslint-plugin-jest": "23.8.2",
+    "eslint-plugin-node": "11.0.0",
+    "eslint-plugin-promise": "4.2.1",
+    "eslint-plugin-standard": "4.0.1",
+    "express": "4.17.1",
+    "husky": "4.2.5",
+    "jest": "26.5.3",
+    "jscpd": "3.3.19",
+    "lint": "0.7.0",
+    "nodemon": "2.0.4",
+    "prettier": "2.0.5",
+    "pretty-quick": "2.0.1"
+  }
+}
