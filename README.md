@@ -2,6 +2,12 @@
 
 Server library for level 3 RESTful APIs
 
+# Support
+
+| App    | Versions   |
+| ------ | ---------- |
+| NodeJS | 10.x, 12.x |
+
 # Strategy
 
 > As an API maintainer,
@@ -14,7 +20,7 @@ Server library for level 3 RESTful APIs
 
 # Rationale
 
-Given an APIs metadata we could:
+Given API metadata we could:
 
 - generate documentation (e.g. swagger)
 - expose metadata via custom API endpoints (e.g. waychaser)
