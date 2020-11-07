@@ -35,9 +35,12 @@ const { wrap } = require('@mountainpass/waycharter')
 // simply wrap express, then use it as you would normally
 const express = wrap(require('express'))
 const app = express()
-app.get('/api/hello', (req, res) => res.json((message: 'Hello world')))
+app.get('/api/hello', (req, res) => res.json( { message: 'Hello world' } ) )
 
-// the api metadata will be available on the app
+// or perhaps with metadata...
+app.get('/api/hellov2', { name: 'Hello World', version: '2', author: 'info@mountain-pass.com.au }, (req, res) => res.json( { message: 'Hello world' } ) )
+
+// finally, the api metadata will be available on the app
 console.log(app._waycharter.apis)
 ```
 
