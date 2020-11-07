@@ -9,15 +9,21 @@ Server library for level 3 RESTful APIs
 | NodeJS  | 10.x, 12.x |
 | Express | 4.x        |
 
-# Strategy
+# Strategy / Goals
 
 > As an API maintainer,
 > I want to automatically generate processable metadata from my API endpoints,
 > So that API consumers can explore APIs in their preferred format
 
+**Must Have...**
+
 - Automatically - because we should have "living" metadata, with minimal human maintenance
 - Processable - readable by a machine
 - Consumers - could be human or machines
+
+**Should have...**
+
+- Non-Invasive - should work with existing code bases
 
 # Rationale
 
