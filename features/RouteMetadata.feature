@@ -1,6 +1,6 @@
 
 @UseExpress
-Feature: Simple Route Metadata
+Feature: Route Metadata
 
   As an API maintainer
   I want to automatically generate processable metadata from my API endpoints
@@ -59,5 +59,11 @@ Feature: Simple Route Metadata
       }
     ]
     ```
+
+  Scenario: Routes with metadata should not be interpreted as middleware
+    Given the route "get" "/hello/world" with metadata
+    | opName   | author | version |
+    | sayHello | nick   | 1       |
+    Then calling "get" "/hello/world" should return 200 "success"
 
  

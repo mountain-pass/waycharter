@@ -3,9 +3,10 @@ const { Given, When, Then } = require('@cucumber/cucumber')
 const { expect } = require('chai')
 // const express = require('express')
 const RSON = require('relaxed-json')
+const request = require('supertest')
 const Metadata = require('../../src/express/Metadata')
 
-const NOOP_HANDLER = (req, res) => {}
+const NOOP_HANDLER = (req, res) => res.send('success')
 
 // setup routes
 
@@ -46,4 +47,14 @@ Then('the metadata json should be', function (docString) {
     world.app._waycharter.apis,
     `Expected: ${JSON.stringify(expectedJson, null, 2)} Actual: ${JSON.stringify(world.app._waycharter.apis, null, 2)}`
   ).to.eql(expectedJson)
+})
+
+Then('calling {string} {string} should return {int} {string}', async function (
+  method,
+  path,
+  expectedStatusCode,
+  expectedReponse
+) {
+  const world = this
+  await request(world.app)[method](path).expect(expectedStatusCode, expectedReponse)
 })

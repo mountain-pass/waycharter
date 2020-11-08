@@ -4,21 +4,6 @@ const Metadata = require('./Metadata')
 
 const ROUTER_FUNCTIONS = ['use', 'options', 'patch', 'head', 'put', 'delete', 'get', 'post']
 
-// const ENDPOINT_METADATA_TEMPLATE = {
-//   displayName: '',
-//   opName: '',
-//   description: '',
-//   headers: '',
-//   contentTypeIn: '',
-//   contentTypeOut: '',
-//   urlParams: '',
-//   queryParams: '',
-//   body: '',
-//   returns: '',
-//   method: '',
-//   path: ''
-// }
-
 // lets proxy some routers!
 
 const proxyRouterConfig = {
@@ -29,23 +14,29 @@ const proxyRouterConfig = {
     if (~ROUTER_FUNCTIONS.indexOf(prop) && typeof result === 'function') {
       return wrapFunction(result, {
         doBefore: (args) => {
+          const newArgs = args
           // if first parameter is a "http path"...
           if ((typeof args[0] === 'string' && args[0] !== 'query parser fn') || Array.isArray(args[0])) {
             const meta = {
-              // ...ENDPOINT_METADATA_TEMPLATE,
               method: prop,
               path: args[0]
             }
-            if (Array.isArray(args)) {
-              const router = args.find((arg) => arg._waycharter)
-              if (router) meta.children = router._waycharter.apis
-              // check if any args is a "Metadata" object... -> apply metdata
-              const metadata = args.find((arg) => arg instanceof Metadata)
-              if (metadata) Object.assign(meta, metadata.metadata)
+
+            // if any args have "waycharter" markup, then copy into 'children'
+            const router = args.find((arg) => arg._waycharter)
+            if (router) meta.children = router._waycharter.apis
+
+            // if any args are a "Metadata" object, then copy metadata, and strip from args
+            const metadataIndex = args.findIndex((arg) => arg instanceof Metadata)
+            if (~metadataIndex) {
+              Object.assign(meta, args[metadataIndex].metadata)
+              newArgs.splice(metadataIndex, 1)
             }
+
+            // finally, store metadata
             receiver._waycharter.apis.push(meta)
           }
-          return args
+          return newArgs
         }
       })
     }

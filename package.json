@@ -21,6 +21,7 @@
     "format:all": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\"",
     "format:staged": "pretty-quick --staged",
     "test": "npm run test:bdd-codecov",
+    "test:bdd": "cucumber-js",
     "test:bdd-codecov": "nyc --reporter=lcov --reporter=text-summary cucumber-js",
     "test:bdd-watch": "nodemon --watch features --watch src --ext js,feature --exec cucumber-js",
     "precommit": "npm run format:staged && npm run sca && npm run test"
@@ -59,6 +60,7 @@
     "nyc": "15.1.0",
     "prettier": "2.0.5",
     "pretty-quick": "2.0.1",
-    "relaxed-json": "1.0.3"
+    "relaxed-json": "1.0.3",
+    "supertest": "6.0.1"
   }
 }

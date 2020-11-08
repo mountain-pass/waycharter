@@ -2,7 +2,9 @@
  * Will start and stop the entire server app with an inmemory database.
  */
 
-var { AfterAll, After, Before, Given, BeforeAll } = require('@cucumber/cucumber')
+var { AfterAll, After, Before, Given, BeforeAll, setDefaultTimeout } = require('@cucumber/cucumber')
+
+setDefaultTimeout(5 * 1000) // 5 seconds
 
 const { wrap } = require('../../src/express')
 const express = wrap(require('express'))

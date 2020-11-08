@@ -30,7 +30,7 @@ Given API metadata we could:
 # Usage -> Express (Proposed)
 
 ```javascript
-const { wrap } = require('@mountainpass/waycharter')
+const { wrap, Metadata } = require('@mountainpass/waycharter')
 
 // simply wrap express, then use it as you would normally
 const express = wrap(require('express'))
@@ -38,8 +38,10 @@ const app = express()
 app.get('/api/hello', (req, res) => res.json({ message: 'Hello world' }))
 
 // or perhaps with metadata...
-app.get('/api/hellov2', { name: 'Hello World', version: '2', author: 'info@mountain-pass.com.au' }, (req, res) =>
-  res.json({ message: 'Hello world' })
+app.get(
+  '/api/hellov2',
+  new Metadata({ name: 'Hello World', version: '2', author: 'Nick <nick@foo.bar>' }),
+  (req, res) => res.json({ message: 'Hello world' })
 )
 
 // finally, the api metadata will be available on the app
