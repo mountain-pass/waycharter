@@ -4,10 +4,11 @@ Server library for level 3 RESTful APIs
 
 # Support
 
-| App     | Versions   |
-| ------- | ---------- |
-| NodeJS  | 10.x, 12.x |
-| Express | 4.x        |
+| Framework | Versions   |
+| --------- | ---------- |
+| NodeJS    | 10.x, 12.x |
+| Express   | 4.x        |
+| OpenAPI   | 3.0.0      |
 
 # Strategy / Goals
 
