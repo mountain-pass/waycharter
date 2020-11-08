@@ -3,6 +3,16 @@
   "version": "1.0.0",
   "description": "Server library for level 3 RESTful APIs",
   "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mountain-pass/waycharter.git"
+  },
+  "author": "info@mountain-pass.com.au",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mountain-pass/waycharter/issues"
+  },
+  "homepage": "https://github.com/mountain-pass/waycharter#readme",
   "scripts": {
     "sca": "npm run sca:lint && npm run sca:dups",
     "sca:lint": "eslint ./src --format unix",
@@ -15,16 +25,6 @@
     "test:bdd-watch": "nodemon --watch features --watch src --ext js,feature --exec cucumber-js",
     "precommit": "npm run format:staged && npm run sca && npm run test"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/mountain-pass/waycharter.git"
-  },
-  "author": "info@mountain-pass.com.au",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/mountain-pass/waycharter/issues"
-  },
-  "homepage": "https://github.com/mountain-pass/waycharter#readme",
   "husky": {
     "hooks": {
       "pre-commit": "npm run precommit"
