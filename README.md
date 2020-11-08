@@ -26,7 +26,7 @@ Given API metadata we could:
 
 - generate documentation (e.g. openapi / swagger)
 - expose metadata via custom API endpoints (e.g. waychaser)
-- generate API client code (ooh... really?)
+- generate API client code (e.g. postman, axios, curl)
 
 # Usage -> Express (Proposed)
 
