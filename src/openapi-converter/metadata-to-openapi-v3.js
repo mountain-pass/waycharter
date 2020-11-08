@@ -1,4 +1,4 @@
-const flattenApis = require('../utils/flatten-apis')
+const flattenApis = require('../common/utils/flatten-apis')
 
 const DEFAULT_RESPONSES = {
   200: {
@@ -7,19 +7,19 @@ const DEFAULT_RESPONSES = {
 }
 
 /**
- * Generates Swagger Json from an API metadata object.
+ * Generates OpenAPI Json from an API metadata object.
  *
- * @param {*} swaggerConfig
+ * @param {*} openApiConfig
  * @param {*} apisMetadata
  */
-module.exports = (swaggerConfig, apisMetadata) => {
+module.exports = (openApiConfig, apisMetadata) => {
   const {
     title = 'No title',
     version = 'No version',
     description = 'No description',
     contact: { name: contactName, email: contactEmail } = {},
     externalDocs: { description: linkDescription, url: linkUrl } = {}
-  } = swaggerConfig
+  } = openApiConfig
 
   const apis = {}
 

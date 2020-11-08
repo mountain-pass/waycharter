@@ -6,8 +6,8 @@ var { AfterAll, After, Before, Given, BeforeAll, setDefaultTimeout } = require('
 
 setDefaultTimeout(5 * 1000) // 5 seconds
 
-const { wrap } = require('../../src/express')
-const express = wrap(require('express'))
+const { wrapExpressV4 } = require('../../index')
+const express = wrapExpressV4(require('express'))
 
 const globalWorld = {
   express

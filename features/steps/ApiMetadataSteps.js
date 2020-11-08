@@ -2,7 +2,7 @@ const { Given, Then } = require('@cucumber/cucumber')
 const { expect } = require('chai')
 const RSON = require('relaxed-json')
 const request = require('supertest')
-const Metadata = require('../../src/express/classes/Metadata')
+const Metadata = require('../../src/common/classes/Metadata')
 
 const NOOP_HANDLER = (req, res) => res.send('success')
 

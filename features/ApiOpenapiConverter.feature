@@ -1,9 +1,9 @@
 
-Feature: API Swagger Transformer
+Feature: API OpenAPI Transformer
 
   As an API consumer
-  I want API metadata in Swagger JSON format
-  So I can have use Swagger UI for documentation
+  I want API metadata in OpenAPI JSON format
+  So I can have use OpenAPI UI for documentation
 
   Scenario: Convert single top level API
     Given API metadata
@@ -15,7 +15,7 @@ Feature: API Swagger Transformer
       }
     ]
     ```
-    Then converted to Swagger JSON should be
+    Then converted to OpenAPI JSON should be
     ```
 {
   "openapi": "3.0.0",
@@ -56,7 +56,7 @@ Feature: API Swagger Transformer
       }
     ]
     ```
-    Then converted to Swagger JSON should be
+    Then converted to OpenAPI JSON should be
     ```
 {
   "openapi": "3.0.0",
@@ -124,7 +124,7 @@ Feature: API Swagger Transformer
       }
     ]
     ```
-    Then converted to Swagger JSON should be
+    Then converted to OpenAPI JSON should be
     ```
 {
   "openapi": "3.0.0",
@@ -175,8 +175,96 @@ Feature: API Swagger Transformer
 }
     ```
 
+  Scenario: Convert multiple nested APIs with Array Path
+    Given API metadata
+    ```
+    [
+      {
+        method: 'use',
+        path: ['/hello1', '/hello2'],
+        children: [
+          {
+            method: 'use',
+            path: '/languages',
+            children: [
+              {
+                method: 'get',
+                path: ['/list1', '/list2']
+              }
+            ]
+          }
+        ]
+      }
+    ]
+    ```
+    Then converted to OpenAPI JSON should be
+    ```
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "No title",
+    "version": "No version",
+    "description": "No description"
+  },
+  "paths": {
+    "/hello1/languages/list1": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "The action was successful."
+          }
+        },
+        "tags": [
+          "all"
+        ],
+        "summary": "No summary"
+      }
+    },
+    "/hello1/languages/list2": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "The action was successful."
+          }
+        },
+        "tags": [
+          "all"
+        ],
+        "summary": "No summary"
+      }
+    },
+    "/hello2/languages/list1": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "The action was successful."
+          }
+        },
+        "tags": [
+          "all"
+        ],
+        "summary": "No summary"
+      }
+    },
+    "/hello2/languages/list2": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "The action was successful."
+          }
+        },
+        "tags": [
+          "all"
+        ],
+        "summary": "No summary"
+      }
+    }
+  }
+}
+    ```
 
-  Scenario: Full Swagger Metadata
+
+  Scenario: Full OpenAPI Metadata
     Given API metadata
     ```
     [
@@ -188,13 +276,13 @@ Feature: API Swagger Transformer
       }
     ]
     ```
-    When converted to Swagger JSON with configuration
+    When converted to OpenAPI JSON with configuration
     | title | Greetings API |
     | version | 1.0.0 |
     | description | Generates *greeting* messages. |
     | contact | { name: "Nick", email: "nick@foo.com" } |
     | externalDocs | { description: "Company website", url: "https://www.mountain-pass.com.au" } |
-    Then the Swagger JSON should be
+    Then the OpenAPI JSON should be
     ```
 {
   "openapi": "3.0.0",

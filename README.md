@@ -24,7 +24,7 @@ Server library for level 3 RESTful APIs
 
 Given API metadata we could:
 
-- generate documentation (e.g. swagger)
+- generate documentation (e.g. openapi / swagger)
 - expose metadata via custom API endpoints (e.g. waychaser)
 - generate API client code (ooh... really?)
 

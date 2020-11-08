@@ -1,6 +1,6 @@
 const mock = require('mock-require')
-const { wrapFunction } = require('./utils/function-wrapper')
-const Metadata = require('./classes/Metadata')
+const { wrapFunction } = require('../common/utils/function-wrapper')
+const Metadata = require('../common/classes/Metadata')
 
 const ROUTER_FUNCTIONS = ['use', 'options', 'patch', 'head', 'put', 'delete', 'get', 'post']
 
@@ -85,4 +85,4 @@ const wrap = (express) => {
   return expressProxy
 }
 
-module.exports = { wrap }
+module.exports = { wrapExpressV4: wrap }
