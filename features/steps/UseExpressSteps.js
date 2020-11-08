@@ -17,6 +17,7 @@ const globalWorld = {
 
 Before({ tags: '@UseExpress' }, function () {
   const world = this
+  world.express = globalWorld.express
   world.app = globalWorld.express()
 })
 

@@ -41,10 +41,12 @@ const { wrap } = require('@mountainpass/waycharter')
 // simply wrap express, then use it as you would normally
 const express = wrap(require('express'))
 const app = express()
-app.get('/api/hello', (req, res) => res.json( { message: 'Hello world' } ) )
+app.get('/api/hello', (req, res) => res.json({ message: 'Hello world' }))
 
 // or perhaps with metadata...
-app.get('/api/hellov2', { name: 'Hello World', version: '2', author: 'info@mountain-pass.com.au }, (req, res) => res.json( { message: 'Hello world' } ) )
+app.get('/api/hellov2', { name: 'Hello World', version: '2', author: 'info@mountain-pass.com.au' }, (req, res) =>
+  res.json({ message: 'Hello world' })
+)
 
 // finally, the api metadata will be available on the app
 console.log(app._waycharter.apis)
@@ -91,8 +93,9 @@ Example Output
 
 - [x] setup express wrapper (using proxies)
 - [x] support sub-routes
-- [ ] support adding metadata via a "Metadata" object(/class) passed in the route parameters
+- [x] support adding metadata via a "Metadata" object(/class) passed in the route parameters
 
 ## Questions
 
 - [ ] consider what serverless usage would look like
+- [ ] consider how operations on resources would look like

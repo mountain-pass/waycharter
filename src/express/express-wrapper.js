@@ -1,19 +1,23 @@
 const mock = require('mock-require')
 const { wrapFunction } = require('./function-wrapper')
+const Metadata = require('./Metadata')
 
 const ROUTER_FUNCTIONS = ['use', 'options', 'patch', 'head', 'put', 'delete', 'get', 'post']
 
-const ENDPOINT_METADATA_TEMPLATE = {
-  name: '',
-  description: '',
-  contentType: '',
-  urlParams: '',
-  queryParams: '',
-  body: '',
-  returns: '',
-  method: '',
-  path: ''
-}
+// const ENDPOINT_METADATA_TEMPLATE = {
+//   displayName: '',
+//   opName: '',
+//   description: '',
+//   headers: '',
+//   contentTypeIn: '',
+//   contentTypeOut: '',
+//   urlParams: '',
+//   queryParams: '',
+//   body: '',
+//   returns: '',
+//   method: '',
+//   path: ''
+// }
 
 // lets proxy some routers!
 
@@ -28,14 +32,16 @@ const proxyRouterConfig = {
           // if first parameter is a "http path"...
           if ((typeof args[0] === 'string' && args[0] !== 'query parser fn') || Array.isArray(args[0])) {
             const meta = {
-              ...ENDPOINT_METADATA_TEMPLATE,
+              // ...ENDPOINT_METADATA_TEMPLATE,
               method: prop,
               path: args[0]
             }
             if (Array.isArray(args)) {
               const router = args.find((arg) => arg._waycharter)
               if (router) meta.children = router._waycharter.apis
-              // todo check if any args is a "Metadata" object... -> apply metdata
+              // check if any args is a "Metadata" object... -> apply metdata
+              const metadata = args.find((arg) => arg instanceof Metadata)
+              if (metadata) Object.assign(meta, metadata.metadata)
             }
             receiver._waycharter.apis.push(meta)
           }

@@ -7,10 +7,12 @@
     "sca": "npm run sca:lint && npm run sca:dups",
     "sca:lint": "eslint ./src --format unix",
     "sca:dups": "jscpd --pattern \"src/**/*.js\" --reporters console --mode strict --min-lines 8 --threshold 2",
+    "format": "npm run format:all",
     "format:all": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\"",
     "format:staged": "pretty-quick --staged",
     "test": "npm run test:bdd",
-    "test:bdd": "./node_modules/.bin/cucumber-js",
+    "test:bdd": "cucumber-js",
+    "test:bdd-watch": "nodemon --watch features --watch src --ext js,feature --exec cucumber-js",
     "precommit": "npm run format:staged && npm run sca"
   },
   "repository": {
@@ -55,6 +57,7 @@
     "lint": "0.7.0",
     "nodemon": "2.0.4",
     "prettier": "2.0.5",
-    "pretty-quick": "2.0.1"
+    "pretty-quick": "2.0.1",
+    "relaxed-json": "1.0.3"
   }
 }
