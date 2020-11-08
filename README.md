@@ -95,3 +95,4 @@ Example Output
 
 - [ ] consider what serverless usage would look like
 - [ ] consider how operations on resources would look like
+- [ ] npm -> should we minify
