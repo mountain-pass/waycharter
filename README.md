@@ -15,15 +15,9 @@ Server library for level 3 RESTful APIs
 > I want to automatically generate processable metadata from my API endpoints,
 > So that API consumers can explore APIs in their preferred format
 
-**Must Have...**
-
-- Automatically - because we should have "living" metadata, with minimal human maintenance
-- Processable - readable by a machine
-- Consumers - could be human or machines
-
-**Should have...**
-
+- Automatic - should have "living" metadata, with minimal human maintenance
 - Non-Invasive - should work with existing code bases
+- Consumable - should support humans and machines
 
 # Rationale
 
