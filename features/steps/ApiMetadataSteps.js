@@ -1,10 +1,8 @@
-// features/support/steps.js
-const { Given, When, Then } = require('@cucumber/cucumber')
+const { Given, Then } = require('@cucumber/cucumber')
 const { expect } = require('chai')
-// const express = require('express')
 const RSON = require('relaxed-json')
 const request = require('supertest')
-const Metadata = require('../../src/express/Metadata')
+const Metadata = require('../../src/express/classes/Metadata')
 
 const NOOP_HANDLER = (req, res) => res.send('success')
 
@@ -28,7 +26,7 @@ Given('the route {string} {string} with subroute {string} {string}', function (m
 Given('the route {string} {string} with metadata', function (method, path, dataTable) {
   const world = this
   const meta = dataTable.hashes()[0]
-  world.app[method](parsePath(path), new Metadata(meta), NOOP_HANDLER)
+  world.app[method](new Metadata(meta), parsePath(path), NOOP_HANDLER)
 })
 
 // assert metadata
@@ -36,7 +34,6 @@ Given('the route {string} {string} with metadata', function (method, path, dataT
 Then('the metadata routes should be', function (dataTable) {
   const world = this
   const expectedArray = dataTable.hashes()
-  expect(world.app._waycharter.apis).to.have.length(expectedArray.length)
   expect(world.app._waycharter.apis).to.eql(expectedArray)
 })
 

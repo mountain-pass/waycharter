@@ -8,11 +8,17 @@
     "url": "git+https://github.com/mountain-pass/waycharter.git"
   },
   "author": "info@mountain-pass.com.au",
-  "license": "ISC",
+  "license": "Apache-2.0",
   "bugs": {
     "url": "https://github.com/mountain-pass/waycharter/issues"
   },
   "homepage": "https://github.com/mountain-pass/waycharter#readme",
+  "contributors": [
+    "Nick Grealy <nick@mountain-pass.com.au>"
+  ],
+  "engines": {
+    "node": ">=10.17.0"
+  },
   "scripts": {
     "sca": "npm run sca:lint && npm run sca:dups",
     "sca:lint": "eslint ./src --format unix",
@@ -47,7 +53,6 @@
     "eslint": "7.13.0",
     "eslint-config-standard": "16.0.1",
     "eslint-plugin-import": "2.22.1",
-    "eslint-plugin-jest": "24.1.0",
     "eslint-plugin-node": "11.1.0",
     "eslint-plugin-promise": "4.2.1",
     "eslint-plugin-standard": "4.0.2",

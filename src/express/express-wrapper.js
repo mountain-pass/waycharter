@@ -1,6 +1,6 @@
 const mock = require('mock-require')
-const { wrapFunction } = require('./function-wrapper')
-const Metadata = require('./Metadata')
+const { wrapFunction } = require('./utils/function-wrapper')
+const Metadata = require('./classes/Metadata')
 
 const ROUTER_FUNCTIONS = ['use', 'options', 'patch', 'head', 'put', 'delete', 'get', 'post']
 
@@ -15,27 +15,28 @@ const proxyRouterConfig = {
       return wrapFunction(result, {
         doBefore: (args) => {
           const newArgs = args
-          // if first parameter is a "http path"...
-          if ((typeof args[0] === 'string' && args[0] !== 'query parser fn') || Array.isArray(args[0])) {
-            const meta = {
-              method: prop,
-              path: args[0]
-            }
+          const meta = {}
 
-            // if any args have "waycharter" markup, then copy into 'children'
-            const router = args.find((arg) => arg._waycharter)
-            if (router) meta.children = router._waycharter.apis
-
-            // if any args are a "Metadata" object, then copy metadata, and strip from args
-            const metadataIndex = args.findIndex((arg) => arg instanceof Metadata)
-            if (~metadataIndex) {
-              Object.assign(meta, args[metadataIndex].metadata)
-              newArgs.splice(metadataIndex, 1)
-            }
-
-            // finally, store metadata
-            receiver._waycharter.apis.push(meta)
+          // if any args are a "Metadata" object, then copy metadata, and strip from args
+          const metadataIndex = args.findIndex((arg) => arg instanceof Metadata)
+          if (~metadataIndex) {
+            Object.assign(meta, args[metadataIndex].metadata)
+            newArgs.splice(metadataIndex, 1)
           }
+
+          // if any args have "waycharter" markup, then copy into 'children'
+          const router = args.find((arg) => arg._waycharter)
+          if (router) meta.children = router._waycharter.apis
+
+          // if first parameter is a "http path" string or array...
+          if ((typeof args[0] === 'string' && args[0] !== 'query parser fn') || Array.isArray(args[0])) {
+            meta.method = prop
+            meta.path = args[0]
+          }
+
+          // finally, store metadata (if populated)
+          if (Object.keys(meta).length > 0) receiver._waycharter.apis.push(meta)
+
           return newArgs
         }
       })

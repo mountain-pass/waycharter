@@ -85,11 +85,19 @@ Example Output
 - [x] setup test framework
 - [ ] publish to npm repo
 
-## Functional -> Express
+## Functional
+
+### Sources -> Express
 
 - [x] setup express wrapper (using proxies)
 - [x] support sub-routes
 - [x] support adding metadata via a "Metadata" object(/class) passed in the route parameters
+
+### Transformers -> OpenAPI v3
+
+_N.B. compatible with Swagger_
+
+- [x] convert API metadata to OpenAPI v3 json
 
 ## Questions
 

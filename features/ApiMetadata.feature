@@ -1,6 +1,6 @@
 
 @UseExpress
-Feature: Route Metadata
+Feature: API Metadata
 
   As an API maintainer
   I want to automatically generate processable metadata from my API endpoints
