@@ -20,9 +20,10 @@
     "node": ">=10.17.0"
   },
   "scripts": {
-    "sca": "npm run sca:lint && npm run sca:dups",
+    "sca": "npm run sca:lint && npm run sca:dups && npm run sca:deps",
     "sca:lint": "eslint ./src --format unix",
     "sca:dups": "jscpd --pattern \"src/**/*.js\" --reporters console --mode strict --min-lines 8 --threshold 2",
+    "sca:deps": "npm-check --production",
     "format": "npm run format:all",
     "format:all": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\"",
     "format:staged": "pretty-quick --staged",
@@ -30,7 +31,9 @@
     "test:bdd": "cucumber-js",
     "test:bdd-codecov": "nyc --reporter=lcov --reporter=text-summary cucumber-js",
     "test:bdd-watch": "nodemon --watch features --watch src --ext js,feature --exec cucumber-js",
-    "precommit": "npm run format:staged && npm run sca && npm run test"
+    "precommit": "npm run format:staged && npm run sca && npm run test",
+    "publish:version-bump": "npm version patch && git push && git push --tags",
+    "publish:npm": "npm publish --access public"
   },
   "husky": {
     "hooks": {
@@ -62,6 +65,7 @@
     "jscpd": "3.3.19",
     "lint": "0.7.0",
     "nodemon": "2.0.6",
+    "npm-check": "5.9.2",
     "nyc": "15.1.0",
     "prettier": "2.1.2",
     "pretty-quick": "3.1.0",

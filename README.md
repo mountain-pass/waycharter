@@ -4,11 +4,11 @@ Server library for level 3 RESTful APIs
 
 # Support
 
-| Framework | Versions   |
-| --------- | ---------- |
-| NodeJS    | 10.x, 12.x |
-| Express   | 4.x        |
-| OpenAPI   | 3.0.0      |
+| Framework | Versions         |
+| --------- | ---------------- |
+| NodeJS    | 10.x, 12.x, 14.x |
+| Express   | 4.x              |
+| OpenAPI   | 3.0.0            |
 
 # Strategy / Goals
 
@@ -88,4 +88,4 @@ _N.B. compatible with Swagger_
 
 - [ ] consider what serverless usage would look like
 - [ ] consider how operations on resources would look like
-- [ ] npm -> should we minify
+- [x] npm -> should we minify? -> No, not really required for server side
