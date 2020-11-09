@@ -72,7 +72,12 @@ console.log(app._waycharter.toOpenApiV3())
 
 ## Questions
 
-- [ ] does graphql fill this solution already - re: discoverability?
+- [ ] does graphql solve this problem already?
+  - [ ] automatic - ???
+  - [ ] discoverable (machine) - ???
+  - [ ] custom operations (not just crudl) - ???
+  - [ ] documentation (usage) - ???
+  - [ ] client libraries - ???
 - [ ] how do devs specify operations on resources?
 - [ ] what does serverless usage would look like?
 - [x] npm -> should we minify? -> No, not really required for server side
