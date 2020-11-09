@@ -72,8 +72,9 @@ console.log(app._waycharter.toOpenApiV3())
 
 ## Questions
 
-- [ ] consider what serverless usage would look like
-- [ ] consider how operations on resources would look like
+- [ ] does graphql fill this solution already - re: discoverability?
+- [ ] how do devs specify operations on resources?
+- [ ] what does serverless usage would look like?
 - [x] npm -> should we minify? -> No, not really required for server side
 
 ## :white_check_mark: ~~Scaffolding~~
