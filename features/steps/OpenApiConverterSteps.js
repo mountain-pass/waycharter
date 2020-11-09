@@ -7,19 +7,22 @@ Given('API metadata', function (docString) {
   this.apis = RSON.parse(docString)
 })
 
-Then('converted to OpenAPI JSON should be', function (expectedOpenAPIJson) {
-  const actual = convertToOpenapiV3({}, this.apis)
-  expect(actual).to.eql(RSON.parse(expectedOpenAPIJson))
-})
-
 When('converted to OpenAPI JSON with configuration', function (dataTable) {
+  const world = this
   const config = dataTable.rowsHash()
   Object.entries(config).forEach(([k, v]) => {
     if (v.startsWith('{')) config[k] = RSON.parse(v)
   })
-  this.OpenAPIJson = convertToOpenapiV3(config, this.apis)
+  world.actualOpenApiV3 = convertToOpenapiV3(config, this.apis)
+})
+
+Then('converted to OpenAPI JSON should be', function (expectedOpenAPIJson) {
+  const world = this
+  const actualJson = convertToOpenapiV3({}, world.apis)
+  expect(actualJson).to.eql(RSON.parse(expectedOpenAPIJson))
 })
 
 Then('the OpenAPI JSON should be', function (expectedOpenAPIJson) {
-  expect(this.OpenAPIJson).to.eql(RSON.parse(expectedOpenAPIJson))
+  const world = this
+  expect(world.actualOpenApiV3).to.eql(RSON.parse(expectedOpenAPIJson))
 })
