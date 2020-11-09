@@ -28,7 +28,13 @@ Given API metadata we could:
 - expose metadata via custom API endpoints (e.g. waychaser)
 - generate API client code (e.g. postman, axios, curl)
 
-# Usage -> Express (Proposed)
+# Example Usage
+
+## Example Projects
+
+- [examples/express-and-swagger](examples/express-and-swagger)
+
+## TLDR
 
 ```javascript
 const { wrapExpressV4, Metadata } = require('@mountainpass/waycharter')
@@ -42,44 +48,16 @@ app.get('/api/hello1', (req, res) => res.json({ message: 'Hello world' }))
 
 // or perhaps with metadata...
 app.get(
-  new Metadata({ name: 'Hello World', version: '2', author: 'Nick <nick@foo.bar>' }),
+  new Metadata({ summary: 'Hello World', version: '2', author: 'Nick <nick@foo.bar>', tags: ['awesome'] }),
   '/api/hello2',
   (req, res) => res.json({ message: 'Hello world' })
 )
 
 // finally, the api metadata will be available on the app
 console.log(app._waycharter.apis)
-git s
+
 // or available as OpenApi v3
 console.log(app._waycharter.toOpenApiV3())
-```
-
-Example Output
-
-```json
-[
-  {
-    "method": "use",
-    "path": "/api",
-    "children": [
-      {
-        "method": "use",
-        "path": "/location",
-        "children": [
-          {
-            "method": "get",
-            "path": "/lastCheckIn"
-          },
-          {
-            "method": "get",
-            "path": "/:id/count"
-          },
-          ... etc ...
-        ]
-      }
-    ]
-  }
-]
 ```
 
 # TODO
@@ -89,17 +67,18 @@ Example Output
 - [x] setup project
 - [x] setup automated build
 - [x] setup test framework
+- [x] setup example project
 - [ ] publish to npm repo
 
 ## Functional
 
-### Sources -> Express
+### ~~Sources -> Express~~ :white_check_mark:
 
 - [x] setup express wrapper (using proxies)
 - [x] support sub-routes
 - [x] support adding metadata via a "Metadata" object(/class) passed in the route parameters
 
-### Transformers -> OpenAPI v3
+### ~~Transformers -> OpenAPI v3~~ :white_check_mark:
 
 _N.B. compatible with Swagger_
 
