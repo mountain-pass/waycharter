@@ -19,7 +19,8 @@ const wrapFunction = (originalFunction, config = DEFAULT_CONFIG) => {
       onError(e)
     }
   }
-  for (var prop in originalFunction) {
+  let prop = null
+  for (prop in originalFunction) {
     /* #3 */
     if (Object.prototype.hasOwnProperty.call(originalFunction, prop)) {
       wrappedFunction[prop] = originalFunction[prop]

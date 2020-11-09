@@ -1,7 +1,13 @@
-const flattenApis = (apisMetadata) => {
+const flattenApis = (apisMetadata = null) => {
+  if (!Array.isArray(apisMetadata)) {
+    throw new Error('apisMetadata must be an array! ' + JSON.stringify({ apisMetadata }))
+  }
+
   const flat = []
 
-  const recurse = (parentPath, children) => {
+  const recurse = (parentPath = null, children = null) => {
+    if (parentPath === null) throw new Error('No parentPath provided!')
+    if (children === null) throw new Error('No children provided!')
     children.forEach((child) => {
       // if a parent node
       if (child.children) {

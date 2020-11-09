@@ -1,6 +1,7 @@
 const mock = require('mock-require')
 const { wrapFunction } = require('../common/utils/function-wrapper')
 const Metadata = require('../common/classes/Metadata')
+const addAppConverters = require('./add-app-converters')
 
 const ROUTER_FUNCTIONS = ['use', 'options', 'patch', 'head', 'put', 'delete', 'get', 'post']
 
@@ -50,7 +51,7 @@ const interceptNewRouter = {
   doAfter: (router) => {
     const proxy = new Proxy(router, proxyRouterConfig)
     proxy._waycharter = { apis: [] }
-    return proxy
+    return addAppConverters(proxy)
   }
 }
 

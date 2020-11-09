@@ -1,9 +1,9 @@
 
 @UseExpress
-Feature: API Metadata
+Feature: Express API Metadata
 
   As an API maintainer
-  I want to automatically generate processable metadata from my API endpoints
+  I want to automatically generate processable metadata from my Express API endpoints
   So that API consumers can discover APIs in their preferred format
 
   Scenario: Simple route
@@ -60,10 +60,31 @@ Feature: API Metadata
     ]
     ```
 
-  Scenario: Routes with metadata should not be interpreted as middleware
-    Given the route "get" "/hello/world" with metadata
-    | opName   | author | version |
-    | sayHello | nick   | 1       |
-    Then calling "get" "/hello/world" should return 200 "success"
-
- 
+  Scenario: App should expose toOpenApiV3
+    Given the route "get" "/hello/world"
+    Then calling app._waycharter.toOpenApiV3 should return
+    ```
+{
+  "info": {
+    "description": "No description",
+    "title": "No title",
+    "version": "No version"
+  },
+  "openapi": "3.0.0",
+  "paths": {
+    "/hello/world": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "The action was successful."
+          }
+        },
+        "summary": "No summary",
+        "tags": [
+          "all"
+        ]
+      }
+    }
+  }
+}
+    ```

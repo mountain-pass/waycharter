@@ -31,22 +31,27 @@ Given API metadata we could:
 # Usage -> Express (Proposed)
 
 ```javascript
-const { wrap, Metadata } = require('@mountainpass/waycharter')
+const { wrapExpressV4, Metadata } = require('@mountainpass/waycharter')
 
 // simply wrap express, then use it as you would normally
-const express = wrap(require('express'))
+const express = wrapExpressV4(require('express'))
+
+// your existing apis...
 const app = express()
-app.get('/api/hello', (req, res) => res.json({ message: 'Hello world' }))
+app.get('/api/hello1', (req, res) => res.json({ message: 'Hello world' }))
 
 // or perhaps with metadata...
 app.get(
-  '/api/hellov2',
   new Metadata({ name: 'Hello World', version: '2', author: 'Nick <nick@foo.bar>' }),
+  '/api/hello2',
   (req, res) => res.json({ message: 'Hello world' })
 )
 
 // finally, the api metadata will be available on the app
 console.log(app._waycharter.apis)
+git s
+// or available as OpenApi v3
+console.log(app._waycharter.toOpenApiV3())
 ```
 
 Example Output

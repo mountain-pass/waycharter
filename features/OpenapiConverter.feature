@@ -263,7 +263,6 @@ Feature: API OpenAPI Transformer
 }
     ```
 
-
   Scenario: Full OpenAPI Metadata
     Given API metadata
     ```

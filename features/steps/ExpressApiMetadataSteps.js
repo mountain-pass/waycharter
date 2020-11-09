@@ -55,3 +55,9 @@ Then('calling {string} {string} should return {int} {string}', async function (
   const world = this
   await request(world.app)[method](path).expect(expectedStatusCode, expectedReponse)
 })
+
+Then('calling app._waycharter.toOpenApiV3 should return', function (expectedOpenApiV3String) {
+  const world = this
+  const actualOpenApiJson = world.app._waycharter.toOpenApiV3({})
+  expect(actualOpenApiJson).to.eql(RSON.parse(expectedOpenApiV3String))
+})
