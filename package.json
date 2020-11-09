@@ -1,6 +1,6 @@
 {
   "name": "@mountainpass/waycharter",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Server library for level 3 RESTful APIs",
   "main": "index.js",
   "repository": {
