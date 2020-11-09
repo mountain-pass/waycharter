@@ -89,3 +89,4 @@ console.log(app._waycharter.toOpenApiV3())
 _N.B. compatible with Swagger_
 
 - [x] convert API metadata to OpenAPI v3 json
+- [x] setup example project

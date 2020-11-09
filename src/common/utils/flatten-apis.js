@@ -5,28 +5,32 @@ const flattenApis = (apisMetadata = null) => {
 
   const flat = []
 
-  const recurse = (parentPath = null, children = null) => {
+  const recurse = (parentPath = null, children = null, inheritProps = {}) => {
     if (parentPath === null) throw new Error('No parentPath provided!')
     if (children === null) throw new Error('No children provided!')
-    children.forEach((child) => {
+    children.forEach((node) => {
       // if a parent node
-      if (child.children) {
-        if (Array.isArray(child.path)) {
-          child.path.forEach((path) => {
-            recurse(parentPath + path, child.children)
+      if (node.children && node.path) {
+        const { children, path, method, ...props } = node
+        // if node has a path array...
+        if (Array.isArray(node.path)) {
+          node.path.forEach((currPath) => {
+            recurse(parentPath + currPath, node.children, { ...inheritProps, ...props })
           })
+
+          // else, node 'path' is assumed to be a single string
         } else {
-          recurse(parentPath + child.path, child.children)
+          recurse(parentPath + node.path, node.children, { ...inheritProps, ...props })
         }
 
         // if a child node
-      } else if (child.method !== 'use' && child.path) {
-        if (Array.isArray(child.path)) {
-          child.path.forEach((path) => {
-            flat.push({ ...child, path: parentPath + path })
+      } else if (node.method !== 'use' && node.path) {
+        if (Array.isArray(node.path)) {
+          node.path.forEach((path) => {
+            flat.push({ ...inheritProps, ...node, path: parentPath + path })
           })
         } else {
-          flat.push({ ...child, path: parentPath + child.path })
+          flat.push({ ...inheritProps, ...node, path: parentPath + node.path })
         }
       }
     })
