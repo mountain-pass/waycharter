@@ -62,30 +62,30 @@ console.log(app._waycharter.toOpenApiV3())
 
 # TODO
 
-## Scaffolding
-
-- [x] setup project
-- [x] setup automated build
-- [x] setup test framework
-- [x] setup example project
-- [ ] publish to npm repo
-
-## Functional
-
-### ~~Sources -> Express~~ :white_check_mark:
-
-- [x] setup express wrapper (using proxies)
-- [x] support sub-routes
-- [x] support adding metadata via a "Metadata" object(/class) passed in the route parameters
-
-### ~~Transformers -> OpenAPI v3~~ :white_check_mark:
-
-_N.B. compatible with Swagger_
-
-- [x] convert API metadata to OpenAPI v3 json
-
 ## Questions
 
 - [ ] consider what serverless usage would look like
 - [ ] consider how operations on resources would look like
 - [x] npm -> should we minify? -> No, not really required for server side
+
+## :white_check_mark: ~~Scaffolding~~
+
+- [x] setup project
+- [x] setup automated build
+- [x] setup test framework
+- [x] setup example project
+- [x] publish to npm repo
+
+## :white_check_mark: ~~Functional~~
+
+### :white_check_mark: ~~Sources -> Express~~
+
+- [x] setup express wrapper (using proxies)
+- [x] support sub-routes
+- [x] support adding metadata via a "Metadata" object(/class) passed in the route parameters
+
+### :white_check_mark: ~~Transformers -> OpenAPI v3~~
+
+_N.B. compatible with Swagger_
+
+- [x] convert API metadata to OpenAPI v3 json
