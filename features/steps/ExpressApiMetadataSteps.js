@@ -5,6 +5,7 @@ const request = require('supertest')
 const Metadata = require('../../src/common/classes/Metadata')
 
 const NOOP_HANDLER = (req, res) => res.send('success')
+const NOOP_MIDDLEWARE = (req, res, next) => next()
 
 // setup routes
 
@@ -27,6 +28,12 @@ Given('the route {string} {string} with metadata', function (method, path, dataT
   const world = this
   const meta = dataTable.hashes()[0]
   world.app[method](new Metadata(meta), parsePath(path), NOOP_HANDLER)
+})
+
+Given('the route {string} {string} with metadata and middleware', function (method, path, dataTable) {
+  const world = this
+  const meta = dataTable.hashes()[0]
+  world.app[method](new Metadata(meta), parsePath(path), NOOP_MIDDLEWARE, NOOP_HANDLER)
 })
 
 // assert metadata

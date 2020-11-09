@@ -21,6 +21,14 @@ Feature: Express API Metadata
     | post   | /hello/world2 |
 
   Scenario: Simple route with metadata
+    Given the route "get" "/hello/world" with metadata and middleware
+    | opName   | author | version |
+    | sayHello | nick   | 1       |
+    Then the metadata routes should be
+    | method | path         | opName   | author | version |
+    | get    | /hello/world | sayHello | nick   | 1       |
+
+  Scenario: Simple route with metadata
     Given the route "get" "/hello/world" with metadata
     | opName   | author | version |
     | sayHello | nick   | 1       |
