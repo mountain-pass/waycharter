@@ -32,6 +32,7 @@
     "test:bdd-codecov": "nyc --reporter=lcov --reporter=text-summary cucumber-js",
     "test:bdd-watch": "nodemon --watch features --watch src --ext js,feature --exec cucumber-js",
     "precommit": "npm run format:staged && npm run sca && npm run test",
+    "publish": "npm run publish:npm",
     "publish:version-bump": "npm version patch && git push && git push --tags",
     "publish:npm": "npm publish --access public"
   },
