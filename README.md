@@ -6,7 +6,7 @@ Server library for level 3 RESTful APIs
 
 [![GitHub license](https://img.shields.io/github/license/mountain-pass/waycharter)](https://github.com/mountain-pass/waycharter/blob/master/LICENSE) [![npm](https://img.shields.io/npm/v/@mountainpass/waycharter)](https://www.npmjs.com/package/@mountainpass/waycharter) [![npm downloads](https://img.shields.io/npm/dm/@mountainpass/waycharter)](https://www.npmjs.com/package/@mountainpass/waycharter)
 
-[![Build Status](https://github.com/mountain-pass/waycharter/workflows/Build/badge.svg)](https://github.com/mountain-pass/waycharter/actions?query=workflow%3ABuild) [![GitHub issues](https://img.shields.io/github/issues/mountain-pass/waycharter)](https://github.com/mountain-pass/waycharter/issues) [![GitHub pull requests](https://img.shields.io/github/issues-pr/mountain-pass/waycharter)](https://github.com/mountain-pass/waycharter/pulls)
+[![Build Status](https://github.com/mountain-pass/waycharter/workflows/Build/badge.svg)](https://github.com/mountain-pass/waycharter/actions?query=workflow%3A"Test+and+Bump+%28on+push+to+main+branch%29") [![GitHub issues](https://img.shields.io/github/issues/mountain-pass/waycharter)](https://github.com/mountain-pass/waycharter/issues) [![GitHub pull requests](https://img.shields.io/github/issues-pr/mountain-pass/waycharter)](https://github.com/mountain-pass/waycharter/pulls)
 
 <!-- [![Maintainability](https://api.codeclimate.com/v1/badges/532f3a287fbffed6f295/maintainability)](https://codeclimate.com/github/mountain-pass/waychaser/maintainability) [![Test Coverage](https://api.codeclimate.com/v1/badges/532f3a287fbffed6f295/test_coverage)](https://codeclimate.com/github/mountain-pass/waychaser/test_coverage) -->
 
