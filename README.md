@@ -79,7 +79,7 @@ console.log(app._waycharter.toOpenApiV3())
   - [ ] documentation (usage) - ???
   - [ ] client libraries - ???
 - [ ] how do devs specify operations on resources?
-- [ ] what does serverless usage would look like?
+- [ ] what does serverless usage look like?
 - [x] npm -> should we minify? -> No, not really required for server side
 
 ## :white_check_mark: ~~Scaffolding~~
