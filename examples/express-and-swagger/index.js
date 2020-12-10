@@ -1,6 +1,5 @@
 const { wrapExpressV4, Metadata } = require('@mountainpass/waycharter')
 const express = wrapExpressV4(require('express'))
-const swaggerUi = require('swagger-ui-express')
 
 const app = express()
 
@@ -24,20 +23,23 @@ resourceRouter.put(resourceMetadata, '/:id', (req, res) => res.json({ foo: 'bar'
 resourceRouter.delete(resourceMetadata, '/:id', (req, res) => res.json({ foo: 'bar' }))
 app.use('/some/resource', resourceRouter)
 
-// generate openapi
-const openApiDoc = app._waycharter.toOpenApiV3({
-  title: 'Example Project API',
-  version: '1.0.0',
-  description: 'An example of using **waycharter** with an express application.',
+// serve it using swagger
+app._waycharter.serveSwaggerDocs('/api-docs', {
+  info: {
+    title: 'Example Project API',
+    version: '1.0.0',
+    description: 'An example of using **waycharter** with an express application.'
+  },
   contact: {
     name: 'Nick',
     email: 'info@mountain-pass.com.au'
   }
 })
 
-// serve it using swagger
-app.use('/api-docs', swaggerUi.serve)
-app.get('/api-docs', swaggerUi.setup(openApiDoc))
+app._waycharter.log()
+
+// redirect root users to the docs
+app.use('/', (req, res) => res.redirect(307, '/api-docs'))
 
 // run the application
 app.listen(3000, () => console.log('App listening on: http://localhost:3000'))

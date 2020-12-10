@@ -12,19 +12,13 @@ const DEFAULT_RESPONSES = {
  * @param {*} openApiConfig
  * @param {*} apisMetadata
  */
-module.exports = (openApiConfig, apisMetadata) => {
-  const {
-    title = 'No title',
-    version = 'No version',
-    description = 'No description',
-    contact: { name: contactName, email: contactEmail } = {},
-    externalDocs: { description: linkDescription, url: linkUrl } = {}
-  } = openApiConfig
-
+module.exports = (openApiRootConfig, apisMetadata) => {
   const apis = {}
 
+  // convert to openapi format...
   const flatApis = flattenApis(apisMetadata)
   flatApis.forEach((api) => {
+    /* istanbul ignore next */
     const { method = '-', path = '-', tags = [], summary = 'No summary' } = api
     const apidoc = {
       tags: tags.length > 0 ? tags : ['all'],
@@ -43,15 +37,13 @@ module.exports = (openApiConfig, apisMetadata) => {
   const openapi = {
     openapi: '3.0.0',
     info: {
-      title,
-      version,
-      description
+      title: 'No title',
+      version: 'No version',
+      description: 'No description'
     },
-    paths: apis
+    paths: apis,
+    ...openApiRootConfig
   }
-
-  if (contactName && contactEmail) openapi.info.contact = { name: contactName, email: contactEmail }
-  if (linkDescription && linkUrl) openapi.externalDocs = { description: linkDescription, url: linkUrl }
 
   return openapi
 }

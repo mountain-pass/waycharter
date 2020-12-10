@@ -10,6 +10,7 @@ Given('API metadata', function (docString) {
 When('converted to OpenAPI JSON with configuration', function (dataTable) {
   const world = this
   const config = dataTable.rowsHash()
+  /* istanbul ignore next */
   Object.entries(config).forEach(([k, v]) => {
     if (v.startsWith('{')) config[k] = RSON.parse(v)
   })

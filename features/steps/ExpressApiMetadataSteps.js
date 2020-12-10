@@ -53,16 +53,6 @@ Then('the metadata json should be', function (docString) {
   ).to.eql(expectedJson)
 })
 
-Then('calling {string} {string} should return {int} {string}', async function (
-  method,
-  path,
-  expectedStatusCode,
-  expectedReponse
-) {
-  const world = this
-  await request(world.app)[method](path).expect(expectedStatusCode, expectedReponse)
-})
-
 Then('calling app._waycharter.toOpenApiV3 should return', function (expectedOpenApiV3String) {
   const world = this
   const actualOpenApiJson = world.app._waycharter.toOpenApiV3({})

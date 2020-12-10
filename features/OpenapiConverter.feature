@@ -276,9 +276,7 @@ Feature: API OpenAPI Transformer
     ]
     ```
     When converted to OpenAPI JSON with configuration
-    | title | Greetings API |
-    | version | 1.0.0 |
-    | description | Generates *greeting* messages. |
+    | info | { "description": "No description", "title": "No title", "version": "No version" } |
     | contact | { name: "Nick", email: "nick@foo.com" } |
     | externalDocs | { description: "Company website", url: "https://www.mountain-pass.com.au" } |
     Then the OpenAPI JSON should be
@@ -286,17 +284,17 @@ Feature: API OpenAPI Transformer
 {
   "openapi": "3.0.0",
   "info": {
-    "title": "Greetings API",
-    "version": "1.0.0",
-    "description": "Generates *greeting* messages.",
-    "contact": {
-      "name": "Nick",
-      "email": "nick@foo.com",
-    }
+    "description": "No description",
+    "title": "No title",
+    "version": "No version"
+  },
+  "contact": {
+    "email": "nick@foo.com",
+    "name": "Nick"
   },
   "externalDocs": {
     "description": "Company website",
-    "url": "https://www.mountain-pass.com.au",
+    "url": "https://www.mountain-pass.com.au"
   },
   "paths": {
     "/hello": {
