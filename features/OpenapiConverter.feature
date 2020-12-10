@@ -34,24 +34,28 @@ Feature: API OpenAPI Transformer
         },
         "tags": [
           "all"
-        ],
-        "summary": "No summary"
+        ]
       }
     }
   }
 }
     ```
 
-  Scenario: Convert single top level API with different methods
+@wip
+  Scenario: Convert single top level API with different methods (check METHOD ordering is alphabetical)
     Given API metadata
     ```
     [
+      {
+        method: 'post',
+        path: '/hello'
+      },
       {
         method: 'get',
         path: '/hello'
       },
       {
-        method: 'post',
+        method: 'use',
         path: '/hello'
       }
     ]
@@ -67,27 +71,200 @@ Feature: API OpenAPI Transformer
   },
   "paths": {
     "/hello": {
-      "get": {
+      "connect": {
+        "tags": [
+          "all"
+        ],
         "responses": {
           "200": {
             "description": "The action was successful."
           }
-        },
+        }
+      },
+      "delete": {
         "tags": [
           "all"
         ],
-        "summary": "No summary"
+        "responses": {
+          "200": {
+            "description": "The action was successful."
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "all"
+        ],
+        "responses": {
+          "200": {
+            "description": "The action was successful."
+          }
+        }
+      },
+      "head": {
+        "tags": [
+          "all"
+        ],
+        "responses": {
+          "200": {
+            "description": "The action was successful."
+          }
+        }
+      },
+      "options": {
+        "tags": [
+          "all"
+        ],
+        "responses": {
+          "200": {
+            "description": "The action was successful."
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "all"
+        ],
+        "responses": {
+          "200": {
+            "description": "The action was successful."
+          }
+        }
       },
       "post": {
+        "tags": [
+          "all"
+        ],
         "responses": {
           "200": {
             "description": "The action was successful."
           }
-        },
+        }
+      },
+      "put": {
         "tags": [
           "all"
         ],
-        "summary": "No summary"
+        "responses": {
+          "200": {
+            "description": "The action was successful."
+          }
+        }
+      },
+      "trace": {
+        "tags": [
+          "all"
+        ],
+        "responses": {
+          "200": {
+            "description": "The action was successful."
+          }
+        }
+      }
+    }
+  }
+}
+    ```
+    Then converted to OpenAPI JSON Text should be
+    ```
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "No title",
+    "version": "No version",
+    "description": "No description"
+  },
+  "paths": {
+    "/hello": {
+      "connect": {
+        "tags": [
+          "all"
+        ],
+        "responses": {
+          "200": {
+            "description": "The action was successful."
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "all"
+        ],
+        "responses": {
+          "200": {
+            "description": "The action was successful."
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "all"
+        ],
+        "responses": {
+          "200": {
+            "description": "The action was successful."
+          }
+        }
+      },
+      "head": {
+        "tags": [
+          "all"
+        ],
+        "responses": {
+          "200": {
+            "description": "The action was successful."
+          }
+        }
+      },
+      "options": {
+        "tags": [
+          "all"
+        ],
+        "responses": {
+          "200": {
+            "description": "The action was successful."
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "all"
+        ],
+        "responses": {
+          "200": {
+            "description": "The action was successful."
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "all"
+        ],
+        "responses": {
+          "200": {
+            "description": "The action was successful."
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "all"
+        ],
+        "responses": {
+          "200": {
+            "description": "The action was successful."
+          }
+        }
+      },
+      "trace": {
+        "tags": [
+          "all"
+        ],
+        "responses": {
+          "200": {
+            "description": "The action was successful."
+          }
+        }
       }
     }
   }
@@ -143,8 +320,7 @@ Feature: API OpenAPI Transformer
         },
         "tags": [
           "all"
-        ],
-        "summary": "No summary"
+        ]
       },
       "post": {
         "responses": {
@@ -154,8 +330,7 @@ Feature: API OpenAPI Transformer
         },
         "tags": [
           "all"
-        ],
-        "summary": "No summary"
+        ]
       }
     },
     "/hello/world": {
@@ -167,15 +342,14 @@ Feature: API OpenAPI Transformer
         },
         "tags": [
           "all"
-        ],
-        "summary": "No summary"
+        ]
       }
     }
   }
 }
     ```
 
-  Scenario: Convert multiple nested APIs with Array Path
+  Scenario: Convert multiple nested APIs with Array Path (check PATH ordering is alphabetical)
     Given API metadata
     ```
     [
@@ -189,7 +363,7 @@ Feature: API OpenAPI Transformer
             children: [
               {
                 method: 'get',
-                path: ['/list1', '/list2']
+                path: ['/list2', '/list1']
               }
             ]
           }
@@ -216,8 +390,7 @@ Feature: API OpenAPI Transformer
         },
         "tags": [
           "all"
-        ],
-        "summary": "No summary"
+        ]
       }
     },
     "/hello1/languages/list2": {
@@ -229,8 +402,7 @@ Feature: API OpenAPI Transformer
         },
         "tags": [
           "all"
-        ],
-        "summary": "No summary"
+        ]
       }
     },
     "/hello2/languages/list1": {
@@ -242,8 +414,7 @@ Feature: API OpenAPI Transformer
         },
         "tags": [
           "all"
-        ],
-        "summary": "No summary"
+        ]
       }
     },
     "/hello2/languages/list2": {
@@ -255,8 +426,68 @@ Feature: API OpenAPI Transformer
         },
         "tags": [
           "all"
+        ]
+      }
+    }
+  }
+}
+    ```
+    Then converted to OpenAPI JSON Text should be
+    ```
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "No title",
+    "version": "No version",
+    "description": "No description"
+  },
+  "paths": {
+    "/hello1/languages/list1": {
+      "get": {
+        "tags": [
+          "all"
         ],
-        "summary": "No summary"
+        "responses": {
+          "200": {
+            "description": "The action was successful."
+          }
+        }
+      }
+    },
+    "/hello1/languages/list2": {
+      "get": {
+        "tags": [
+          "all"
+        ],
+        "responses": {
+          "200": {
+            "description": "The action was successful."
+          }
+        }
+      }
+    },
+    "/hello2/languages/list1": {
+      "get": {
+        "tags": [
+          "all"
+        ],
+        "responses": {
+          "200": {
+            "description": "The action was successful."
+          }
+        }
+      }
+    },
+    "/hello2/languages/list2": {
+      "get": {
+        "tags": [
+          "all"
+        ],
+        "responses": {
+          "200": {
+            "description": "The action was successful."
+          }
+        }
       }
     }
   }

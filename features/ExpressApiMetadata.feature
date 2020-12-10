@@ -6,21 +6,23 @@ Feature: Express API Metadata
   I want to automatically generate processable metadata from my Express API endpoints
   So that API consumers can discover APIs in their preferred format
 
-  Scenario: Simple route
+  Scenario: A simple route should have metadata generated
     Given the route "get" "/hello/world"
     Then the metadata routes should be
     | method | path         |
     | get    | /hello/world |
 
-  Scenario: Two routes
+  Scenario: Multiple routes should have metadata generated
     Given the route "get" "/hello/world1" 
     Given the route "post" "/hello/world2" 
+    Given the route "use" "/hello/world3" 
     Then the metadata routes should be
     | method | path          |
     | get    | /hello/world1 |
     | post   | /hello/world2 |
+    | use    | /hello/world3 |
 
-  Scenario: Simple route with metadata
+  Scenario: Simple route with metadata AND middelware should have metadata generated
     Given the route "get" "/hello/world" with metadata and middleware
     | opName   | author | version |
     | sayHello | nick   | 1       |
@@ -28,7 +30,7 @@ Feature: Express API Metadata
     | method | path         | opName   | author | version |
     | get    | /hello/world | sayHello | nick   | 1       |
 
-  Scenario: Simple route with metadata
+  Scenario: Simple route with metadata should have metadata generated
     Given the route "get" "/hello/world" with metadata
     | opName   | author | version |
     | sayHello | nick   | 1       |
@@ -36,7 +38,14 @@ Feature: Express API Metadata
     | method | path         | opName   | author | version |
     | get    | /hello/world | sayHello | nick   | 1       |
 
-  Scenario: Array path route
+  Scenario: A route with 'ignore=true' metadata should NOT have metadata generated
+    Given the route "get" "/hello/world" with metadata
+    | opName   | author | version | ignore |
+    | sayHello | nick   | 1      | true   |
+    Then the metadata routes should be
+    | method | path         | opName     | author | version |
+
+  Scenario: A route with an path array should have metadata generated
     Given the route "get" "/hello/world,/bonjour/le/monde,/ahoj/svet"
     Then the metadata json should be
     ```
@@ -50,7 +59,7 @@ Feature: Express API Metadata
     ]
     ```
 
-  Scenario: Sub Routes
+  Scenario: A route with Sub-Routes should have metadata generated
     Given the route "use" "/hello" with subroute "get" "/world"
     Then the metadata json should be
     ```
@@ -68,7 +77,7 @@ Feature: Express API Metadata
     ]
     ```
 
-  Scenario: App should expose toOpenApiV3
+  Scenario: The 'app' should expose a toOpenApiV3 function
     Given the route "get" "/hello/world"
     Then calling app._waycharter.toOpenApiV3 should return
     ```
@@ -87,7 +96,6 @@ Feature: Express API Metadata
             "description": "The action was successful."
           }
         },
-        "summary": "No summary",
         "tags": [
           "all"
         ]

@@ -1,3 +1,5 @@
+const USE_METHODS = ['get', 'head', 'post', 'put', 'delete', 'connect', 'options', 'trace', 'patch']
+
 const flattenApis = (apisMetadata = null) => {
   if (!Array.isArray(apisMetadata)) {
     throw new Error('apisMetadata must be an array! ' + JSON.stringify({ apisMetadata }))
@@ -31,6 +33,15 @@ const flattenApis = (apisMetadata = null) => {
           })
         } else {
           flat.push({ ...inheritProps, ...node, path: parentPath + node.path })
+        }
+      } else if (node.method === 'use' && node.path) {
+        // 'use' methods should be mapped to ALL http methods...
+        if (Array.isArray(node.path)) {
+          node.path.forEach((path) => {
+            USE_METHODS.forEach((method) => flat.push({ ...inheritProps, ...node, path: parentPath + path, method }))
+          })
+        } else {
+          USE_METHODS.forEach((method) => flat.push({ ...inheritProps, ...node, path: parentPath + node.path, method }))
         }
       }
     })

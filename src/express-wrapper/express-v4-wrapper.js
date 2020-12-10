@@ -21,7 +21,8 @@ const proxyRouterConfig = {
           // if any args are a "Metadata" object, then copy metadata, and strip from args
           const metadataIndex = args.findIndex((arg) => arg instanceof Metadata)
           if (~metadataIndex) {
-            Object.assign(meta, args[metadataIndex].metadata)
+            const metadata = args[metadataIndex].metadata
+            Object.assign(meta, metadata)
             newArgs.splice(metadataIndex, 1)
           }
 
@@ -36,7 +37,7 @@ const proxyRouterConfig = {
           }
 
           // finally, store metadata (if populated)
-          if (Object.keys(meta).length > 0) receiver._waycharter.apis.push(meta)
+          if (Object.keys(meta).length > 0 && meta.ignore !== true) receiver._waycharter.apis.push(meta)
 
           return newArgs
         }

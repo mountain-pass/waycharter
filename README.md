@@ -82,6 +82,11 @@ console.log(app._waycharter.toOpenApiV3())
 - [ ] what does serverless usage look like?
 - [x] npm -> should we minify? -> No, not really required for server side
 
+## Low Priority
+
+- [x] sort apis -> path then method
+- [ ] test /api/status -> not showing
+
 ## :white_check_mark: ~~Scaffolding~~
 
 - [x] setup project

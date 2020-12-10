@@ -27,12 +27,14 @@ Given('the route {string} {string} with subroute {string} {string}', function (m
 Given('the route {string} {string} with metadata', function (method, path, dataTable) {
   const world = this
   const meta = dataTable.hashes()[0]
+  if (typeof meta.ignore !== 'undefined') meta.ignore = meta.ignore === 'true'
   world.app[method](new Metadata(meta), parsePath(path), NOOP_HANDLER)
 })
 
 Given('the route {string} {string} with metadata and middleware', function (method, path, dataTable) {
   const world = this
   const meta = dataTable.hashes()[0]
+  if (typeof meta.ignore !== 'undefined') meta.ignore = meta.ignore === 'true'
   world.app[method](new Metadata(meta), parsePath(path), NOOP_MIDDLEWARE, NOOP_HANDLER)
 })
 

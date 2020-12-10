@@ -1,5 +1,6 @@
 const toOpenApiV3 = require('../openapi-converter/metadata-to-openapi-v3')
 const swaggerUi = require('swagger-ui-express')
+const Metadata = require('../common/classes/Metadata')
 
 /* istanbul ignore next */
 module.exports = (app) => {
@@ -14,7 +15,7 @@ module.exports = (app) => {
 
   /** Serves the Swagger docs under the given endpoint. */
   app._waycharter.serveSwaggerDocs = (urlPath = '/api-docs', openApiConfig = {}) => {
-    app.use(urlPath, swaggerUi.serve)
+    app.use(urlPath, swaggerUi.serve, new Metadata({ ignore: true }))
     app.get(urlPath, swaggerUi.setup(generateOpenApiV3(openApiConfig)))
   }
 

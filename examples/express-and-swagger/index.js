@@ -8,20 +8,21 @@ const statusMeta = new Metadata({
   summary: 'Provides an indication of the current system status.',
   tags: ['operations']
 })
-app.get('/api/status', (req, res) => res.json({ status: 'up' }), statusMeta)
+app.use('/api/status', (req, res) => res.json({ status: 'up' }), statusMeta)
 
 // multi-path route
 app.get(['/one', '/two', '/three'], (req, res) => res.json({ status: 'up' }))
 
 // sub-routes
 const resourceMetadata = new Metadata({ tags: ['someResource'] })
-const resourceRouter = express.Router()
-resourceRouter.get(resourceMetadata, '/list', (req, res) => res.json({ data: [{ foo: 'bar' }] }))
-resourceRouter.get(resourceMetadata, '/:id', (req, res) => res.json({ foo: 'bar' }))
-resourceRouter.post(resourceMetadata, '/', (req, res) => res.json({ foo: 'bar' }))
-resourceRouter.put(resourceMetadata, '/:id', (req, res) => res.json({ foo: 'bar' }))
-resourceRouter.delete(resourceMetadata, '/:id', (req, res) => res.json({ foo: 'bar' }))
-app.use('/some/resource', resourceRouter)
+
+const routes = express.Router()
+routes.get(resourceMetadata, '/list', (req, res) => res.json({ data: [{ foo: 'bar' }] }))
+routes.get(resourceMetadata, '/:id', (req, res) => res.json({ foo: 'bar' }))
+routes.post(resourceMetadata, '/', (req, res) => res.json({ foo: 'bar' }))
+routes.put(resourceMetadata, '/:id', (req, res) => res.json({ foo: 'bar' }))
+routes.delete(resourceMetadata, '/:id', (req, res) => res.json({ foo: 'bar' }))
+app.use('/some/resource', routes)
 
 // serve it using swagger
 app._waycharter.serveSwaggerDocs('/api-docs', {

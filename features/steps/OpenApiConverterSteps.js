@@ -23,6 +23,13 @@ Then('converted to OpenAPI JSON should be', function (expectedOpenAPIJson) {
   expect(actualJson).to.eql(RSON.parse(expectedOpenAPIJson))
 })
 
+// N.B. Used for testing
+Then('converted to OpenAPI JSON Text should be', function (expectedOpenAPIJson) {
+  const world = this
+  const actualJson = JSON.stringify(convertToOpenapiV3({}, world.apis), null, 2).trim()
+  expect(actualJson).to.eql(JSON.stringify(RSON.parse(expectedOpenAPIJson), null, 2).trim())
+})
+
 Then('the OpenAPI JSON should be', function (expectedOpenAPIJson) {
   const world = this
   expect(world.actualOpenApiV3).to.eql(RSON.parse(expectedOpenAPIJson))

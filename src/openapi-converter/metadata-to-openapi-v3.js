@@ -13,26 +13,37 @@ const DEFAULT_RESPONSES = {
  * @param {*} apisMetadata
  */
 module.exports = (openApiRootConfig, apisMetadata) => {
-  const apis = {}
+  let apis = {}
 
   // convert to openapi format...
   const flatApis = flattenApis(apisMetadata)
   flatApis.forEach((api) => {
     /* istanbul ignore next */
-    const { method = '-', path = '-', tags = [], summary = 'No summary' } = api
+    const { method = '-', path = '-', tags = [], summary } = api
     const apidoc = {
       tags: tags.length > 0 ? tags : ['all'],
-      summary,
       responses: DEFAULT_RESPONSES
     }
+    if (summary) apidoc.summary = summary
+
+    // add paths
     if (typeof apis[path] === 'undefined') {
+      // (new)
       apis[path] = {
         [method]: apidoc
       }
     } else {
+      // (existing)
       apis[path][method] = apidoc
     }
   })
+
+  Object.keys(apis).forEach((k) => {
+    // sort by method
+    apis[k] = Object.fromEntries(Object.entries(apis[k]).sort())
+  })
+  // sort by path
+  apis = Object.fromEntries(Object.entries(apis).sort())
 
   const openapi = {
     openapi: '3.0.0',
