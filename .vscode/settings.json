@@ -1,9 +1,57 @@
 {
-  "editor.formatOnSave": false,
+  "eslint.alwaysShowStatus": true,
+  "editor.formatOnSave": true,
+  "cucumberautocomplete.onTypeFormat": true,
+  "cucumberautocomplete.steps": ["src/test/*.steps.js"],
+  "cucumberautocomplete.skipDocStringsFormat": true,
+  "cucumberautocomplete.syncfeatures": "src/test/**/*.feature",
   "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": true,
-    "source.organizeImports": false
+    "source.fixAll.eslint": true
   },
-  "eslint.format.enable": true,
-  "svg.preview.background": "black"
+  "search.exclude": {
+    "**/coverage": true,
+    "**/dist": true,
+    "**/lib": true,
+    "**/test-results": true
+  },
+  "standard.usePackageJson": true,
+  "standard.workingDirectories": [
+  
+  ],
+  "editor.rulers": [
+    120
+  ],
+  "commit-message-editor.view.defaultView": "form",
+  "commit-message-editor.staticTemplate": [
+    "<type>[(scope)]: <description>",
+    "",
+    "[optional body]",
+    "",
+    "[[BREAKING CHANGE: ]optional footer(s)]"
+  ],
+  "cSpell.words": [
+    "DIRPATH",
+    "HATEOAS",
+    "SNYK",
+    "Waychaser",
+    "bufferutil",
+    "codacy",
+    "commitlint",
+    "conventionalcommits",
+    "jscpd",
+    "lcov",
+    "markdownlint",
+    "mkdir",
+    "mountainpass",
+    "refs",
+    "shellcheck",
+    "standardjs",
+    "styfle",
+    "waycharter",
+    "windyroad"
+  ],
+  "cSpell.language": "en-GB",
+  "cSpell.enableFiletypes": [
+    "feature"
+  ]
 }
