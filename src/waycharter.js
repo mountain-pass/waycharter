@@ -22,7 +22,7 @@ export class WayCharter {
         links.set(link)
       }
       response.header('link', links.toString())
-      response.json(resource.body || {})
+      response.json(resource.body)
     })
     return {
       path: parameters => {
