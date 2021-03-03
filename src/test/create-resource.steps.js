@@ -94,7 +94,7 @@ Given(
 )
 
 Given(
-  "a waycharter resource instance that's a collection with {int} item",
+  "a waycharter resource instance that's a collection with {int} item(s)",
   async function (length) {
     this.currentPath = randomApiPath()
     this.currentType = this.waycharter.createType({
@@ -181,6 +181,8 @@ Then('an empty collection will be returned', async function () {
   expect(this.result.ops.find('item')).to.be.undefined()
 })
 
-Then('an collection with {int} item will be returned', async function (length) {
+Then('an collection with {int} item(s) will be returned', async function (
+  length
+) {
   expect(this.result.ops.filter('item').length).to.equal(length)
 })
