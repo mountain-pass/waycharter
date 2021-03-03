@@ -37,8 +37,13 @@ Feature: Create Resource
         Then it will have a 'self' operation
         And the 'self' operation will return the same resource instance
 
-    @wip
-    Scenario: Collection
+    Scenario: Empty Collection
         Given a waycharter resource instance that's an empty collection
         When we load the collection
         Then an empty collection will be returned
+
+    @wip
+    Scenario: Collection with one item
+        Given a waycharter resource instance that's a collection with 1 item
+        When we load the collection
+        Then an collection with 1 item will be returned

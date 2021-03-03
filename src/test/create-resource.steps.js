@@ -93,6 +93,27 @@ Given(
   }
 )
 
+Given(
+  "a waycharter resource instance that's a collection with {int} item",
+  async function (length) {
+    this.currentPath = randomApiPath()
+    this.currentType = this.waycharter.createType({
+      path: `${this.currentPath}/:id`,
+      loader: async parameters => {
+        return this.instances[parameters.id]
+      }
+    })
+    this.instances = Array.from({ length }).fill({})
+    this.currentPath = createSingleton.bind(this)({
+      path: randomApiPath(),
+      links: this.instances.map((item, index) => ({
+        rel: 'item',
+        uri: `${this.currentPath}/:${index}`
+      }))
+    })
+  }
+)
+
 Given('the singleton has a {string} link to that instance', async function (
   relationship
 ) {
@@ -158,4 +179,8 @@ Then(
 
 Then('an empty collection will be returned', async function () {
   expect(this.result.ops.find('item')).to.be.undefined()
+})
+
+Then('an collection with {int} item will be returned', async function (length) {
+  expect(this.result.ops.filter('item').length).to.equal(length)
 })
