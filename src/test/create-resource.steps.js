@@ -103,12 +103,16 @@ Given(
         return this.instances[parameters.id]
       }
     })
-    this.instances = Array.from({ length }).fill({})
+    this.instances = [...Array.from({ length }).keys()].map(index => ({
+      body: { id: index }
+    }))
     this.currentPath = createSingleton.bind(this)({
       path: randomApiPath(),
       links: this.instances.map((item, index) => ({
         rel: 'item',
-        uri: `${this.currentPath}/:${index}`
+        uri: this.currentType.path({
+          id: index
+        })
       }))
     })
   }
@@ -185,4 +189,13 @@ Then('an collection with {int} item(s) will be returned', async function (
   length
 ) {
   expect(this.result.ops.filter('item').length).to.equal(length)
+})
+
+Then('that item will be returned', async function () {
+  expect(this.result.ops.find('self').uri).to.equal(
+    this.currentType.path({
+      id: 0
+    })
+  )
+  expect(await this.result.body()).to.deep.equal({ id: 0 })
 })

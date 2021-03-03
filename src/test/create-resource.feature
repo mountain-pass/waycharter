@@ -47,8 +47,14 @@ Feature: Create Resource
         When we load the collection
         Then an collection with 1 item will be returned
 
+    Scenario: Collection with one item - fetch item
+        Given a waycharter resource instance that's a collection with 1 item
+        When we load the collection
+        And we invoke the 'item' operation
+        Then that item will be returned
+
     @wip
-    Scenario: Collection with many item
+    Scenario: Collection with many items
         Given a waycharter resource instance that's a collection with 16 items
         When we load the collection
         Then an collection with 16 items will be returned
