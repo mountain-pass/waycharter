@@ -86,19 +86,28 @@ Given('an instance of that type with the {string} {string}', async function (
   })
 })
 
+Given(
+  "a waycharter resource instance that's an empty collection",
+  async function () {
+    this.currentPath = createSingleton.bind(this)({ path: randomApiPath() })
+  }
+)
+
 Given('the singleton has a {string} link to that instance', async function (
   relationship
 ) {
   this.singleton.links.push({ rel: relationship, uri: this.currentPath })
 })
 
-When('we load that resource instance', async function () {
+async function loadCurrent () {
   this.result = await load.bind(this)(this.currentPath, this.baseUrl)
-})
+}
 
-When('we load the latter singleton', async function () {
-  this.result = await load.bind(this)(this.currentPath, this.baseUrl)
-})
+When('we load that resource instance', loadCurrent)
+
+When('we load the latter singleton', loadCurrent)
+
+When('we load the collection', loadCurrent)
 
 When('we load the singleton', async function () {
   this.result = await load.bind(this)(this.previousPath, this.baseUrl)
@@ -146,3 +155,7 @@ Then(
     })
   }
 )
+
+Then('an empty collection will be returned', async function () {
+  expect(this.result.ops.find('item')).to.be.undefined()
+})

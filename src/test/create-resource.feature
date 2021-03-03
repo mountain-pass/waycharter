@@ -27,7 +27,7 @@ Feature: Create Resource
         Then it will have a 'related' operation
         And the 'related' operation will return the instance with the 'id' 'alpha'
 
-    Scenario: Create Non-Singleton
+    Scenario: Create Non-Singleton - self
         Given a resource instance that's a singleton waycharter resource type
         And a waycharter resource type accessed by 'id'
         And an instance of that type with the 'id' 'alpha'
@@ -36,3 +36,9 @@ Feature: Create Resource
         And we invoke the 'related' operation
         Then it will have a 'self' operation
         And the 'self' operation will return the same resource instance
+
+    @wip
+    Scenario: Collection
+        Given a waycharter resource instance that's an empty collection
+        When we load the collection
+        Then an empty collection will be returned

@@ -53,6 +53,7 @@
     "test:node-api": "scripts/test-node.sh",
     "watch:test:node-api": "nodemon -V -x npm -- run ${npm_lifecycle_event#watch:}",
     "test:node-api:@wip": "scripts/test-node.sh",
+    "watch:test:node-api:@wip": "nodemon -V -x npm -- run ${npm_lifecycle_event#watch:}",
     "test": "npm-run-all --sequential ${npm_lifecycle_event}:*",
     "watch:test": "nodemon -V -x npm -- run ${npm_lifecycle_event#watch:}",
     "cover:node-api": "scripts/cover.sh",
