@@ -13,18 +13,23 @@ export class WayCharter {
     const pathExpander = parameters => URI.expand(uriTemplate, parameters)
     this.router.get(path, async function (request, response, next) {
       const links = new LinkHeader()
+      console.log('setting links')
       links.set({
         rel: 'self',
         uri: pathExpander(request.params)
       })
+      console.log('loading...')
       const resource = await loader(request.params)
+      console.log('setting more links', resource.links)
       for (const link of resource.links || []) {
         links.set(link)
       }
       response.header('link', links.toString())
+      console.log('sending', resource.body)
       response.json(resource.body)
     })
     return {
+      pathTemplate: uriTemplate,
       path: parameters => {
         const expanded = pathExpander(parameters)
         return expanded

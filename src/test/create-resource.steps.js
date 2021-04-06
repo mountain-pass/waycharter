@@ -1,12 +1,13 @@
 import { expect } from 'chai'
 import { Given, When, Then } from '@cucumber/cucumber'
-
 import {
   uniqueNamesGenerator,
   adjectives,
   colors,
   animals
 } from 'unique-names-generator'
+import pointer from 'jsonpointer'
+import { URI } from 'uri-template-lite'
 
 let pathCount = 0
 
@@ -20,9 +21,9 @@ const randomApiPath = () => {
   return `/api/${pathCount++}-${randomPathSegment()}`
 }
 
-function createSingleton ({ path, links }) {
+function createSingleton ({ path, links, body }) {
   this.singleton = {
-    body: { foo: 'bar' },
+    body: body || { foo: 'bar' },
     links: links || []
   }
   this.waycharter.createType({
@@ -97,23 +98,19 @@ Given(
   "a waycharter resource instance that's a collection with {int} item(s)",
   async function (length) {
     this.currentPath = randomApiPath()
-    this.currentType = this.waycharter.createType({
-      path: `${this.currentPath}/:id`,
-      loader: async parameters => {
-        return this.instances[parameters.id]
-      }
-    })
     this.instances = [...Array.from({ length }).keys()].map(index => ({
       body: { id: index }
     }))
+    const body = this.instances.map(item => item.body)
+    const links = this.instances.map((item, index) => ({
+      rel: 'item',
+      uri: `#/${index}`
+    }))
+    // need a create that allows adding loader for loading
     this.currentPath = createSingleton.bind(this)({
+      body,
       path: randomApiPath(),
-      links: this.instances.map((item, index) => ({
-        rel: 'item',
-        uri: this.currentType.path({
-          id: index
-        })
-      }))
+      links
     })
   }
 )
@@ -140,7 +137,38 @@ When('we load the singleton', async function () {
 
 When('we invoke the {string} operation', async function (relationship) {
   this.result = await this.result.invoke(relationship)
+  console.log(this.result)
 })
+
+async function getNthItem (relationship, nth) {
+  // in waychaser, we should provide a convenience function
+  // so we can get "nested" resources as follows
+  // this.result.nested(relationship)[nth - 1].invoke()
+  // which would return all the resources with the given relationship
+  // the invoke needs to be customised for items, so that it passes the item
+  // as context to expand the uri
+  // OR....
+  // the item link points to a fragment, which is retrievable
+  // and waychaser is smart enough to provide the relevant links for that fragment
+  // based on the anchors
+  // so to get the items, you'd do something like
+  /* 
+  const items = await Promise.all(resource.ops.filter('item').map(itemOp => itemOp.invoke()))
+  const item = await items[nth-1].invoke('unabridged')
+  */
+  // eslint-disable-next-line unicorn/no-array-callback-reference
+  const items = this.result.ops.filter(relationship)
+  this.result = await items[nth - 1].invoke()
+  /*
+    how do we iterated through the collection?
+    WHat if we gave the index a range and that range was automatically expanded by waychaser
+  */
+}
+
+When(
+  'we invoke the {string} operation for the {int}(st)(nd)(rd)(th) item',
+  getNthItem
+)
 
 Then('it will have a {string} operation', async function (relationship) {
   // eslint-disable-next-line unicorn/no-array-callback-reference
@@ -188,14 +216,14 @@ Then('an empty collection will be returned', async function () {
 Then('an collection with {int} item(s) will be returned', async function (
   length
 ) {
-  expect(this.result.ops.filter('item').length).to.equal(length)
+  const body = await this.result.body()
+  expect(body.length).to.equal(length)
 })
 
 Then('that item will be returned', async function () {
-  expect(this.result.ops.find('self').uri).to.equal(
-    this.currentType.path({
-      id: 0
-    })
-  )
   expect(await this.result.body()).to.deep.equal({ id: 0 })
+})
+
+Then('the {int}(th) item will be returned', async function (nth) {
+  expect(await this.result.body()).to.deep.equal({ id: nth - 1 })
 })

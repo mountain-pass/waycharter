@@ -1,5 +1,6 @@
 
 # TO DO
 
-- [ ] Setup initial resource middleware
+- [x] Setup initial resource middleware
+- [ ] Provide way to use URI templates for repeating 'item' links
 

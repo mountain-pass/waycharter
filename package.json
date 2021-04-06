@@ -79,6 +79,8 @@
   ],
   "dependencies": {
     "debug": "^4.2.0",
+    "json-pointer": "^0.6.1",
+    "jsonpointer": "^4.1.0",
     "router-uri-convert": "^1.0.22",
     "uri-template-lite": "^20.5.0"
   },
@@ -97,7 +99,7 @@
     "@commitlint/config-conventional": "^12.0.0",
     "@cucumber/cucumber": "^7.0.0",
     "@istanbuljs/nyc-config-babel": "^3.0.0",
-    "@mountainpass/waychaser": "^3.0.20",
+    "@mountainpass/waychaser": "^3.0.29",
     "@windyroad/cucumber-js-throwables": "^1.0.4",
     "aws4": "^1.11.0",
     "babel-eslint": "^10.0.2",
@@ -145,6 +147,7 @@
     "istanbul": "^0.4.5",
     "jscpd": "^3.3.25",
     "jsdoc": "^3.6.6",
+    "jsonpath": "^1.1.0",
     "lint-staged": "^10.2.11",
     "markdownlint": "^0.23.0",
     "moment-timezone": "^0.5.31",

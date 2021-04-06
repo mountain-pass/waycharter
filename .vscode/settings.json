@@ -39,6 +39,8 @@
     "commitlint",
     "conventionalcommits",
     "jscpd",
+    "jsonpath",
+    "jsonpointer",
     "lcov",
     "markdownlint",
     "mkdir",

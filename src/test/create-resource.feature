@@ -50,11 +50,16 @@ Feature: Create Resource
     Scenario: Collection with one item - fetch item
         Given a waycharter resource instance that's a collection with 1 item
         When we load the collection
-        And we invoke the 'item' operation
+        And we invoke the 'item' operation for the 1st item
         Then that item will be returned
 
-    @wip
     Scenario: Collection with many items
         Given a waycharter resource instance that's a collection with 16 items
         When we load the collection
         Then an collection with 16 items will be returned
+
+    Scenario: Collection with many items - fetch nth item
+        Given a waycharter resource instance that's a collection with 16 item
+        When we load the collection
+        And we invoke the 'item' operation for the 6th item
+        Then the 6th item will be returned
