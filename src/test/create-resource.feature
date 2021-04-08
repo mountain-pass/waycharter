@@ -107,3 +107,24 @@ Feature: Create Resource
         And it will have a 'first' operation
         And it will have a 'prev' operation
         But it won't have a 'next' operation
+
+
+    Scenario: Collection with many many items - next page then first page
+        Given a waycharter resource instance that's a collection with 1000 items and a page size of 16
+        When we load the collection
+        And we invoke the 'next' operation
+        And we invoke the 'first' operation
+        Then the first 16 items of the collection will be returned
+        And it will have a 'first' operation
+        And it will have a 'next' operation
+        But it won't have a 'prev' operation
+
+    Scenario: Collection with many many items - next page then prev page
+        Given a waycharter resource instance that's a collection with 1000 items and a page size of 16
+        When we load the collection
+        And we invoke the 'next' operation
+        And we invoke the 'prev' operation
+        Then the first 16 items of the collection will be returned
+        And it will have a 'first' operation
+        And it will have a 'next' operation
+        But it won't have a 'prev' operation

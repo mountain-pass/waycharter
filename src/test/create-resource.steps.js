@@ -135,6 +135,7 @@ Given(
           rel: 'item',
           uri: `#/${index}`
         }))
+
         return {
           body,
           links: [
@@ -145,7 +146,7 @@ Given(
             ...(pageInt > 0
               ? [{ rel: 'prev', uri: `?page=${pageInt - 1}` }]
               : []),
-            { rel: 'first', uri: '?' }
+            { rel: 'first', uri: '?page=0' }
           ]
         }
       }
