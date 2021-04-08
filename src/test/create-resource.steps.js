@@ -115,6 +115,44 @@ Given(
   }
 )
 
+Given(
+  "a waycharter resource instance that's a collection with {int} items and a page size of {int}",
+  async function (length, pageSize) {
+    this.currentPath = randomApiPath()
+    this.instances = [...Array.from({ length }).keys()].map(index => ({
+      body: { id: index }
+    }))
+    this.waycharter.createType({
+      path: this.currentPath,
+      loader: async ({ page = '0' }) => {
+        const pageInt = Number.parseInt(page)
+        const pageInstances = this.instances.slice(
+          pageInt * pageSize,
+          (pageInt + 1) * pageSize
+        )
+        const body = pageInstances.map(item => item.body)
+        const links = pageInstances.map((item, index) => ({
+          rel: 'item',
+          uri: `#/${index}`
+        }))
+        return {
+          body,
+          links: [
+            ...links,
+            ...(pageInt < this.instances.length / pageSize - 1
+              ? [{ rel: 'next', uri: `?page=${pageInt + 1}` }]
+              : []),
+            ...(pageInt > 0
+              ? [{ rel: 'prev', uri: `?page=${pageInt - 1}` }]
+              : []),
+            { rel: 'first', uri: '?' }
+          ]
+        }
+      }
+    })
+  }
+)
+
 Given('the singleton has a {string} link to that instance', async function (
   relationship
 ) {
@@ -139,6 +177,18 @@ When('we invoke the {string} operation', async function (relationship) {
   this.result = await this.result.invoke(relationship)
   console.log(this.result)
 })
+
+When(
+  'we invoke the {string} operation until we reach the last page',
+  async function (relationship) {
+    for (
+      this.result = await this.result.invoke(relationship);
+      // eslint-disable-next-line unicorn/no-array-callback-reference
+      this.result.ops.find(relationship); // eslint-disable-line unicorn/prefer-array-some
+      this.result = await this.result.invoke(relationship)
+    ) {}
+  }
+)
 
 async function getNthItem (relationship, nth) {
   // in waychaser, we should provide a convenience function
@@ -173,6 +223,11 @@ When(
 Then('it will have a {string} operation', async function (relationship) {
   // eslint-disable-next-line unicorn/no-array-callback-reference
   expect(this.result.ops.find(relationship)).to.not.be.undefined()
+})
+
+Then("it won't have a {string} operation", async function (relationship) {
+  // eslint-disable-next-line unicorn/no-array-callback-reference
+  expect(this.result.ops.find(relationship)).to.be.undefined()
 })
 
 Then(
@@ -218,6 +273,48 @@ Then('an collection with {int} item(s) will be returned', async function (
 ) {
   const body = await this.result.body()
   expect(body.length).to.equal(length)
+})
+
+Then(
+  'the first {int} items of the collection will be returned',
+  async function (count) {
+    const body = await this.result.body()
+    expect(body.length).to.equal(count)
+    expect(body).to.deep.equal(
+      this.instances.slice(0, count).map(item => item.body)
+    )
+  }
+)
+
+Then('the next {int} items of the collection will be returned', async function (
+  count
+) {
+  const body = await this.result.body()
+  expect(body.length).to.equal(count)
+  expect(body).to.deep.equal(
+    this.instances.slice(count, count * 2).map(item => item.body)
+  )
+})
+
+Then(
+  'the next next {int} items of the collection will be returned',
+  async function (count) {
+    const body = await this.result.body()
+    expect(body.length).to.equal(count)
+    expect(body).to.deep.equal(
+      this.instances.slice(count * 2, count * 3).map(item => item.body)
+    )
+  }
+)
+
+Then('the last {int} items of the collection will be returned', async function (
+  count
+) {
+  const body = await this.result.body()
+  expect(body.length).to.equal(count)
+  expect(body).to.deep.equal(
+    this.instances.slice(-count).map(item => item.body)
+  )
 })
 
 Then('that item will be returned', async function () {

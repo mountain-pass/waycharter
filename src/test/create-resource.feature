@@ -63,3 +63,47 @@ Feature: Create Resource
         When we load the collection
         And we invoke the 'item' operation for the 6th item
         Then the 6th item will be returned
+
+    Scenario: Collection with many many items
+        Given a waycharter resource instance that's a collection with 1000 items and a page size of 16
+        When we load the collection
+        Then the first 16 items of the collection will be returned
+        And it will have a 'next' operation
+        And it will have a 'first' operation
+        But it won't have a 'prev' operation
+
+
+    Scenario: Collection with many many items - page 2
+        Given a waycharter resource instance that's a collection with 1000 items and a page size of 16
+        When we load the collection
+        And we invoke the 'next' operation
+        Then the next 16 items of the collection will be returned
+        And it will have a 'first' operation
+        And it will have a 'next' operation
+        And it will have a 'prev' operation
+
+    Scenario: Collection with many many items - page 2 item 6
+        Given a waycharter resource instance that's a collection with 1000 items and a page size of 16
+        When we load the collection
+        And we invoke the 'next' operation
+        And we invoke the 'item' operation for the 4th item
+        Then the 20th item will be returned
+
+    Scenario: Collection with many many items - page 3
+        Given a waycharter resource instance that's a collection with 1000 items and a page size of 16
+        When we load the collection
+        And we invoke the 'next' operation
+        And we invoke the 'next' operation
+        Then the next next 16 items of the collection will be returned
+        And it will have a 'first' operation
+        And it will have a 'next' operation
+        And it will have a 'prev' operation
+
+    Scenario: Collection with many many items - last page
+        Given a waycharter resource instance that's a collection with 1000 items and a page size of 16
+        When we load the collection
+        And we invoke the 'next' operation until we reach the last page
+        Then the last 8 items of the collection will be returned
+        And it will have a 'first' operation
+        And it will have a 'prev' operation
+        But it won't have a 'next' operation

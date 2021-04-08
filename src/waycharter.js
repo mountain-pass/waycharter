@@ -16,10 +16,10 @@ export class WayCharter {
       console.log('setting links')
       links.set({
         rel: 'self',
-        uri: pathExpander(request.params)
+        uri: request.url
       })
       console.log('loading...')
-      const resource = await loader(request.params)
+      const resource = await loader({ ...request.params, ...request.query })
       console.log('setting more links', resource.links)
       for (const link of resource.links || []) {
         links.set(link)
