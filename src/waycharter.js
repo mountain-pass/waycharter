@@ -8,9 +8,8 @@ export class WayCharter {
     this.router = Router()
   }
 
-  createType ({ path, loader }) {
+  registerResourceType ({ path, loader }) {
     const uriTemplate = routerToRfc6570(path)
-    const pathExpander = parameters => URI.expand(uriTemplate, parameters)
     this.router.get(path, async function (request, response, next) {
       const links = new LinkHeader()
       console.log('setting links')
@@ -30,10 +29,19 @@ export class WayCharter {
     })
     return {
       pathTemplate: uriTemplate,
-      path: parameters => {
-        const expanded = pathExpander(parameters)
-        return expanded
-      }
+      path: parameters => URI.expand(uriTemplate, parameters)
     }
+  }
+
+  registerStaticResource ({ path, body, links }) {
+    return this.registerResourceType({
+      path,
+      loader: async () => {
+        return {
+          body,
+          links
+        }
+      }
+    })
   }
 }

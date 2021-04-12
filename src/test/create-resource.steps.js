@@ -26,11 +26,10 @@ function createSingleton ({ path, links, body }) {
     body: body || { foo: 'bar' },
     links: links || []
   }
-  this.waycharter.createType({
+  this.waycharter.registerStaticResource({
     path,
-    loader: async () => {
-      return this.singleton
-    }
+    body: this.singleton.body,
+    links: this.singleton.links
   })
   return path
 }
@@ -65,7 +64,7 @@ Given('a waycharter resource type accessed by {string}', async function (
   this.previousPath = this.currentPath
   this.currentPath = randomApiPath()
   this.instances = []
-  this.currentType = this.waycharter.createType({
+  this.currentType = this.waycharter.registerResourceType({
     path: `${this.currentPath}/:${indexParameter}`,
     loader: async parameters => {
       return this.instances[parameters[indexParameter]]
@@ -113,7 +112,7 @@ function createCollection (length, pageSize) {
 
   // this code is to expose each item
   this.currentPath = randomApiPath()
-  this.currentType = this.waycharter.createType({
+  this.currentType = this.waycharter.registerResourceType({
     path: `${this.currentPath}/:id`,
     loader: async parameters => {
       return this.instances[parameters.id]
@@ -147,7 +146,7 @@ function createCollection (length, pageSize) {
     }
   }
 
-  this.waycharter.createType({
+  this.waycharter.registerResourceType({
     path: this.currentPath,
     loader: async ({ page = '0' }) => {
       const pageInt = Number.parseInt(page)
