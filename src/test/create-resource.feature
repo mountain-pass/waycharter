@@ -51,7 +51,7 @@ Feature: Create Resource
         Given a waycharter resource instance that's a collection with 1 item
         When we load the collection
         And we invoke the 'item' operation for the 1st item
-        Then that item will be returned
+        Then that item summary will be returned
 
     Scenario: Collection with many items
         Given a waycharter resource instance that's a collection with 16 items
@@ -62,12 +62,12 @@ Feature: Create Resource
         Given a waycharter resource instance that's a collection with 16 item
         When we load the collection
         And we invoke the 'item' operation for the 6th item
-        Then the 6th item will be returned
+        Then the 6th item summary will be returned
 
     Scenario: Collection with many many items
         Given a waycharter resource instance that's a collection with 1000 items and a page size of 16
         When we load the collection
-        Then the first 16 items of the collection will be returned
+        Then the first 16 item summaries of the collection will be returned
         And it will have a 'next' operation
         And it will have a 'first' operation
         But it won't have a 'prev' operation
@@ -77,7 +77,7 @@ Feature: Create Resource
         Given a waycharter resource instance that's a collection with 1000 items and a page size of 16
         When we load the collection
         And we invoke the 'next' operation
-        Then the next 16 items of the collection will be returned
+        Then the next 16 item summaries of the collection will be returned
         And it will have a 'first' operation
         And it will have a 'next' operation
         And it will have a 'prev' operation
@@ -87,14 +87,14 @@ Feature: Create Resource
         When we load the collection
         And we invoke the 'next' operation
         And we invoke the 'item' operation for the 4th item
-        Then the 20th item will be returned
+        Then the 20th item summary will be returned
 
     Scenario: Collection with many many items - page 3
         Given a waycharter resource instance that's a collection with 1000 items and a page size of 16
         When we load the collection
         And we invoke the 'next' operation
         And we invoke the 'next' operation
-        Then the next next 16 items of the collection will be returned
+        Then the next next 16 item summaries of the collection will be returned
         And it will have a 'first' operation
         And it will have a 'next' operation
         And it will have a 'prev' operation
@@ -103,7 +103,7 @@ Feature: Create Resource
         Given a waycharter resource instance that's a collection with 1000 items and a page size of 16
         When we load the collection
         And we invoke the 'next' operation until we reach the last page
-        Then the last 8 items of the collection will be returned
+        Then the last 8 item summaries of the collection will be returned
         And it will have a 'first' operation
         And it will have a 'prev' operation
         But it won't have a 'next' operation
@@ -114,7 +114,7 @@ Feature: Create Resource
         When we load the collection
         And we invoke the 'next' operation
         And we invoke the 'first' operation
-        Then the first 16 items of the collection will be returned
+        Then the first 16 item summaries of the collection will be returned
         And it will have a 'first' operation
         And it will have a 'next' operation
         But it won't have a 'prev' operation
@@ -124,7 +124,14 @@ Feature: Create Resource
         When we load the collection
         And we invoke the 'next' operation
         And we invoke the 'prev' operation
-        Then the first 16 items of the collection will be returned
+        Then the first 16 item summaries of the collection will be returned
         And it will have a 'first' operation
         And it will have a 'next' operation
         But it won't have a 'prev' operation
+
+    Scenario: Collection with many items - fetch nth item and get unabridged
+        Given a waycharter resource instance that's a collection with 16 item
+        When we load the collection
+        And we invoke the 'item' operation for the 6th item
+        And we invoke the 'canonical' operation
+        Then the 6th unabridged item will be returned

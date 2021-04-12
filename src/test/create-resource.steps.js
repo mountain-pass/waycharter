@@ -97,61 +97,82 @@ Given(
 Given(
   "a waycharter resource instance that's a collection with {int} item(s)",
   async function (length) {
-    this.currentPath = randomApiPath()
-    this.instances = [...Array.from({ length }).keys()].map(index => ({
-      body: { id: index }
-    }))
-    const body = this.instances.map(item => item.body)
-    const links = this.instances.map((item, index) => ({
-      rel: 'item',
-      uri: `#/${index}`
-    }))
-    // need a create that allows adding loader for loading
-    this.currentPath = createSingleton.bind(this)({
-      body,
-      path: randomApiPath(),
-      links
-    })
+    createCollection.bind(this)(length)
   }
 )
 
+function summariseItem (item) {
+  const { id, title } = item
+  return { id, title }
+}
+
+function createCollection (length, pageSize) {
+  this.instances = [...Array.from({ length }).keys()].map(index => ({
+    body: { id: index, title: 'foo', other: 'bar' }
+  }))
+
+  // this code is to expose each item
+  this.currentPath = randomApiPath()
+  this.currentType = this.waycharter.createType({
+    path: `${this.currentPath}/:id`,
+    loader: async parameters => {
+      return this.instances[parameters.id]
+    }
+  })
+
+  // this code is to expose the collection
+  this.currentPath = randomApiPath()
+  const collectionLoader = async ({ page = 0 }) => {
+    const pageInt = page
+    const pageInstances = pageSize
+      ? this.instances.slice(pageInt * pageSize, (pageInt + 1) * pageSize)
+      : this.instances
+    const body = pageInstances
+      .map(item => item.body)
+      .map(item => summariseItem(item))
+    const itemLinks = pageInstances.map((item, index) => ({
+      rel: 'item',
+      uri: `#/${index}`
+    }))
+    const canonicalLinks = pageInstances.map((item, index) => ({
+      rel: 'canonical',
+      uri: this.currentType.path({
+        id: index
+      }),
+      anchor: `#/${index}`
+    }))
+    return {
+      body,
+      links: [...itemLinks, ...canonicalLinks]
+    }
+  }
+
+  this.waycharter.createType({
+    path: this.currentPath,
+    loader: async ({ page = '0' }) => {
+      const pageInt = Number.parseInt(page)
+      const { body, links } = await collectionLoader({ page: pageInt })
+
+      return {
+        body,
+        links: [
+          ...links,
+          ...(pageSize && pageInt < this.instances.length / pageSize - 1
+            ? [{ rel: 'next', uri: `?page=${pageInt + 1}` }]
+            : []),
+          ...(pageInt > 0
+            ? [{ rel: 'prev', uri: `?page=${pageInt - 1}` }]
+            : []),
+          { rel: 'first', uri: '?page=0' }
+        ]
+      }
+    }
+  })
+}
+
 Given(
   "a waycharter resource instance that's a collection with {int} items and a page size of {int}",
-  async function (length, pageSize) {
-    this.currentPath = randomApiPath()
-    this.instances = [...Array.from({ length }).keys()].map(index => ({
-      body: { id: index }
-    }))
-    this.waycharter.createType({
-      path: this.currentPath,
-      loader: async ({ page = '0' }) => {
-        const pageInt = Number.parseInt(page)
-        const pageInstances = this.instances.slice(
-          pageInt * pageSize,
-          (pageInt + 1) * pageSize
-        )
-        const body = pageInstances.map(item => item.body)
-        const links = pageInstances.map((item, index) => ({
-          rel: 'item',
-          uri: `#/${index}`
-        }))
-
-        return {
-          body,
-          links: [
-            ...links,
-            ...(pageInt < this.instances.length / pageSize - 1
-              ? [{ rel: 'next', uri: `?page=${pageInt + 1}` }]
-              : []),
-            ...(pageInt > 0
-              ? [{ rel: 'prev', uri: `?page=${pageInt - 1}` }]
-              : []),
-            { rel: 'first', uri: '?page=0' }
-          ]
-        }
-      }
-    })
-  }
+  createCollection
 )
 
 Given('the singleton has a {string} link to that instance', async function (
@@ -277,51 +298,73 @@ Then('an collection with {int} item(s) will be returned', async function (
 })
 
 Then(
-  'the first {int} items of the collection will be returned',
+  'the first {int} item summaries of the collection will be returned',
   async function (count) {
     const body = await this.result.body()
     expect(body.length).to.equal(count)
     expect(body).to.deep.equal(
-      this.instances.slice(0, count).map(item => item.body)
+      this.instances
+        .slice(0, count)
+        .map(item => item.body)
+        .map(item => summariseItem(item))
     )
   }
 )
-
-Then('the next {int} items of the collection will be returned', async function (
-  count
-) {
-  const body = await this.result.body()
-  expect(body.length).to.equal(count)
-  expect(body).to.deep.equal(
-    this.instances.slice(count, count * 2).map(item => item.body)
-  )
-})
 
 Then(
-  'the next next {int} items of the collection will be returned',
+  'the next {int} item summaries of the collection will be returned',
   async function (count) {
     const body = await this.result.body()
     expect(body.length).to.equal(count)
     expect(body).to.deep.equal(
-      this.instances.slice(count * 2, count * 3).map(item => item.body)
+      this.instances
+        .slice(count, count * 2)
+        .map(item => item.body)
+        .map(item => summariseItem(item))
     )
   }
 )
 
-Then('the last {int} items of the collection will be returned', async function (
-  count
-) {
-  const body = await this.result.body()
-  expect(body.length).to.equal(count)
-  expect(body).to.deep.equal(
-    this.instances.slice(-count).map(item => item.body)
+Then(
+  'the next next {int} item summaries of the collection will be returned',
+  async function (count) {
+    const body = await this.result.body()
+    expect(body.length).to.equal(count)
+    expect(body).to.deep.equal(
+      this.instances
+        .slice(count * 2, count * 3)
+        .map(item => item.body)
+        .map(item => summariseItem(item))
+    )
+  }
+)
+
+Then(
+  'the last {int} item summaries of the collection will be returned',
+  async function (count) {
+    const body = await this.result.body()
+    expect(body.length).to.equal(count)
+    expect(body).to.deep.equal(
+      this.instances
+        .slice(-count)
+        .map(item => item.body)
+        .map(item => summariseItem(item))
+    )
+  }
+)
+
+Then('that item summary will be returned', async function () {
+  expect(await this.result.body()).to.deep.equal(
+    summariseItem(this.instances[0].body)
   )
 })
 
-Then('that item will be returned', async function () {
-  expect(await this.result.body()).to.deep.equal({ id: 0 })
+Then('the {int}(th) item summary will be returned', async function (nth) {
+  expect(await this.result.body()).to.deep.equal(
+    summariseItem(this.instances[nth - 1].body)
+  )
 })
 
-Then('the {int}(th) item will be returned', async function (nth) {
-  expect(await this.result.body()).to.deep.equal({ id: nth - 1 })
+Then('the {int}(th) unabridged item will be returned', async function (nth) {
+  expect(await this.result.body()).to.deep.equal(this.instances[nth - 1].body)
 })
