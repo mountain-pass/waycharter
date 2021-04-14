@@ -2,6 +2,7 @@ import { Router } from 'express'
 import LinkHeader from 'http-link-header'
 import { URI } from 'uri-template-lite'
 import { routerToRfc6570 } from 'router-uri-convert'
+import pointer from 'jsonpointer'
 
 export class WayCharter {
   constructor () {
@@ -40,6 +41,59 @@ export class WayCharter {
         return {
           body,
           links
+        }
+      }
+    })
+  }
+
+  registerCollection ({
+    itemPath,
+    itemLoader,
+    collectionPath,
+    collectionLoader
+  }) {
+    const itemType = this.registerResourceType({
+      path: `${collectionPath}${itemPath}`,
+      loader: itemLoader
+    })
+    return this.registerResourceType({
+      path: collectionPath,
+      loader: async ({ page = '0' }) => {
+        // TODO:  ${collectionPath}?page=0 should redirect to ${collectionPath}
+
+        const pageInt = Number.parseInt(page)
+        const { body, arrayPointer, hasMore } = await collectionLoader({
+          page: pageInt
+        })
+        const array = arrayPointer ? pointer.get(body, arrayPointer) : body
+        const itemLinks = array.map((item, index) => ({
+          rel: 'item',
+          uri: `#${arrayPointer || ''}/${index}`
+        }))
+        const canonicalLinks = itemType
+          ? array.map((item, index) => ({
+              rel: 'canonical',
+              uri: itemType.path(item),
+              anchor: `#${arrayPointer || ''}/${index}`
+            }))
+          : []
+
+        return {
+          body,
+          links: [
+            ...itemLinks,
+            ...canonicalLinks,
+            ...(hasMore ? [{ rel: 'next', uri: `?page=${pageInt + 1}` }] : []),
+            ...(pageInt > 0
+              ? [
+                  {
+                    rel: 'prev',
+                    uri: pageInt === 1 ? collectionPath : `?page=${pageInt - 1}`
+                  }
+                ]
+              : []),
+            { rel: 'first', uri: collectionPath }
+          ]
         }
       }
     })

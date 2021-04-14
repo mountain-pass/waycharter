@@ -6,8 +6,6 @@ import {
   colors,
   animals
 } from 'unique-names-generator'
-import pointer from 'jsonpointer'
-import { URI } from 'uri-template-lite'
 
 let pathCount = 0
 
@@ -110,62 +108,34 @@ function createCollection (length, pageSize) {
     body: { id: index, title: 'foo', other: 'bar' }
   }))
 
-  // this code is to expose each item
   this.currentPath = randomApiPath()
-  this.currentType = this.waycharter.registerResourceType({
-    path: `${this.currentPath}/:id`,
-    loader: async parameters => {
+
+  this.waycharter.registerCollection({
+    itemPath: '/:id',
+    itemLoader: async parameters => {
       return this.instances[parameters.id]
-    }
-  })
+    },
+    collectionPath: this.currentPath,
+    collectionLoader: async ({ page = 0 }) => {
+      const pageInstances = pageSize
+        ? this.instances.slice(page * pageSize, (page + 1) * pageSize)
+        : this.instances
+      const items = pageInstances
+        .map(item => item.body)
+        .map(item => summariseItem(item))
 
-  // this code is to expose the collection
-  this.currentPath = randomApiPath()
-  const collectionLoader = async ({ page = 0 }) => {
-    const pageInt = page
-    const pageInstances = pageSize
-      ? this.instances.slice(pageInt * pageSize, (pageInt + 1) * pageSize)
-      : this.instances
-    const body = pageInstances
-      .map(item => item.body)
-      .map(item => summariseItem(item))
-    const itemLinks = pageInstances.map((item, index) => ({
-      rel: 'item',
-      uri: `#/${index}`
-    }))
-    const canonicalLinks = pageInstances.map((item, index) => ({
-      rel: 'canonical',
-      uri: this.currentType.path({
-        id: index
-      }),
-      anchor: `#/${index}`
-    }))
-    return {
-      body,
-      links: [...itemLinks, ...canonicalLinks]
-    }
-  }
-
-  this.waycharter.registerResourceType({
-    path: this.currentPath,
-    loader: async ({ page = '0' }) => {
-      const pageInt = Number.parseInt(page)
-      const { body, links } = await collectionLoader({ page: pageInt })
-
+      // wrapping the items here to make sure we aren't relying on the body being just an array
       return {
-        body,
-        links: [
-          ...links,
-          ...(pageSize && pageInt < this.instances.length / pageSize - 1
-            ? [{ rel: 'next', uri: `?page=${pageInt + 1}` }]
-            : []),
-          ...(pageInt > 0
-            ? [{ rel: 'prev', uri: `?page=${pageInt - 1}` }]
-            : []),
-          { rel: 'first', uri: '?page=0' }
-        ]
+        // body: items
+        body: {
+          items,
+          count: items.length
+        },
+        arrayPointer: '/items',
+        hasMore: pageSize && page < this.instances.length / pageSize - 1
       }
     }
+    // itemType: this.currentType
   })
 }
 
@@ -202,12 +172,13 @@ When('we invoke the {string} operation', async function (relationship) {
 When(
   'we invoke the {string} operation until we reach the last page',
   async function (relationship) {
-    for (
-      this.result = await this.result.invoke(relationship);
+    this.result = await this.result.invoke(relationship)
+    while (
       // eslint-disable-next-line unicorn/no-array-callback-reference
-      this.result.ops.find(relationship); // eslint-disable-line unicorn/prefer-array-some
+      this.result.ops.find(relationship) // eslint-disable-line unicorn/prefer-array-some
+    ) {
       this.result = await this.result.invoke(relationship)
-    ) {}
+    }
   }
 )
 
@@ -223,7 +194,7 @@ async function getNthItem (relationship, nth) {
   // and waychaser is smart enough to provide the relevant links for that fragment
   // based on the anchors
   // so to get the items, you'd do something like
-  /* 
+  /*
   const items = await Promise.all(resource.ops.filter('item').map(itemOp => itemOp.invoke()))
   const item = await items[nth-1].invoke('unabridged')
   */
@@ -292,16 +263,20 @@ Then('an empty collection will be returned', async function () {
 Then('an collection with {int} item(s) will be returned', async function (
   length
 ) {
-  const body = await this.result.body()
-  expect(body.length).to.equal(length)
+  const items = await Promise.all(
+    this.result.ops.filter('item').map(op => op.invoke())
+  )
+  expect(items.length).to.equal(length)
 })
 
 Then(
   'the first {int} item summaries of the collection will be returned',
   async function (count) {
-    const body = await this.result.body()
-    expect(body.length).to.equal(count)
-    expect(body).to.deep.equal(
+    const items = await Promise.all(
+      this.result.ops.filter('item').map(op => op.invoke())
+    )
+    expect(items.length).to.equal(count)
+    expect(await Promise.all(items.map(item => item.body()))).to.deep.equal(
       this.instances
         .slice(0, count)
         .map(item => item.body)
@@ -313,9 +288,11 @@ Then(
 Then(
   'the next {int} item summaries of the collection will be returned',
   async function (count) {
-    const body = await this.result.body()
-    expect(body.length).to.equal(count)
-    expect(body).to.deep.equal(
+    const items = await Promise.all(
+      this.result.ops.filter('item').map(op => op.invoke())
+    )
+    expect(items.length).to.equal(count)
+    expect(await Promise.all(items.map(item => item.body()))).to.deep.equal(
       this.instances
         .slice(count, count * 2)
         .map(item => item.body)
@@ -327,9 +304,11 @@ Then(
 Then(
   'the next next {int} item summaries of the collection will be returned',
   async function (count) {
-    const body = await this.result.body()
-    expect(body.length).to.equal(count)
-    expect(body).to.deep.equal(
+    const items = await Promise.all(
+      this.result.ops.filter('item').map(op => op.invoke())
+    )
+    expect(items.length).to.equal(count)
+    expect(await Promise.all(items.map(item => item.body()))).to.deep.equal(
       this.instances
         .slice(count * 2, count * 3)
         .map(item => item.body)
@@ -341,9 +320,11 @@ Then(
 Then(
   'the last {int} item summaries of the collection will be returned',
   async function (count) {
-    const body = await this.result.body()
-    expect(body.length).to.equal(count)
-    expect(body).to.deep.equal(
+    const items = await Promise.all(
+      this.result.ops.filter('item').map(op => op.invoke())
+    )
+    expect(items.length).to.equal(count)
+    expect(await Promise.all(items.map(item => item.body()))).to.deep.equal(
       this.instances
         .slice(-count)
         .map(item => item.body)
