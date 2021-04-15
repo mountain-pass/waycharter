@@ -1,3 +1,9 @@
+## <small>1.0.22 (2021-04-15)</small>
+
+* docs(readme): fixed ToC ([c3328c0](https://github.com/mountain-pass/waycharter/commit/c3328c0))
+
+
+
 ## <small>1.0.21 (2021-04-15)</small>
 
 * fix(coverage): fixed test coverage ([136d724](https://github.com/mountain-pass/waycharter/commit/136d724))
