@@ -135,3 +135,21 @@ Feature: Create Resource
         And we invoke the 'item' operation for the 6th item
         And we invoke the 'canonical' operation
         Then the 6th unabridged item will be returned
+
+    Scenario: Collection with many items - items in root
+        Given a waycharter resource instance that's a collection with 16 items without any wrapper
+        When we load the collection
+        And we invoke the 'item' operation for the 6th item
+        Then the 6th item summary will be returned
+
+    Scenario: Collection with many items - paginate items in root
+        Given a waycharter resource instance that's a collection with 30 items without any wrapper and a page size of 16
+        When we load the collection
+        And we invoke the 'item' operation for the 6th item
+        Then the 6th item summary will be returned
+
+    Scenario: Collection with many items - items not independently retrievable
+        Given a waycharter resource instance that's a collection with 16 items that aren't independently retrievable
+        When we load the collection
+        And we invoke the 'item' operation for the 6th item
+        Then the 6th unabridged item will be returned

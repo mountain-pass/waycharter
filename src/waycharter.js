@@ -10,6 +10,9 @@ export class WayCharter {
   }
 
   registerResourceType ({ path, loader }) {
+    // TODO: error handling for path not set
+    // TODO: error handling for loader not set
+
     const uriTemplate = routerToRfc6570(path)
     this.router.get(path, async function (request, response, next) {
       const links = new LinkHeader()
@@ -35,6 +38,9 @@ export class WayCharter {
   }
 
   registerStaticResource ({ path, body, links }) {
+    // TODO: error handling for path not set
+    // TODO: error handling for body not set
+
     return this.registerResourceType({
       path,
       loader: async () => {
@@ -52,10 +58,16 @@ export class WayCharter {
     collectionPath,
     collectionLoader
   }) {
-    const itemType = this.registerResourceType({
-      path: `${collectionPath}${itemPath}`,
-      loader: itemLoader
-    })
+    // TODO: error handling for itemPath set, but itemLoader isn't and visa-versa
+    // TODO: error handling for collectionPath not set
+    // TODO: error handling for collectionLoader not set
+    const itemType =
+      itemPath !== undefined && itemLoader !== undefined
+        ? this.registerResourceType({
+            path: `${collectionPath}${itemPath}`,
+            loader: itemLoader
+          })
+        : undefined
     return this.registerResourceType({
       path: collectionPath,
       loader: async ({ page = '0' }) => {
