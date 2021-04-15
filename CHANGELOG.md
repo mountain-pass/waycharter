@@ -1,3 +1,9 @@
+## <small>1.0.21 (2021-04-15)</small>
+
+* fix(coverage): fixed test coverage ([136d724](https://github.com/mountain-pass/waycharter/commit/136d724))
+
+
+
 ## <small>1.0.20 (2021-04-06)</small>
 
 * Merge pull request #71 from mountain-pass/dependabot/npm_and_yarn/snyk-1.526.0 ([0ab1840](https://github.com/mountain-pass/waycharter/commit/0ab1840)), closes [#71](https://github.com/mountain-pass/waycharter/issues/71)
