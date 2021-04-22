@@ -1,3 +1,9 @@
+## <small>1.0.23 (2021-04-22)</small>
+
+* Merge pull request #95 from mountain-pass/dependabot/npm_and_yarn/core-js-3.10.2 ([a733fd1](https://github.com/mountain-pass/waycharter/commit/a733fd1)), closes [#95](https://github.com/mountain-pass/waycharter/issues/95)
+
+
+
 ## <small>1.0.22 (2021-04-15)</small>
 
 * docs(readme): fixed ToC ([c3328c0](https://github.com/mountain-pass/waycharter/commit/c3328c0))
