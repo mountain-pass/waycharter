@@ -1,3 +1,9 @@
+## <small>1.0.24 (2021-04-22)</small>
+
+* Merge pull request #97 from mountain-pass/dependabot/npm_and_yarn/babel/register-7.13.16 ([c220124](https://github.com/mountain-pass/waycharter/commit/c220124)), closes [#97](https://github.com/mountain-pass/waycharter/issues/97)
+
+
+
 ## <small>1.0.23 (2021-04-22)</small>
 
 * Merge pull request #95 from mountain-pass/dependabot/npm_and_yarn/core-js-3.10.2 ([a733fd1](https://github.com/mountain-pass/waycharter/commit/a733fd1)), closes [#95](https://github.com/mountain-pass/waycharter/issues/95)
