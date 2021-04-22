@@ -1,3 +1,9 @@
+## <small>1.0.26 (2021-04-22)</small>
+
+* Merge pull request #107 from mountain-pass/dependabot/npm_and_yarn/concurrently-6.0.2 ([5c87ea9](https://github.com/mountain-pass/waycharter/commit/5c87ea9)), closes [#107](https://github.com/mountain-pass/waycharter/issues/107)
+
+
+
 ## <small>1.0.25 (2021-04-22)</small>
 
 * Merge pull request #98 from mountain-pass/dependabot/npm_and_yarn/babel/cli-7.13.16 ([5784c91](https://github.com/mountain-pass/waycharter/commit/5784c91)), closes [#98](https://github.com/mountain-pass/waycharter/issues/98)
