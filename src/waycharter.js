@@ -32,20 +32,25 @@ export class WayCharter {
             : filtered,
         {}
       )
-      const resource = await loader(
-        { ...request.params, ...request.query },
-        filteredHeaders
-      )
-      console.log('setting more links', resource.links)
-      for (const link of resource.links || []) {
-        links.set(link)
+      try {
+        const resource = await loader(
+          { ...request.params, ...request.query },
+          filteredHeaders
+        )
+        console.log('setting more links', resource.links)
+        for (const link of resource.links || []) {
+          links.set(link)
+        }
+        response.header('link', links.toString())
+        if (loaderVaries) {
+          response.header('vary', [...lowerCaseLoaderVaries])
+        }
+        console.log('sending', resource.body)
+        response.json(resource.body)
+      } catch {
+        response.status(500)
+        response.json({})
       }
-      response.header('link', links.toString())
-      if (loaderVaries) {
-        response.header('vary', [...lowerCaseLoaderVaries])
-      }
-      console.log('sending', resource.body)
-      response.json(resource.body)
     })
     return {
       pathTemplate: uriTemplate,
