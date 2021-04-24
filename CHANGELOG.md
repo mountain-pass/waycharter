@@ -1,3 +1,9 @@
+## <small>1.0.27 (2021-04-24)</small>
+
+* feat(headers): added support for using request headers ([72cc907](https://github.com/mountain-pass/waycharter/commit/72cc907))
+
+
+
 ## <small>1.0.25 (2021-04-22)</small>
 
 * Merge pull request #98 from mountain-pass/dependabot/npm_and_yarn/babel/cli-7.13.16 ([5784c91](https://github.com/mountain-pass/waycharter/commit/5784c91)), closes [#98](https://github.com/mountain-pass/waycharter/issues/98)
