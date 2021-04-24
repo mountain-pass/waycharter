@@ -9,10 +9,12 @@ export class WayCharter {
     this.router = Router()
   }
 
-  registerResourceType ({ path, loader }) {
+  registerResourceType ({ path, loader, loaderVaries }) {
     // TODO: error handling for path not set
     // TODO: error handling for loader not set
-
+    const lowerCaseLoaderVaries = new Set(
+      loaderVaries ? loaderVaries.map(header => header.toLowerCase()) : []
+    )
     const uriTemplate = routerToRfc6570(path)
     this.router.get(path, async function (request, response, next) {
       const links = new LinkHeader()
@@ -22,12 +24,26 @@ export class WayCharter {
         uri: request.url
       })
       console.log('loading...')
-      const resource = await loader({ ...request.params, ...request.query })
+      console.log({ headers: request.headers })
+      const filteredHeaders = Object.keys(request.headers).reduce(
+        (filtered, key) =>
+          lowerCaseLoaderVaries.has(key)
+            ? { ...filtered, [key]: request.headers[key] }
+            : filtered,
+        {}
+      )
+      const resource = await loader(
+        { ...request.params, ...request.query },
+        filteredHeaders
+      )
       console.log('setting more links', resource.links)
       for (const link of resource.links || []) {
         links.set(link)
       }
       response.header('link', links.toString())
+      if (loaderVaries) {
+        response.header('vary', [...lowerCaseLoaderVaries])
+      }
       console.log('sending', resource.body)
       response.json(resource.body)
     })

@@ -1,23 +1,6 @@
 import { expect } from 'chai'
 import { Given, When, Then } from '@cucumber/cucumber'
-import {
-  uniqueNamesGenerator,
-  adjectives,
-  colors,
-  animals
-} from 'unique-names-generator'
-
-let pathCount = 0
-
-function randomPathSegment () {
-  return uniqueNamesGenerator({
-    dictionaries: [adjectives, colors, animals]
-  })
-}
-
-const randomApiPath = () => {
-  return `/api/${pathCount++}-${randomPathSegment()}`
-}
+import { randomApiPath } from './random-api-path'
 
 function createSingleton ({ path, links, body }) {
   this.singleton = {
