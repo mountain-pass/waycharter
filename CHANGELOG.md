@@ -1,3 +1,9 @@
+## <small>1.0.28 (2021-04-24)</small>
+
+* feat(errors): added basic error handling in loaders ([c0800d4](https://github.com/mountain-pass/waycharter/commit/c0800d4))
+
+
+
 ## <small>1.0.27 (2021-04-24)</small>
 
 * feat(headers): added support for using request headers ([72cc907](https://github.com/mountain-pass/waycharter/commit/72cc907))
