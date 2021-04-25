@@ -1,3 +1,9 @@
+## <small>1.0.30 (2021-04-25)</small>
+
+* Merge pull request #111 from mountain-pass/dependabot/npm_and_yarn/eslint-plugin-markdown-2.1.0 ([b5350e9](https://github.com/mountain-pass/waycharter/commit/b5350e9)), closes [#111](https://github.com/mountain-pass/waycharter/issues/111)
+
+
+
 ## <small>1.0.29 (2021-04-25)</small>
 
 * feat(errors): added ability to set status codes ([d86fe86](https://github.com/mountain-pass/waycharter/commit/d86fe86))
