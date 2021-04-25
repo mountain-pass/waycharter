@@ -1,3 +1,9 @@
+## <small>1.0.29 (2021-04-25)</small>
+
+* feat(errors): added ability to set status codes ([d86fe86](https://github.com/mountain-pass/waycharter/commit/d86fe86))
+
+
+
 ## <small>1.0.28 (2021-04-24)</small>
 
 * feat(errors): added basic error handling in loaders ([c0800d4](https://github.com/mountain-pass/waycharter/commit/c0800d4))
