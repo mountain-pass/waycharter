@@ -46,6 +46,9 @@ export class WayCharter {
           response.header('vary', [...lowerCaseLoaderVaries])
         }
         console.log('sending', resource.body)
+        if (resource.status) {
+          response.status(resource.status)
+        }
         response.json(resource.body)
       } catch {
         response.status(500)

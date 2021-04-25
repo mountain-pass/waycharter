@@ -72,7 +72,18 @@ When('we try to load that resource instance', async function () {
   )
 })
 
+When('we try to load the resource with the {string} {string}', async function (
+  parameter,
+  value
+) {
+  this.result = await this.waychaser.load(
+    new URL(this.currentTemplatePath, this.baseUrl),
+    { [parameter]: value }
+  )
+})
+
 Then('a {int} response will be received', async function (expectedStatus) {
+  console.log({ response: this.result.response })
   expect(this.result.response.ok).to.be.false()
   expect(this.result.response.status).to.equal(expectedStatus)
 })

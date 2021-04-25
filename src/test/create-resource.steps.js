@@ -44,11 +44,26 @@ Given('a waycharter resource type accessed by {string}', async function (
 ) {
   this.previousPath = this.currentPath
   this.currentPath = randomApiPath()
-  this.instances = []
+  this.instances = {}
+  const path = this.currentPath
+  this.currentTemplatePath = `${this.currentPath}/:${indexParameter}`
   this.currentType = this.waycharter.registerResourceType({
     path: `${this.currentPath}/:${indexParameter}`,
     loader: async parameters => {
-      return this.instances[parameters[indexParameter]]
+      console.log({ parameters })
+      console.log({ instances: this.instances })
+      console.log({
+        found: parameters[indexParameter] in this.instances
+      })
+      return parameters[indexParameter] in this.instances
+        ? this.instances[parameters[indexParameter]]
+        : {
+            status: 404,
+            body: {
+              error: 'Not Found',
+              path: `${path}/${parameters[indexParameter]}`
+            }
+          }
     }
   })
 })
@@ -228,6 +243,8 @@ When(
 
 Then('it will have a {string} operation', async function (relationship) {
   // eslint-disable-next-line unicorn/no-array-callback-reference
+  console.log({ related: this.result.ops.find(relationship) })
+  // eslint-disable-next-line unicorn/no-array-callback-reference
   expect(this.result.ops.find(relationship)).to.not.be.undefined()
 })
 
@@ -258,11 +275,16 @@ Then(
 Then(
   'the {string} operation will return the instance with the {string} {string}',
   async function (relationship, indexParameter, indexParameterValue) {
+    // eslint-disable-next-line unicorn/no-array-callback-reference
+    const operation = this.result.ops.find(relationship)
+    console.log({ operation })
     const related = await this.result.invoke(relationship)
     // const bodyAsTest = await related.response.text()
     expect(related.response.url).to.equal(
       new URL(this.currentPath, this.baseUrl).toString()
     )
+    console.log({ response: related.response })
+    console.log({ body: await related.body() })
     expect(related.response.ok).to.be.true()
     expect(await related.body()).to.deep.equal({
       [indexParameter]: indexParameterValue
