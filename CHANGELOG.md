@@ -1,3 +1,9 @@
+## <small>1.0.32 (2021-04-28)</small>
+
+* Merge pull request #116 from mountain-pass/dependabot/npm_and_yarn/snyk-1.566.0 ([95cc392](https://github.com/mountain-pass/waycharter/commit/95cc392)), closes [#116](https://github.com/mountain-pass/waycharter/issues/116)
+
+
+
 ## <small>1.0.31 (2021-04-25)</small>
 
 * Merge pull request #112 from mountain-pass/dependabot/npm_and_yarn/eslint-plugin-jsdoc-32.3.1 ([8b82b8a](https://github.com/mountain-pass/waycharter/commit/8b82b8a)), closes [#112](https://github.com/mountain-pass/waycharter/issues/112)
