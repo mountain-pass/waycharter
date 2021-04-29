@@ -1,3 +1,9 @@
+## <small>1.0.35 (2021-04-29)</small>
+
+* Merge pull request #122 from mountain-pass/dependabot/npm_and_yarn/babel/runtime-7.14.0 ([c58887a](https://github.com/mountain-pass/waycharter/commit/c58887a)), closes [#122](https://github.com/mountain-pass/waycharter/issues/122)
+
+
+
 ## <small>1.0.34 (2021-04-28)</small>
 
 * Merge pull request #120 from mountain-pass/dependabot/npm_and_yarn/eslint-plugin-jsdoc-32.3.3 ([9fb0885](https://github.com/mountain-pass/waycharter/commit/9fb0885)), closes [#120](https://github.com/mountain-pass/waycharter/issues/120)
