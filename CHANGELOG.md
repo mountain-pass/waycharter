@@ -1,3 +1,9 @@
+## <small>1.0.37 (2021-04-29)</small>
+
+* Merge pull request #126 from mountain-pass/dependabot/npm_and_yarn/babel/plugin-transform-modules-co ([777b231](https://github.com/mountain-pass/waycharter/commit/777b231)), closes [#126](https://github.com/mountain-pass/waycharter/issues/126)
+
+
+
 ## <small>1.0.36 (2021-04-29)</small>
 
 * Merge pull request #125 from mountain-pass/dependabot/npm_and_yarn/babel/core-7.14.0 ([f677ea0](https://github.com/mountain-pass/waycharter/commit/f677ea0)), closes [#125](https://github.com/mountain-pass/waycharter/issues/125)
