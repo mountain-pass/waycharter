@@ -1,3 +1,9 @@
+## <small>1.0.36 (2021-04-29)</small>
+
+* Merge pull request #125 from mountain-pass/dependabot/npm_and_yarn/babel/core-7.14.0 ([f677ea0](https://github.com/mountain-pass/waycharter/commit/f677ea0)), closes [#125](https://github.com/mountain-pass/waycharter/issues/125)
+
+
+
 ## <small>1.0.35 (2021-04-29)</small>
 
 * Merge pull request #122 from mountain-pass/dependabot/npm_and_yarn/babel/runtime-7.14.0 ([c58887a](https://github.com/mountain-pass/waycharter/commit/c58887a)), closes [#122](https://github.com/mountain-pass/waycharter/issues/122)
