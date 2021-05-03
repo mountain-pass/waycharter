@@ -85,7 +85,14 @@ Given('an instance of that type with the {string} {string}', async function (
 Given(
   "a waycharter resource instance that's an empty collection",
   async function () {
-    this.currentPath = createSingleton.bind(this)({ path: randomApiPath() })
+    createCollection.bind(this)(0)
+  }
+)
+
+Given(
+  "a waycharter resource instance that's an empty static collection",
+  async function () {
+    createStaticCollection.bind(this)(0)
   }
 )
 
@@ -96,9 +103,36 @@ Given(
   }
 )
 
+Given(
+  "a waycharter resource instance that's a static collection with {int} item(s)",
+  async function (length) {
+    createStaticCollection.bind(this)(length)
+  }
+)
+
+Given(
+  "a waycharter resource instance that's a static collection with {int} items with a wrapper",
+  async function (length) {
+    createStaticCollection.bind(this)(length, undefined, { wrapper: true })
+  }
+)
+
 function summariseItem (item) {
   const { id, title } = item
   return { id, title }
+}
+
+function createStaticCollection (length, pageSize, { wrapper = false } = {}) {
+  this.instances = createArrayOfItems(length)
+
+  this.currentPath = randomApiPath()
+  const items = this.instances.map(item => item.body)
+  this.waycharter.registerStaticCollection({
+    collectionPath: this.currentPath,
+    collection: wrapper ? { items: items } : items,
+    arrayPointer: wrapper ? '/items' : undefined,
+    pageSize
+  })
 }
 
 function createCollection (
@@ -106,9 +140,7 @@ function createCollection (
   pageSize,
   { noWrapper = false, independentlyRetrievable = true } = {}
 ) {
-  this.instances = [...Array.from({ length }).keys()].map(index => ({
-    body: { id: index, title: 'foo', other: 'bar' }
-  }))
+  this.instances = createArrayOfItems(length)
 
   this.currentPath = randomApiPath()
 
@@ -173,11 +205,24 @@ Given(
   }
 )
 
+Given(
+  "a waycharter resource instance that's a static collection with {int} items and a page size of {int}",
+  async function (count, pageSize) {
+    createStaticCollection.bind(this)(count, pageSize)
+  }
+)
+
 Given('the singleton has a {string} link to that instance', async function (
   relationship
 ) {
   this.singleton.links.push({ rel: relationship, uri: this.currentPath })
 })
+
+function createArrayOfItems (length) {
+  return [...Array.from({ length }).keys()].map(index => ({
+    body: { id: index, title: 'foo', other: 'bar' }
+  }))
+}
 
 async function loadCurrent () {
   this.result = await load.bind(this)(this.currentPath, this.baseUrl)
@@ -308,16 +353,14 @@ Then('an collection with {int} item(s) will be returned', async function (
 Then(
   'the first {int} item summaries of the collection will be returned',
   async function (count) {
-    const items = await Promise.all(
-      this.result.ops.filter('item').map(op => op.invoke())
-    )
-    expect(items.length).to.equal(count)
-    expect(await Promise.all(items.map(item => item.body()))).to.deep.equal(
-      this.instances
-        .slice(0, count)
-        .map(item => item.body)
-        .map(item => summariseItem(item))
-    )
+    await checkItemsInCollection.bind(this)(0, count)
+  }
+)
+
+Then(
+  'the first {int} unabridged items of the collection will be returned',
+  async function (count) {
+    await checkItemsInCollection.bind(this)(0, count, { summarise: false })
   }
 )
 
@@ -329,9 +372,25 @@ Then(
 )
 
 Then(
+  'the next {int} unabridged items of the collection will be returned',
+  async function (count) {
+    await checkItemsInCollection.bind(this)(count, count, { summarise: false })
+  }
+)
+
+Then(
   'the next next {int} item summaries of the collection will be returned',
   async function (count) {
     await checkItemsInCollection.bind(this)(count * 2, count)
+  }
+)
+
+Then(
+  'the next next {int} unabridged items of the collection will be returned',
+  async function (count) {
+    await checkItemsInCollection.bind(this)(count * 2, count, {
+      summarise: false
+    })
   }
 )
 
@@ -342,10 +401,21 @@ Then(
   }
 )
 
+Then(
+  'the last {int} unabridged items of the collection will be returned',
+  async function (count) {
+    await checkItemsInCollection.bind(this)(-count, count, { summarise: false })
+  }
+)
+
 Then('that item summary will be returned', async function () {
   expect(await this.result.body()).to.deep.equal(
     summariseItem(this.instances[0].body)
   )
+})
+
+Then('that unabridged item will be returned', async function () {
+  expect(await this.result.body()).to.deep.equal(this.instances[0].body)
 })
 
 Then('the {int}(th) item summary will be returned', async function (nth) {
@@ -358,15 +428,25 @@ Then('the {int}(th) unabridged item will be returned', async function (nth) {
   expect(await this.result.body()).to.deep.equal(this.instances[nth - 1].body)
 })
 
-async function checkItemsInCollection (start, count) {
-  const items = await Promise.all(
+async function getItems () {
+  const resources = await Promise.all(
     this.result.ops.filter('item').map(op => op.invoke())
   )
+  const items = await Promise.all(resources.map(resource => resource.body()))
+  return items
+}
+
+async function checkItemsInCollection (
+  start,
+  count,
+  { summarise = true } = {}
+) {
+  const items = await getItems.bind(this)()
   expect(items.length).to.equal(count)
-  expect(await Promise.all(items.map(item => item.body()))).to.deep.equal(
+  expect(items).to.deep.equal(
     this.instances
       .slice(start, start < 0 ? undefined : start + count)
       .map(item => item.body)
-      .map(item => summariseItem(item))
+      .map(item => (summarise ? summariseItem(item) : item))
   )
 }

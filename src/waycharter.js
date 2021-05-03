@@ -50,7 +50,8 @@ export class WayCharter {
           response.status(resource.status)
         }
         response.json(resource.body)
-      } catch {
+      } catch (error) {
+        console.error(error)
         response.status(500)
         response.json({})
       }
@@ -102,6 +103,7 @@ export class WayCharter {
           page: pageInt
         })
         const array = arrayPointer ? pointer.get(body, arrayPointer) : body
+        console.log({ arrayPointer, body, array })
         const itemLinks = array.map((item, index) => ({
           rel: 'item',
           uri: `#${arrayPointer || ''}/${index}`
@@ -130,6 +132,27 @@ export class WayCharter {
               : []),
             { rel: 'first', uri: collectionPath }
           ]
+        }
+      }
+    })
+  }
+
+  registerStaticCollection ({
+    collectionPath,
+    collection,
+    pageSize,
+    arrayPointer
+  }) {
+    return this.registerCollection({
+      collectionPath,
+      collectionLoader: async ({ page }) => {
+        const items = pageSize
+          ? collection.slice(page * pageSize, (page + 1) * pageSize)
+          : collection
+        return {
+          body: items,
+          hasMore: pageSize && page < collection.length / pageSize - 1,
+          arrayPointer
         }
       }
     })

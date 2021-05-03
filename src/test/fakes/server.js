@@ -16,6 +16,7 @@ app.use(upload.none()) // support multi-part bodies
 /* istanbul ignore next: only gets executed when there are test errors (at this stage) */
 app.use(function (error, request, response, next) {
   logger.error(error)
+  console.error(error)
   next()
 })
 let router
