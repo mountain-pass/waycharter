@@ -1,3 +1,9 @@
+## <small>1.0.41 (2021-05-04)</small>
+
+* feat(collections): Added `registerStaticCollection` convenience method ([05614f4](https://github.com/mountain-pass/waycharter/commit/05614f4))
+
+
+
 ## <small>1.0.39 (2021-05-02)</small>
 
 * Merge pull request #128 from mountain-pass/dependabot/npm_and_yarn/eslint-plugin-jsdoc-33.0.0 ([e960bfc](https://github.com/mountain-pass/waycharter/commit/e960bfc)), closes [#128](https://github.com/mountain-pass/waycharter/issues/128)
