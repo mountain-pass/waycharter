@@ -1,3 +1,9 @@
+## <small>1.0.42 (2021-05-04)</small>
+
+* Merge pull request #134 from mountain-pass/dependabot/npm_and_yarn/snyk-1.582.0 ([a78cd14](https://github.com/mountain-pass/waycharter/commit/a78cd14)), closes [#134](https://github.com/mountain-pass/waycharter/issues/134)
+
+
+
 ## <small>1.0.41 (2021-05-04)</small>
 
 * feat(collections): Added `registerStaticCollection` convenience method ([05614f4](https://github.com/mountain-pass/waycharter/commit/05614f4))
