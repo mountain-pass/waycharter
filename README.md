@@ -13,7 +13,7 @@ This library is compatible with Node.js 10.x, 12.x and 14.x
 
 <!-- [![Quality](https://img.shields.io/codacy/grade/940768d54f7545f7b42f89b26c23c751?logo=codacy)](https://www.codacy.com/gh/mountain-pass/waycharter/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=mountain-pass/waycharter&amp;utm_campaign=Badge_Grade) [![Coverage](https://img.shields.io/codacy/coverage/940768d54f7545f7b42f89b26c23c751?logo=codacy)](https://www.codacy.com/gh/mountain-pass/waycharter/dashboard?utm_source=github.com&utm_medium=referral&utm_content=mountain-pass/waycharter&utm_campaign=Badge_Coverage) -->
 
-[![source code vulnerabilities](https://img.shields.io/snyk/vulnerabilities/github/mountain-pass/waycharter?label=source%20code%20vulnerabilities&logo=snyk)](https://snyk.io/test/github/mountain-pass/waycharter) [![npm package vulnerabilities](https://img.shields.io/snyk/vulnerabilities/npm/@mountainpass/waycharter@1.0.43?label=npm%20package%20vulnerabilties&logo=snyk)](https://snyk.io/test/npm/@mountainpass/waycharter/1.0.43)
+[![source code vulnerabilities](https://img.shields.io/snyk/vulnerabilities/github/mountain-pass/waycharter?label=source%20code%20vulnerabilities&logo=snyk)](https://snyk.io/test/github/mountain-pass/waycharter) [![npm package vulnerabilities](https://img.shields.io/snyk/vulnerabilities/npm/@mountainpass/waycharter@1.0.44?label=npm%20package%20vulnerabilties&logo=snyk)](https://snyk.io/test/npm/@mountainpass/waycharter/1.0.44)
 
 
 [![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-yellow.svg)](https://conventionalcommits.org) [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
