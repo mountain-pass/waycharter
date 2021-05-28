@@ -111,6 +111,11 @@ export class WayCharter {
           }
         }
         const pageInt = Number.parseInt(page || '0')
+        if (page < 0) {
+          return {
+            status: 400
+          }
+        }
         const { body, arrayPointer, hasMore } = await collectionLoader({
           page: pageInt
         })

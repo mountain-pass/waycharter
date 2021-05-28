@@ -242,3 +242,9 @@ Feature: Collection
         And it will have a 'next' operation
         And it will have a 'first' operation
         But it won't have a 'prev' operation
+
+
+    Scenario: Collection - redirect to first page
+        Given a waycharter resource instance that's a collection with 100 items and a page size of 16
+        When we load page -1 of the collection
+        Then a 400 bad request will be returned

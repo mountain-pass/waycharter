@@ -168,7 +168,8 @@ function createCollection (
         : {
             body: {
               items,
-              count: items.length
+              count: items.length,
+              page
             },
             arrayPointer: '/items',
             hasMore: pageSize && page < this.instances.length / pageSize - 1
@@ -234,14 +235,13 @@ When('we load the latter singleton', loadCurrent)
 
 When('we load the collection', loadCurrent)
 
-When('we load page {int} of the collection', async function (int) {
+When('we load page {int} of the collection', async function (page) {
   await loadCurrent.bind(this)()
-  console.log(this.result)
-  console.log(this.result.ops.find('next').uri)
-  console.log(this.result.ops.find('next').baseUrl)
-  this.result = await load.bind(this)(
-    this.result.ops.find('next').uri.replace('=1', '=0'),
-    this.result.ops.find('next').baseUrl
+  this.result = await this.waychaser.load(
+    new URL(
+      this.result.ops.find('next').uri.replace('=1', `=${page}`),
+      this.result.ops.find('next').baseUrl
+    )
   )
   console.log(this.result)
 })
@@ -469,3 +469,8 @@ Then(
     expect(this.result.ops.find('self').uri).to.equal(this.currentPath)
   }
 )
+
+Then('a {int} bad request will be returned', async function (status) {
+  console.log(this.result)
+  expect(this.result.response.status).to.equal(400)
+})
