@@ -4,8 +4,8 @@
 - [x] Setup initial resource middleware
 - [x] handle errors in loader
 - [x] Allow errors with different status codes and bodies
-- [ ] Provide way to use URI templates for repeating 'item' links
-- [ ] for collections include redirect to first page if page param is undefined
-- [ ] redirect
+- [x] Provide way to use URI templates for repeating 'item' links
+- [x] for collections include redirect to first page if page param is undefined
+- [ ] caching
 - [ ] POST/PUT/DELETE/PATCH
 

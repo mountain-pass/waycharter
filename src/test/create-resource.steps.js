@@ -234,6 +234,18 @@ When('we load the latter singleton', loadCurrent)
 
 When('we load the collection', loadCurrent)
 
+When('we load page {int} of the collection', async function (int) {
+  await loadCurrent.bind(this)()
+  console.log(this.result)
+  console.log(this.result.ops.find('next').uri)
+  console.log(this.result.ops.find('next').baseUrl)
+  this.result = await load.bind(this)(
+    this.result.ops.find('next').uri.replace('=1', '=0'),
+    this.result.ops.find('next').baseUrl
+  )
+  console.log(this.result)
+})
+
 When('we load the singleton', async function () {
   this.result = await load.bind(this)(this.previousPath, this.baseUrl)
 })
@@ -450,3 +462,10 @@ async function checkItemsInCollection (
       .map(item => (summarise ? summariseItem(item) : item))
   )
 }
+
+Then(
+  'we will be redirected to the collection without a page number',
+  async function () {
+    expect(this.result.ops.find('self').uri).to.equal(this.currentPath)
+  }
+)

@@ -49,6 +49,11 @@ export class WayCharter {
         if (resource.status) {
           response.status(resource.status)
         }
+        if (resource.headers) {
+          for (const header in resource.headers) {
+            response.header(header, resource.headers[header])
+          }
+        }
         response.json(resource.body)
       } catch (error) {
         console.error(error)
@@ -95,10 +100,17 @@ export class WayCharter {
         : undefined
     return this.registerResourceType({
       path: collectionPath,
-      loader: async ({ page = '0' }) => {
+      loader: async ({ page }) => {
         // TODO:  ${collectionPath}?page=0 should redirect to ${collectionPath}
-
-        const pageInt = Number.parseInt(page)
+        if (page === '0') {
+          return {
+            status: 308,
+            headers: {
+              location: collectionPath
+            }
+          }
+        }
+        const pageInt = Number.parseInt(page || '0')
         const { body, arrayPointer, hasMore } = await collectionLoader({
           page: pageInt
         })

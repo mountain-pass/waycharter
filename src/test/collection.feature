@@ -232,3 +232,13 @@ Feature: Collection
         And we invoke the 'item' operation for the 6th item
         Then the 6th unabridged item will be returned
         And it won't have a 'canonical' operation
+
+
+    Scenario: Collection - redirect to first page
+        Given a waycharter resource instance that's a collection with 100 items and a page size of 16
+        When we load page 0 of the collection
+        Then we will be redirected to the collection without a page number
+        And the first 16 item summaries of the collection will be returned
+        And it will have a 'next' operation
+        And it will have a 'first' operation
+        But it won't have a 'prev' operation
