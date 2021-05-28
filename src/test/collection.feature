@@ -106,6 +106,12 @@ Feature: Collection
         And we invoke the 'canonical' operation
         Then the 6th unabridged item will be returned
 
+    Scenario: Collection with single item - items in root
+        Given a waycharter resource instance that's a collection with 1 item without any wrapper
+        When we load the collection
+        And we invoke the 'item' operation for the 1st item
+        Then that item summary will be returned
+
     Scenario: Collection with many items - items in root
         Given a waycharter resource instance that's a collection with 16 items without any wrapper
         When we load the collection

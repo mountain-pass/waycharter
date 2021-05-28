@@ -183,7 +183,7 @@ Given(
 )
 
 Given(
-  "a waycharter resource instance that's a collection with {int} items without any wrapper",
+  "a waycharter resource instance that's a collection with {int} item(s) without any wrapper",
   async function (count) {
     createCollection.bind(this)(count, undefined, { noWrapper: true })
   }
