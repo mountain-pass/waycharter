@@ -1,3 +1,9 @@
+## <small>1.0.47 (2021-05-28)</small>
+
+* refactor(collection): refactored code for item and canonical links ([ef40dd5](https://github.com/mountain-pass/waycharter/commit/ef40dd5))
+
+
+
 ## <small>1.0.46 (2021-05-28)</small>
 
 * feat(collection): out of bounds error response ([721bf0f](https://github.com/mountain-pass/waycharter/commit/721bf0f))
