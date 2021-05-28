@@ -1,3 +1,9 @@
+## <small>1.0.46 (2021-05-28)</small>
+
+* feat(collection): out of bounds error response ([721bf0f](https://github.com/mountain-pass/waycharter/commit/721bf0f))
+
+
+
 ## <small>1.0.45 (2021-05-28)</small>
 
 * fix(test): added missing test case ([93d5358](https://github.com/mountain-pass/waycharter/commit/93d5358))
