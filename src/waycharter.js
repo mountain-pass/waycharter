@@ -121,42 +121,11 @@ export class WayCharter {
         })
         const array = arrayPointer ? pointer.get(body, arrayPointer) : body
         console.log({ arrayPointer, body, array })
-        const itemLinks = []
-        const canonicalLinks = []
-        if (array.length === 1) {
-          itemLinks.push({
-            rel: 'item',
-            uri: `#${arrayPointer || ''}/0`
-          })
-          if (itemType) {
-            canonicalLinks.push({
-              rel: 'canonical',
-              uri: itemType.path(array[0]),
-              anchor: `#${arrayPointer || ''}/0`
-            })
-          }
-        } else if (array.length > 0) {
-          itemLinks.push({
-            rel: 'item',
-            uri: `#${arrayPointer || ''}/{[0..${array.length - 1}]}`
-          })
-          if (itemType) {
-            let pathTemplate = itemType.pathTemplate
-            const template = new URI.Template(itemType.pathTemplate)
-            const parameters = template.match(itemType.pathTemplate)
-            Object.keys(parameters).forEach(key => {
-              pathTemplate = pathTemplate.replace(
-                parameters[key],
-                `{this.${key}}`
-              )
-            })
-            canonicalLinks.push({
-              rel: 'canonical',
-              uri: pathTemplate,
-              anchor: `#${arrayPointer || ''}/{[0..${array.length - 1}]}`
-            })
-          }
-        }
+        const { itemLinks, canonicalLinks } = builtItemLinks(
+          array,
+          arrayPointer,
+          itemType
+        )
 
         return {
           body,
@@ -199,4 +168,45 @@ export class WayCharter {
       }
     })
   }
+}
+/**
+ * @param array
+ * @param arrayPointer
+ * @param itemType
+ */
+function builtItemLinks (array, arrayPointer, itemType) {
+  const itemLinks = []
+  const canonicalLinks = []
+  if (array.length === 1) {
+    itemLinks.push({
+      rel: 'item',
+      uri: `#${arrayPointer || ''}/0`
+    })
+    if (itemType) {
+      canonicalLinks.push({
+        rel: 'canonical',
+        uri: itemType.path(array[0]),
+        anchor: `#${arrayPointer || ''}/0`
+      })
+    }
+  } else if (array.length > 0) {
+    itemLinks.push({
+      rel: 'item',
+      uri: `#${arrayPointer || ''}/{[0..${array.length - 1}]}`
+    })
+    if (itemType) {
+      let pathTemplate = itemType.pathTemplate
+      const template = new URI.Template(itemType.pathTemplate)
+      const parameters = template.match(itemType.pathTemplate)
+      Object.keys(parameters).forEach(key => {
+        pathTemplate = pathTemplate.replace(parameters[key], `{this.${key}}`)
+      })
+      canonicalLinks.push({
+        rel: 'canonical',
+        uri: pathTemplate,
+        anchor: `#${arrayPointer || ''}/{[0..${array.length - 1}]}`
+      })
+    }
+  }
+  return { itemLinks, canonicalLinks }
 }
