@@ -99,7 +99,7 @@
     "@commitlint/config-conventional": "^12.0.0",
     "@cucumber/cucumber": "^7.0.0",
     "@istanbuljs/nyc-config-babel": "^3.0.0",
-    "@mountainpass/waychaser": "^3.0.29",
+    "@mountainpass/waychaser": "^3.0.39",
     "@windyroad/cucumber-js-throwables": "^1.0.4",
     "aws4": "^1.11.0",
     "babel-eslint": "^10.0.2",

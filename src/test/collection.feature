@@ -28,6 +28,12 @@ Feature: Collection
         And we invoke the 'item' operation for the 6th item
         Then the 6th item summary will be returned
 
+    Scenario: Collection with many many many many many items - fetch nth item
+        Given a waycharter resource instance that's a collection with 524288 item
+        When we load the collection
+        And we invoke the 'item' operation for the 1986th item
+        Then the 1986th item summary will be returned
+
     Scenario: Collection with many many items
         Given a waycharter resource instance that's a collection with 1000 items and a page size of 16
         When we load the collection
