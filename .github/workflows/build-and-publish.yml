@@ -18,6 +18,8 @@ jobs:
           access_token: ${{ github.token }}
 
   check-secret:
+    if: |
+      github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     outputs:
       SECRETS_SET: ${{ steps.check-secret.outputs.SECRETS_SET }}
@@ -60,7 +62,7 @@ jobs:
       - run: npm run lint
 
   duplication:
-    if: "! contains(toJSON(github.event.commits.*.message), '[skip-ci]')"
+    if: "! contains(toJSON(github.event.commits.*.message), '[skip-ci]') && ! startsWith( github.head_ref, 'dependabot' )"
 
     runs-on: ubuntu-latest
 
@@ -94,7 +96,7 @@ jobs:
           path: report
 
   audit:
-    if: "! contains(toJSON(github.event.commits.*.message), '[skip-ci]')"
+    if: "! contains(toJSON(github.event.commits.*.message), '[skip-ci]') && ! startsWith( github.head_ref, 'dependabot' )"
 
     runs-on: ubuntu-latest
 
@@ -125,6 +127,7 @@ jobs:
     needs:
       - check-secret
     if: |
+      github.ref == 'refs/heads/main' &&
       needs.check-secret.outputs.SECRETS_SET == 'true' &&
        ! contains(toJSON(github.event.commits.*.message), '[skip-ci]')
 
@@ -233,7 +236,7 @@ jobs:
           path: coverage/node-api
 
   check-coverage:
-    if: "! contains(toJSON(github.event.commits.*.message), '[skip-ci]')"
+    if: "! contains(toJSON(github.event.commits.*.message), '[skip-ci]') && ! startsWith( github.head_ref, 'dependabot' )"
 
     needs:
       - test-node-api
