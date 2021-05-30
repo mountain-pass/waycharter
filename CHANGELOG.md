@@ -1,3 +1,9 @@
+## <small>1.0.50 (2021-05-30)</small>
+
+* Merge pull request #50 from mountain-pass/dependabot/npm_and_yarn/chai-4.3.4 ([ac746e6](https://github.com/mountain-pass/waycharter/commit/ac746e6)), closes [#50](https://github.com/mountain-pass/waycharter/issues/50)
+
+
+
 ## <small>1.0.49 (2021-05-30)</small>
 
 * Merge pull request #182 from mountain-pass/dependabot/npm_and_yarn/core-js-3.13.1 ([08c8cf7](https://github.com/mountain-pass/waycharter/commit/08c8cf7)), closes [#182](https://github.com/mountain-pass/waycharter/issues/182)
