@@ -1,3 +1,9 @@
+## <small>1.0.51 (2021-05-31)</small>
+
+* fix: fixed test coverage ([0dd0f37](https://github.com/mountain-pass/waycharter/commit/0dd0f37))
+
+
+
 ## <small>1.0.50 (2021-05-30)</small>
 
 * Merge pull request #50 from mountain-pass/dependabot/npm_and_yarn/chai-4.3.4 ([ac746e6](https://github.com/mountain-pass/waycharter/commit/ac746e6)), closes [#50](https://github.com/mountain-pass/waycharter/issues/50)
