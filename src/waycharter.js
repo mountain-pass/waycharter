@@ -92,7 +92,7 @@ export class WayCharter {
     collectionPath,
     collectionLoader,
     filters = []
-  } = {}) {
+  }) {
     // TODO: error handling for itemPath set, but itemLoader isn't and visa-versa
     // TODO: error handling for collectionPath not set
     // TODO: error handling for collectionLoader not set
