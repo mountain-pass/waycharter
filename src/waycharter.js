@@ -18,13 +18,11 @@ export class WayCharter {
     const uriTemplate = routerToRfc6570(path)
     this.router.get(path, async function (request, response, next) {
       const links = new LinkHeader()
-      console.log('setting links')
+      const linkTemplates = new LinkHeader()
       links.set({
         rel: 'self',
         uri: request.url
       })
-      console.log('loading...')
-      console.log({ headers: request.headers })
       const filteredHeaders = Object.keys(request.headers).reduce(
         (filtered, key) =>
           lowerCaseLoaderVaries.has(key)
@@ -37,15 +35,21 @@ export class WayCharter {
           { ...request.params, ...request.query },
           filteredHeaders
         )
-        console.log('setting more links', resource.links)
         for (const link of resource.links || []) {
           links.set(link)
         }
         response.header('link', links.toString())
+
+        if (resource.linkTemplates) {
+          for (const linkTemplate of resource.linkTemplates) {
+            linkTemplates.set(Object.assign({ uri: request.url }, linkTemplate))
+          }
+          response.header('link-template', linkTemplates.toString())
+        }
+
         if (loaderVaries) {
           response.header('vary', [...lowerCaseLoaderVaries])
         }
-        console.log('sending', resource.body)
         if (resource.status) {
           response.status(resource.status)
         }
@@ -86,8 +90,9 @@ export class WayCharter {
     itemPath,
     itemLoader,
     collectionPath,
-    collectionLoader
-  }) {
+    collectionLoader,
+    filters = []
+  } = {}) {
     // TODO: error handling for itemPath set, but itemLoader isn't and visa-versa
     // TODO: error handling for collectionPath not set
     // TODO: error handling for collectionLoader not set
@@ -100,8 +105,8 @@ export class WayCharter {
         : undefined
     return this.registerResourceType({
       path: collectionPath,
-      loader: async ({ page }) => {
-        // TODO:  ${collectionPath}?page=0 should redirect to ${collectionPath}
+      loader: async ({ page, ...otherParameters }) => {
+        // ${collectionPath}?page=0 should redirect to ${collectionPath}
         if (page === '0') {
           return {
             status: 308,
@@ -110,39 +115,53 @@ export class WayCharter {
             }
           }
         }
+        // TODO: page is not a number
+
+        // page should be >= 0
         const pageInt = Number.parseInt(page || '0')
         if (page < 0) {
           return {
             status: 400
           }
         }
+        const filteredParameters = {}
+        for (const filter of filters) {
+          for (const parameter of filter.parameters) {
+            if (otherParameters[parameter] !== undefined) {
+              filteredParameters[parameter] = otherParameters[parameter]
+            }
+          }
+        }
+
         const { body, arrayPointer, hasMore } = await collectionLoader({
-          page: pageInt
+          page: pageInt,
+          ...filteredParameters
         })
         const array = arrayPointer ? pointer.get(body, arrayPointer) : body
-        console.log({ arrayPointer, body, array })
         const { itemLinks, canonicalLinks } = builtItemLinks(
           array,
           arrayPointer,
           itemType
         )
 
+        const linkTemplates = []
+        for (const filter of filters) {
+          linkTemplates.push({
+            rel: filter.rel,
+            uri: `{?${filter.parameters.join(',')}}`
+          })
+        }
+
         return {
           body,
           links: [
             ...itemLinks,
             ...canonicalLinks,
-            ...(hasMore ? [{ rel: 'next', uri: `?page=${pageInt + 1}` }] : []),
-            ...(pageInt > 0
-              ? [
-                  {
-                    rel: 'prev',
-                    uri: pageInt === 1 ? collectionPath : `?page=${pageInt - 1}`
-                  }
-                ]
-              : []),
-            { rel: 'first', uri: collectionPath }
-          ]
+            ...buildNextLink(hasMore, pageInt, otherParameters),
+            ...buildPreviousLink(pageInt, collectionPath, otherParameters),
+            ...buildFirstLink(hasMore, pageInt, collectionPath, otherParameters)
+          ],
+          linkTemplates: linkTemplates
         }
       }
     })
@@ -169,6 +188,90 @@ export class WayCharter {
     })
   }
 }
+/**
+ * @param hasMore
+ * @param pageInt
+ * @param collectionPath
+ * @param otherParameters
+ */
+function buildFirstLink (hasMore, pageInt, collectionPath, otherParameters) {
+  if (pageInt > 0 || hasMore) {
+    return Object.keys(otherParameters).length > 0
+      ? [
+          {
+            rel: 'first',
+            uri: `?${new URLSearchParams({
+              ...otherParameters
+            }).toString()}`
+          }
+        ]
+      : [
+          {
+            rel: 'first',
+            uri: collectionPath
+          }
+        ]
+  } else {
+    return []
+  }
+}
+
+/**
+ * @param pageInt
+ * @param collectionPath
+ * @param otherParameters
+ */
+function buildPreviousLink (pageInt, collectionPath, otherParameters) {
+  if (pageInt === 1) {
+    return Object.keys(otherParameters).length > 0
+      ? [
+          {
+            rel: 'prev',
+            uri: `?${new URLSearchParams({
+              ...otherParameters
+            }).toString()}`
+          }
+        ]
+      : [
+          {
+            rel: 'prev',
+            uri: collectionPath
+          }
+        ]
+  } else if (pageInt > 1) {
+    return [
+      {
+        rel: 'prev',
+        uri: `?${new URLSearchParams({
+          page: pageInt - 1,
+          ...otherParameters
+        }).toString()}`
+      }
+    ]
+  } else {
+    return []
+  }
+}
+
+/**
+ * @param hasMore
+ * @param pageInt
+ * @param otherParameters
+ */
+function buildNextLink (hasMore, pageInt, otherParameters) {
+  return hasMore
+    ? [
+        {
+          rel: 'next',
+          uri: `?${new URLSearchParams({
+            page: pageInt + 1,
+            ...otherParameters
+          }).toString()}`
+        }
+      ]
+    : []
+}
+
 /**
  * @param array
  * @param arrayPointer

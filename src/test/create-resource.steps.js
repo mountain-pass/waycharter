@@ -103,6 +103,35 @@ Given(
   }
 )
 
+Given('a collection of {int} items with a {string} filter', async function (
+  length,
+  filterRelationship
+) {
+  createCollection.bind(this)(length, undefined, {
+    filters: [{ rel: filterRelationship }]
+  })
+})
+
+Given(
+  'a collection of {int} items with a {string} filter with the following parameters',
+  async function (length, filterRelationship, dataTable) {
+    console.log(dataTable.hashes())
+    createCollection.bind(this)(length, undefined, {
+      filters: [{ rel: filterRelationship, parameters: dataTable.hashes() }]
+    })
+  }
+)
+
+Given(
+  'a collection of {int} items with a page size of {int} and with a {string} filter with the following parameters',
+  async function (length, pageSize, filterRelationship, dataTable) {
+    console.log(dataTable.hashes())
+    createCollection.bind(this)(length, pageSize, {
+      filters: [{ rel: filterRelationship, parameters: dataTable.hashes() }]
+    })
+  }
+)
+
 Given(
   "a waycharter resource instance that's a static collection with {int} item(s)",
   async function (length) {
@@ -138,7 +167,7 @@ function createStaticCollection (length, pageSize, { wrapper = false } = {}) {
 function createCollection (
   length,
   pageSize,
-  { noWrapper = false, independentlyRetrievable = true } = {}
+  { noWrapper = false, independentlyRetrievable = true, filters = [] } = {}
 ) {
   this.instances = createArrayOfItems(length)
 
@@ -152,10 +181,28 @@ function createCollection (
       }
     }),
     collectionPath: this.currentPath,
-    collectionLoader: async ({ page }) => {
+    collectionLoader: async ({ page, ...otherParameters }) => {
+      let instances = this.instances
+      for (const filter of filters) {
+        if (filter.parameters) {
+          for (const parameter of filter.parameters) {
+            console.log(
+              `looking for ${parameter.parameter} of ${parameter.value} in`,
+              otherParameters
+            )
+            console.log({
+              'otherParameters[parameter.parameter] === parameter.value':
+                otherParameters[parameter.parameter] === parameter.value
+            })
+            if (otherParameters[parameter.parameter] === parameter.value) {
+              instances = instances.slice(parameter.itemsRemoved)
+            }
+          }
+        }
+      }
       const pageInstances = pageSize
-        ? this.instances.slice(page * pageSize, (page + 1) * pageSize)
-        : this.instances
+        ? instances.slice(page * pageSize, (page + 1) * pageSize)
+        : instances
       const items = pageInstances
         .map(item => item.body)
         .map(item => (independentlyRetrievable ? summariseItem(item) : item))
@@ -174,7 +221,15 @@ function createCollection (
             arrayPointer: '/items',
             hasMore: pageSize && page < this.instances.length / pageSize - 1
           }
-    }
+    },
+    ...(filters && {
+      filters: filters.map(filter => ({
+        rel: filter.rel,
+        parameters: [
+          ...new Set(filter.parameters?.map(parameter => parameter.parameter))
+        ]
+      }))
+    })
   })
 }
 
@@ -253,6 +308,15 @@ When('we load the singleton', async function () {
 When('we invoke the {string} operation', async function (relationship) {
   this.result = await this.result.invoke(relationship)
   console.log(this.result)
+})
+
+When('we invoke the {string} operation with', async function (
+  relationship,
+  dataTable
+) {
+  console.log({ ops: this.result.ops })
+  this.result = await this.result.invoke(relationship, dataTable.rowsHash())
+  console.log({ ops: this.result.ops })
 })
 
 When(
@@ -353,7 +417,7 @@ Then('an empty collection will be returned', async function () {
   expect(this.result.ops.find('item')).to.be.undefined()
 })
 
-Then('an collection with {int} item(s) will be returned', async function (
+Then('a(n) collection with {int} item(s) will be returned', async function (
   length
 ) {
   const items = await Promise.all(

@@ -248,3 +248,115 @@ Feature: Collection
         Given a waycharter resource instance that's a collection with 100 items and a page size of 16
         When we load page -1 of the collection
         Then a 400 bad request will be returned
+
+    Scenario: Collection - filter operation
+        Given a collection of 10 items with a 'search' filter
+        When we load the collection
+        And it will have a 'search' operation
+
+    Scenario: Collection - filterable
+        Given a collection of 10 items with a 'search' filter with the following parameters
+            | parameter | value | itemsRemoved |
+            | query     | alpha | 5            |
+        When we load the collection
+        And we invoke the 'search' operation with
+            | query | alpha |
+        Then a collection with 5 items will be returned
+
+    Scenario: Collection - filterable
+        Given a collection of 10 items with a 'search' filter with the following parameters
+            | parameter | value | itemsRemoved |
+            | query     | alpha | 5            |
+            | query     | bravo | 2            |
+        When we load the collection
+        And we invoke the 'search' operation with
+            | query | bravo |
+        Then a collection with 8 items will be returned
+
+    Scenario: Collection - dual filterable
+        Given a collection of 10 items with a 'search' filter with the following parameters
+            | parameter | value     | itemsRemoved |
+            | query     | alpha     | 5            |
+            | when      | yesterday | 2            |
+        When we load the collection
+        And we invoke the 'search' operation with
+            | query | alpha     |
+            | when  | yesterday |
+        Then a collection with 3 items will be returned
+
+    Scenario: Paged Collection - filterable
+        Given a collection of 30 items with a page size of 16 and with a 'search' filter with the following parameters
+            | parameter | value | itemsRemoved |
+            | query     | alpha | 10           |
+        When we load the collection
+        And we invoke the 'search' operation with
+            | query | alpha |
+        Then a collection with 16 items will be returned
+        And it will have a 'first' operation
+        And it will have a 'next' operation
+        But it won't have a 'prev' operation
+
+    @wip
+    Scenario: Paged Collection - filterable and pageable
+        Given a collection of 30 items with a page size of 16 and with a 'search' filter with the following parameters
+            | parameter | value | itemsRemoved |
+            | query     | alpha | 10           |
+        When we load the collection
+        And we invoke the 'search' operation with
+            | query | alpha |
+        And we invoke the 'next' operation
+        Then a collection with 4 items will be returned
+        And it will have a 'first' operation
+        And it will have a 'prev' operation
+        But it won't have a 'next' operation
+
+
+    Scenario Outline: Paged Collection - filterable and pageable
+        Given a collection of 30 items with a page size of 16 and with a 'search' filter with the following parameters
+            | parameter | value | itemsRemoved |
+            | query     | alpha | 10           |
+        When we load the collection
+        And we invoke the 'search' operation with
+            | query | alpha |
+        And we invoke the 'next' operation
+        And we invoke the '<REL>' operation
+        Then a collection with 16 items will be returned
+
+        Examples:
+            | REL   |
+            | first |
+            | prev  |
+
+    Scenario: Collection - dual filterable
+        Given a collection of 30 items with a page size of 16 and with a 'search' filter with the following parameters
+            | parameter | value     | itemsRemoved |
+            | query     | alpha     | 6            |
+            | when      | yesterday | 4            |
+        When we load the collection
+        And we invoke the 'search' operation with
+            | query | alpha     |
+            | when  | yesterday |
+        And we invoke the 'next' operation
+        Then a collection with 4 items will be returned
+        And it will have a 'first' operation
+        And it will have a 'prev' operation
+        But it won't have a 'next' operation
+
+
+    Scenario Outline: Paged Collection - dual filterable and pageable
+        Given a collection of 30 items with a page size of 16 and with a 'search' filter with the following parameters
+            | parameter | value     | itemsRemoved |
+            | query     | alpha     | 6            |
+            | when      | yesterday | 4            |
+        When we load the collection
+        And we invoke the 'search' operation with
+            | query | alpha     |
+            | when  | yesterday |
+        And we invoke the 'next' operation
+        And we invoke the '<REL>' operation
+        Then a collection with 16 items will be returned
+
+        Examples:
+            | REL   |
+            | first |
+            | prev  |
