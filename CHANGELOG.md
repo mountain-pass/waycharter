@@ -1,3 +1,9 @@
+## <small>1.0.52 (2021-05-31)</small>
+
+* Merge pull request #185 from mountain-pass/dependabot/npm_and_yarn/babel/cli-7.14.3 ([423b483](https://github.com/mountain-pass/waycharter/commit/423b483)), closes [#185](https://github.com/mountain-pass/waycharter/issues/185)
+
+
+
 ## <small>1.0.51 (2021-05-31)</small>
 
 * fix: fixed test coverage ([0dd0f37](https://github.com/mountain-pass/waycharter/commit/0dd0f37))
