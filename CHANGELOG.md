@@ -1,3 +1,9 @@
+## <small>1.0.57 (2021-06-07)</small>
+
+* Merge pull request #208 from mountain-pass/dependabot/npm_and_yarn/mountainpass/waychaser-3.0.43 ([e318d8b](https://github.com/mountain-pass/waycharter/commit/e318d8b)), closes [#208](https://github.com/mountain-pass/waycharter/issues/208)
+
+
+
 ## <small>1.0.56 (2021-06-02)</small>
 
 * Merge pull request #199 from mountain-pass/dependabot/npm_and_yarn/snyk-1.621.0 ([956bf3b](https://github.com/mountain-pass/waycharter/commit/956bf3b)), closes [#199](https://github.com/mountain-pass/waycharter/issues/199)
