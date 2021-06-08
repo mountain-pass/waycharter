@@ -153,7 +153,7 @@ Feature: Collection
         Then an collection with 16 items will be returned
 
     Scenario: Static Collection with many items - fetch nth item
-        Given a waycharter resource instance that's a static collection with 16 item
+        Given a waycharter resource instance that's a static collection with 16 items
         When we load the collection
         And we invoke the 'item' operation for the 6th item
         Then the 6th unabridged item will be returned
@@ -166,6 +166,14 @@ Feature: Collection
         And it will have a 'next' operation
         And it will have a 'first' operation
         But it won't have a 'prev' operation
+
+    Scenario: Static Collection with headers
+        Given a waycharter resource instance that's a static collection with 16 items and the following headers
+            | x-testing | foobar |
+        When we load the collection
+        Then the response will include the following header
+            | x-testing | foobar |
+
 
 
     Scenario: Static Collection with many many items - page 2
@@ -296,7 +304,6 @@ Feature: Collection
         And it will have a 'next' operation
         But it won't have a 'prev' operation
 
-    @wip
     Scenario: Paged Collection - filterable and pageable
         Given a collection of 30 items with a page size of 16 and with a 'https://waychaser.io/rel/search' filter with the following parameters
             | parameter | value | itemsRemoved |
@@ -360,3 +367,20 @@ Feature: Collection
             | REL   |
             | first |
             | prev  |
+
+    Scenario: Collection with headers
+        Given a collection of 30 items and following headers
+            | x-testing | foobar |
+        When we load the collection
+        Then the response will include the following header
+            | x-testing | foobar |
+
+    @wip
+    Scenario: Collection with item headers
+        Given a collection of 30 items and following item headers
+            | x-testing | foobar |
+        When we load the collection
+        And we invoke the 'item' operation for the 6th item
+        And we invoke the 'canonical' operation
+        Then the response will include the following header
+            | x-testing | foobar |

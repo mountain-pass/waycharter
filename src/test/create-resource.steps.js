@@ -112,6 +112,24 @@ Given('a collection of {int} items with a {string} filter', async function (
   })
 })
 
+Given('a collection of {int} items and following headers', async function (
+  length,
+  dataTable
+) {
+  createCollection.bind(this)(length, undefined, {
+    headers: dataTable.rowsHash()
+  })
+})
+
+Given('a collection of {int} items and following item headers', async function (
+  length,
+  dataTable
+) {
+  createCollection.bind(this)(length, undefined, {
+    itemHeaders: dataTable.rowsHash()
+  })
+})
+
 Given(
   'a collection of {int} items with a {string} filter with the following parameters',
   async function (length, filterRelationship, dataTable) {
@@ -140,6 +158,15 @@ Given(
 )
 
 Given(
+  "a waycharter resource instance that's a static collection with {int} items and the following headers",
+  async function (length, headers) {
+    createStaticCollection.bind(this)(length, undefined, {
+      headers: headers.rowsHash()
+    })
+  }
+)
+
+Given(
   "a waycharter resource instance that's a static collection with {int} items with a wrapper",
   async function (length) {
     createStaticCollection.bind(this)(length, undefined, { wrapper: true })
@@ -151,7 +178,11 @@ function summariseItem (item) {
   return { id, title }
 }
 
-function createStaticCollection (length, pageSize, { wrapper = false } = {}) {
+function createStaticCollection (
+  length,
+  pageSize,
+  { wrapper = false, headers = {} } = {}
+) {
   this.instances = createArrayOfItems(length)
 
   this.currentPath = randomApiPath()
@@ -160,6 +191,7 @@ function createStaticCollection (length, pageSize, { wrapper = false } = {}) {
     collectionPath: this.currentPath,
     collection: wrapper ? { items: items } : items,
     arrayPointer: wrapper ? '/items' : undefined,
+    headers,
     pageSize
   })
 }
@@ -167,7 +199,13 @@ function createStaticCollection (length, pageSize, { wrapper = false } = {}) {
 function createCollection (
   length,
   pageSize,
-  { noWrapper = false, independentlyRetrievable = true, filters = [] } = {}
+  {
+    noWrapper = false,
+    independentlyRetrievable = true,
+    filters = [],
+    headers = {},
+    itemHeaders = {}
+  } = {}
 ) {
   this.instances = createArrayOfItems(length)
 
@@ -177,7 +215,10 @@ function createCollection (
     ...(independentlyRetrievable && {
       itemPath: '/:id',
       itemLoader: async parameters => {
-        return this.instances[parameters.id]
+        return {
+          body: this.instances[parameters.id].body,
+          headers: itemHeaders
+        }
       }
     }),
     collectionPath: this.currentPath,
@@ -210,7 +251,8 @@ function createCollection (
       return noWrapper
         ? {
             body: items,
-            hasMore: pageSize && page < this.instances.length / pageSize - 1
+            hasMore: pageSize && page < this.instances.length / pageSize - 1,
+            headers
           }
         : {
             body: {
@@ -219,7 +261,8 @@ function createCollection (
               page
             },
             arrayPointer: '/items',
-            hasMore: pageSize && page < this.instances.length / pageSize - 1
+            hasMore: pageSize && page < this.instances.length / pageSize - 1,
+            headers
           }
     },
     ...(filters && {
@@ -415,6 +458,19 @@ Then(
 
 Then('an empty collection will be returned', async function () {
   expect(this.result.ops.find('item')).to.be.undefined()
+})
+
+Then('the response will include the following header(s)', async function (
+  dataTable
+) {
+  const headers = dataTable.rowsHash()
+  console.log({ headers })
+  console.log({ actualHeaders: this.result.response.headers })
+
+  for (const name in headers) {
+    console.log({ name })
+    expect(this.result.response.headers.get(name)).to.equal(headers[name])
+  }
 })
 
 Then('a(n) collection with {int} item(s) will be returned', async function (

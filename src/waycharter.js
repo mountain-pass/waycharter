@@ -133,10 +133,12 @@ export class WayCharter {
           }
         }
 
-        const { body, arrayPointer, hasMore } = await collectionLoader({
-          page: pageInt,
-          ...filteredParameters
-        })
+        const { body, arrayPointer, hasMore, headers } = await collectionLoader(
+          {
+            page: pageInt,
+            ...filteredParameters
+          }
+        )
         const array = arrayPointer ? pointer.get(body, arrayPointer) : body
         const { itemLinks, canonicalLinks } = builtItemLinks(
           array,
@@ -161,7 +163,8 @@ export class WayCharter {
             ...buildPreviousLink(pageInt, collectionPath, otherParameters),
             ...buildFirstLink(hasMore, pageInt, collectionPath, otherParameters)
           ],
-          linkTemplates: linkTemplates
+          linkTemplates: linkTemplates,
+          headers
         }
       }
     })
@@ -171,7 +174,8 @@ export class WayCharter {
     collectionPath,
     collection,
     pageSize,
-    arrayPointer
+    arrayPointer,
+    headers
   }) {
     return this.registerCollection({
       collectionPath,
@@ -182,7 +186,8 @@ export class WayCharter {
         return {
           body: items,
           hasMore: pageSize && page < collection.length / pageSize - 1,
-          arrayPointer
+          arrayPointer,
+          headers
         }
       }
     })
