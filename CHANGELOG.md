@@ -1,3 +1,9 @@
+## <small>1.0.59 (2021-06-08)</small>
+
+* feat(collection): added support for returning headers in collections ([3a91649](https://github.com/mountain-pass/waycharter/commit/3a91649))
+
+
+
 ## <small>1.0.58 (2021-06-07)</small>
 
 * Merge pull request #205 from mountain-pass/dependabot/npm_and_yarn/snyk-1.622.0 ([06b3c80](https://github.com/mountain-pass/waycharter/commit/06b3c80)), closes [#205](https://github.com/mountain-pass/waycharter/issues/205)
