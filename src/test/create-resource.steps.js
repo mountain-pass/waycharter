@@ -30,11 +30,35 @@ Given(
 
 Given(
   'another singleton that has a {string} link that previous singleton',
-  async function (string) {
+  async function (relationship) {
     this.previousPath = this.currentPath
     this.currentPath = createSingleton.bind(this)({
       path: randomApiPath(),
-      links: [{ rel: 'related', uri: this.previousPath }]
+      links: [{ rel: relationship, uri: this.previousPath }]
+    })
+  }
+)
+
+Given(
+  'a singleton that has a {string} link to that collection',
+  async function (relationship) {
+    this.previousPath = this.currentPath
+    this.currentPath = createSingleton.bind(this)({
+      path: randomApiPath(),
+      links: [{ rel: relationship, uri: this.currentType.path() }]
+    })
+  }
+)
+
+Given(
+  "a singleton that has a link to that collection's {string} filter",
+  async function (relationship) {
+    this.previousPath = this.currentPath
+    this.currentPath = createSingleton.bind(this)({
+      path: randomApiPath(),
+      links: [
+        this.currentType.additionalPaths.find(path => path.rel === relationship)
+      ]
     })
   }
 )
@@ -187,7 +211,7 @@ function createStaticCollection (
 
   this.currentPath = randomApiPath()
   const items = this.instances.map(item => item.body)
-  this.waycharter.registerStaticCollection({
+  this.currentType = this.waycharter.registerStaticCollection({
     collectionPath: this.currentPath,
     collection: wrapper ? { items: items } : items,
     arrayPointer: wrapper ? '/items' : undefined,
@@ -211,7 +235,7 @@ function createCollection (
 
   this.currentPath = randomApiPath()
 
-  this.waycharter.registerCollection({
+  this.currentType = this.waycharter.registerCollection({
     ...(independentlyRetrievable && {
       itemPath: '/:id',
       itemLoader: async parameters => {
@@ -346,6 +370,7 @@ When('we load page {int} of the collection', async function (page) {
 
 When('we load the singleton', async function () {
   this.result = await load.bind(this)(this.previousPath, this.baseUrl)
+  console.log(this.result)
 })
 
 When('we invoke the {string} operation', async function (relationship) {

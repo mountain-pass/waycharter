@@ -55,7 +55,7 @@ function world () {
 }
 
 Before({ timeout: 240000 }, async function (scenario) {
-  logger.info('BEGIN Before')
+  logger.info('BEGIN Before: ', scenario.pickle.name)
   logger.info('END Before')
 })
 

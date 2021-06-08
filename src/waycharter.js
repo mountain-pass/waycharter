@@ -33,7 +33,8 @@ export class WayCharter {
       try {
         const resource = await loader(
           { ...request.params, ...request.query },
-          filteredHeaders
+          filteredHeaders,
+          request.url
         )
         for (const link of resource.links || []) {
           links.set(link)
@@ -103,9 +104,21 @@ export class WayCharter {
             loader: itemLoader
           })
         : undefined
-    return this.registerResourceType({
+
+    const linkTemplates = []
+    for (const filter of filters) {
+      linkTemplates.push({
+        rel: filter.rel,
+        uri: `${collectionPath}{?${filter.parameters.join(',')}}`
+      })
+    }
+    const type = this.registerResourceType({
       path: collectionPath,
-      loader: async ({ page, ...otherParameters }) => {
+      loader: async (
+        { page, ...otherParameters },
+        filteredHeaders,
+        selfUri
+      ) => {
         // ${collectionPath}?page=0 should redirect to ${collectionPath}
         if (page === '0') {
           return {
@@ -143,31 +156,25 @@ export class WayCharter {
         const { itemLinks, canonicalLinks } = builtItemLinks(
           array,
           arrayPointer,
-          itemType
+          itemType,
+          selfUri
         )
-
-        const linkTemplates = []
-        for (const filter of filters) {
-          linkTemplates.push({
-            rel: filter.rel,
-            uri: `{?${filter.parameters.join(',')}}`
-          })
-        }
 
         return {
           body,
           links: [
             ...itemLinks,
             ...canonicalLinks,
-            ...buildNextLink(hasMore, pageInt, otherParameters),
+            ...buildNextLink(hasMore, pageInt, collectionPath, otherParameters),
             ...buildPreviousLink(pageInt, collectionPath, otherParameters),
             ...buildFirstLink(hasMore, pageInt, collectionPath, otherParameters)
           ],
-          linkTemplates: linkTemplates,
+          linkTemplates,
           headers
         }
       }
     })
+    return { ...type, additionalPaths: linkTemplates }
   }
 
   registerStaticCollection ({
@@ -205,7 +212,7 @@ function buildFirstLink (hasMore, pageInt, collectionPath, otherParameters) {
       ? [
           {
             rel: 'first',
-            uri: `?${new URLSearchParams({
+            uri: `${collectionPath}?${new URLSearchParams({
               ...otherParameters
             }).toString()}`
           }
@@ -232,7 +239,7 @@ function buildPreviousLink (pageInt, collectionPath, otherParameters) {
       ? [
           {
             rel: 'prev',
-            uri: `?${new URLSearchParams({
+            uri: `${collectionPath}?${new URLSearchParams({
               ...otherParameters
             }).toString()}`
           }
@@ -247,7 +254,7 @@ function buildPreviousLink (pageInt, collectionPath, otherParameters) {
     return [
       {
         rel: 'prev',
-        uri: `?${new URLSearchParams({
+        uri: `${collectionPath}?${new URLSearchParams({
           page: pageInt - 1,
           ...otherParameters
         }).toString()}`
@@ -261,14 +268,15 @@ function buildPreviousLink (pageInt, collectionPath, otherParameters) {
 /**
  * @param hasMore
  * @param pageInt
+ * @param collectionPath
  * @param otherParameters
  */
-function buildNextLink (hasMore, pageInt, otherParameters) {
+function buildNextLink (hasMore, pageInt, collectionPath, otherParameters) {
   return hasMore
     ? [
         {
           rel: 'next',
-          uri: `?${new URLSearchParams({
+          uri: `${collectionPath}?${new URLSearchParams({
             page: pageInt + 1,
             ...otherParameters
           }).toString()}`
@@ -281,14 +289,16 @@ function buildNextLink (hasMore, pageInt, otherParameters) {
  * @param array
  * @param arrayPointer
  * @param itemType
+ * @param collectionPath
+ * @param selfUri
  */
-function builtItemLinks (array, arrayPointer, itemType) {
+function builtItemLinks (array, arrayPointer, itemType, selfUri) {
   const itemLinks = []
   const canonicalLinks = []
   if (array.length === 1) {
     itemLinks.push({
       rel: 'item',
-      uri: `#${arrayPointer || ''}/0`
+      uri: `${selfUri}#${arrayPointer || ''}/0`
     })
     if (itemType) {
       canonicalLinks.push({
@@ -300,7 +310,7 @@ function builtItemLinks (array, arrayPointer, itemType) {
   } else if (array.length > 0) {
     itemLinks.push({
       rel: 'item',
-      uri: `#${arrayPointer || ''}/{[0..${array.length - 1}]}`
+      uri: `${selfUri}#${arrayPointer || ''}/{[0..${array.length - 1}]}`
     })
     if (itemType) {
       let pathTemplate = itemType.pathTemplate

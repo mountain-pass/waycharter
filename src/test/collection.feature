@@ -375,7 +375,6 @@ Feature: Collection
         Then the response will include the following header
             | x-testing | foobar |
 
-    @wip
     Scenario: Collection with item headers
         Given a collection of 30 items and following item headers
             | x-testing | foobar |
@@ -384,3 +383,21 @@ Feature: Collection
         And we invoke the 'canonical' operation
         Then the response will include the following header
             | x-testing | foobar |
+
+    Scenario: Link To Collection
+        Given a waycharter resource instance that's a static collection with 16 items
+        And a singleton that has a 'related' link to that collection
+        When we load the latter singleton
+        And we invoke the 'related' operation
+        Then a collection with 16 items will be returned
+
+    @wip
+    Scenario: Link To Collection Filter
+        Given a collection of 10 items with a 'https://waychaser.io/rel/search' filter with the following parameters
+            | parameter | value | itemsRemoved |
+            | query     | alpha | 5            |
+        And a singleton that has a link to that collection's "https://waychaser.io/rel/search" filter
+        When we load the latter singleton
+        And we invoke the 'https://waychaser.io/rel/search' operation with
+            | query | alpha |
+        Then a collection with 5 items will be returned
