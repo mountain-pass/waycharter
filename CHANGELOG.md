@@ -1,3 +1,9 @@
+## <small>1.0.62 (2021-06-09)</small>
+
+* Merge pull request #211 from mountain-pass/dependabot/npm_and_yarn/snyk-1.624.0 ([4d35fa7](https://github.com/mountain-pass/waycharter/commit/4d35fa7)), closes [#211](https://github.com/mountain-pass/waycharter/issues/211)
+
+
+
 ## <small>1.0.61 (2021-06-09)</small>
 
 * refactor(test): removed code duplication ([ed86cb9](https://github.com/mountain-pass/waycharter/commit/ed86cb9))
