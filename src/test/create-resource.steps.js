@@ -42,24 +42,18 @@ Given(
 Given(
   'a singleton that has a {string} link to that collection',
   async function (relationship) {
-    this.previousPath = this.currentPath
-    this.currentPath = createSingleton.bind(this)({
-      path: randomApiPath(),
-      links: [{ rel: relationship, uri: this.currentType.path() }]
-    })
+    const link = { rel: relationship, uri: this.currentType.path() }
+    createSingletonWithLink.bind(this)(link)
   }
 )
 
 Given(
   "a singleton that has a link to that collection's {string} filter",
   async function (relationship) {
-    this.previousPath = this.currentPath
-    this.currentPath = createSingleton.bind(this)({
-      path: randomApiPath(),
-      links: [
-        this.currentType.additionalPaths.find(path => path.rel === relationship)
-      ]
-    })
+    const link = this.currentType.additionalPaths.find(
+      path => path.rel === relationship
+    )
+    createSingletonWithLink.bind(this)(link)
   }
 )
 
@@ -196,6 +190,14 @@ Given(
     createStaticCollection.bind(this)(length, undefined, { wrapper: true })
   }
 )
+
+function createSingletonWithLink (link) {
+  this.previousPath = this.currentPath
+  this.currentPath = createSingleton.bind(this)({
+    path: randomApiPath(),
+    links: [link]
+  })
+}
 
 function summariseItem (item) {
   const { id, title } = item
