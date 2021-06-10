@@ -1,3 +1,9 @@
+## <small>1.0.63 (2021-06-10)</small>
+
+* Merge pull request #222 from mountain-pass/dependabot/npm_and_yarn/babel/plugin-proposal-class-prope ([17daa46](https://github.com/mountain-pass/waycharter/commit/17daa46)), closes [#222](https://github.com/mountain-pass/waycharter/issues/222)
+
+
+
 ## <small>1.0.62 (2021-06-09)</small>
 
 * Merge pull request #211 from mountain-pass/dependabot/npm_and_yarn/snyk-1.624.0 ([4d35fa7](https://github.com/mountain-pass/waycharter/commit/4d35fa7)), closes [#211](https://github.com/mountain-pass/waycharter/issues/211)
