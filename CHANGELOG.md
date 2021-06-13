@@ -1,3 +1,9 @@
+## <small>1.0.64 (2021-06-13)</small>
+
+* Merge pull request #223 from mountain-pass/dependabot/npm_and_yarn/glob-parent-5.1.2 ([368395f](https://github.com/mountain-pass/waycharter/commit/368395f)), closes [#223](https://github.com/mountain-pass/waycharter/issues/223)
+
+
+
 ## <small>1.0.63 (2021-06-10)</small>
 
 * Merge pull request #222 from mountain-pass/dependabot/npm_and_yarn/babel/plugin-proposal-class-prope ([17daa46](https://github.com/mountain-pass/waycharter/commit/17daa46)), closes [#222](https://github.com/mountain-pass/waycharter/issues/222)
