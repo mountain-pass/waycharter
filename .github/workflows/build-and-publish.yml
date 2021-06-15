@@ -282,6 +282,28 @@ jobs:
           project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
           coverage-reports: coverage/full/lcov.info
 
+
+  merge:
+    needs:
+      - check-secret
+      - test-node-api
+      - lint
+      - audit
+      - security
+      - build
+      - duplication
+    if: |
+      needs.check-secret.outputs.SECRETS_SET == 'true' &&
+      startsWith( github.head_ref, 'dependabot' )
+      ! contains(toJSON(github.event.commits.*.message), '[skip-ci]')
+
+
+    steps:
+      - uses: ahmadnassri/action-dependabot-auto-merge@v2
+        with:
+          target: major
+          github-token: ${{ secrets.MERGE_TOKEN }}
+
   publish:
     needs:
       - check-secret
