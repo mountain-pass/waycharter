@@ -7,7 +7,10 @@
 - [x] Provide way to use URI templates for repeating 'item' links
 - [x] for collections include redirect to first page if page param is undefined
 - [x] filter collection
-- [ ] collections with additional links
+- [x] collections with additional links
+- [ ] http status from collectionLoader
+- [ ] headers for static resource
+- [ ] remove class
 - [ ] caching
 - [ ] POST/PUT/DELETE/PATCH
 
