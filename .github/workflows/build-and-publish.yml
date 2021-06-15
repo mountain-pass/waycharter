@@ -297,6 +297,7 @@ jobs:
       startsWith( github.head_ref, 'dependabot' )
       ! contains(toJSON(github.event.commits.*.message), '[skip-ci]')
 
+    runs-on: ubuntu-latest
 
     steps:
       - uses: ahmadnassri/action-dependabot-auto-merge@v2
