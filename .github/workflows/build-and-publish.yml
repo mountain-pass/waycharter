@@ -294,7 +294,7 @@ jobs:
       - duplication
     if: |
       needs.check-secret.outputs.SECRETS_SET == 'true' &&
-      startsWith( github.head_ref, 'dependabot' )
+      startsWith( github.head_ref, 'dependabot' ) &&
       ! contains(toJSON(github.event.commits.*.message), '[skip-ci]')
 
     runs-on: ubuntu-latest
