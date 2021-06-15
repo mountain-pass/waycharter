@@ -1,3 +1,9 @@
+## <small>1.0.67 (2021-06-15)</small>
+
+* refactor(deps): removed unsed dependencies ([0f8a363](https://github.com/mountain-pass/waycharter/commit/0f8a363))
+
+
+
 ## <small>1.0.66 (2021-06-14)</small>
 
 * Merge pull request #226 from mountain-pass/dependabot/npm_and_yarn/babel/runtime-7.14.6 ([bba5a54](https://github.com/mountain-pass/waycharter/commit/bba5a54)), closes [#226](https://github.com/mountain-pass/waycharter/issues/226)
