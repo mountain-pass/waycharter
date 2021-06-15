@@ -1,3 +1,9 @@
+## <small>1.0.68 (2021-06-15)</small>
+
+* chore(deps): updating dependabot ([2414c5e](https://github.com/mountain-pass/waycharter/commit/2414c5e))
+
+
+
 ## <small>1.0.67 (2021-06-15)</small>
 
 * refactor(deps): removed unsed dependencies ([0f8a363](https://github.com/mountain-pass/waycharter/commit/0f8a363))
