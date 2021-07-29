@@ -97,7 +97,7 @@
     "@commitlint/config-conventional": "^12.0.0",
     "@cucumber/cucumber": "^7.0.0",
     "@istanbuljs/nyc-config-babel": "^3.0.0",
-    "@mountainpass/waychaser": "^3.0.39",
+    "@mountainpass/waychaser": "^4.0.20",
     "@windyroad/cucumber-js-throwables": "^1.0.4",
     "babel-eslint": "^10.0.2",
     "babel-plugin-istanbul": "^6.0.0",
