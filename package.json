@@ -119,7 +119,7 @@
     "eslint-plugin-eslint-comments": "^3.2.0",
     "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-istanbul": "^0.1.2",
-    "eslint-plugin-jsdoc": "^35.0.0",
+    "eslint-plugin-jsdoc": "^36.0.8",
     "eslint-plugin-json": "^3.0.0",
     "eslint-plugin-markdown": "^2.2.0",
     "eslint-plugin-md": "^1.0.19",
