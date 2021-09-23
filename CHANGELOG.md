@@ -1,3 +1,9 @@
+## <small>1.0.69 (2021-09-23)</small>
+
+* fix(paths): fixed defect in path template parameters starting with an uppercase or digit ([075e534](https://github.com/mountain-pass/waycharter/commit/075e534))
+
+
+
 ## <small>1.0.68 (2021-06-15)</small>
 
 * chore(deps): updating dependabot ([2414c5e](https://github.com/mountain-pass/waycharter/commit/2414c5e))
