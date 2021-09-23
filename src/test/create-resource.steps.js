@@ -200,8 +200,8 @@ function createSingletonWithLink (link) {
 }
 
 function summariseItem (item) {
-  const { id, title } = item
-  return { id, title }
+  const { ID, title } = item
+  return { ID, title }
 }
 
 function createStaticCollection (
@@ -239,10 +239,10 @@ function createCollection (
 
   this.currentType = this.waycharter.registerCollection({
     ...(independentlyRetrievable && {
-      itemPath: '/:id',
+      itemPath: '/:ID',
       itemLoader: async parameters => {
         return {
-          body: this.instances[parameters.id].body,
+          body: this.instances[parameters.ID].body,
           headers: itemHeaders
         }
       }
@@ -345,7 +345,7 @@ Given('the singleton has a {string} link to that instance', async function (
 
 function createArrayOfItems (length) {
   return [...Array.from({ length }).keys()].map(index => ({
-    body: { id: index, title: 'foo', other: 'bar' }
+    body: { ID: index, title: 'foo', other: 'bar' }
   }))
 }
 
@@ -376,6 +376,8 @@ When('we load the singleton', async function () {
 })
 
 When('we invoke the {string} operation', async function (relationship) {
+  console.log({ ops: this.result.ops })
+  console.log({ item: await this.result.body() })
   this.result = await this.result.invoke(relationship)
   console.log(this.result)
 })

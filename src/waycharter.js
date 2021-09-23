@@ -1,9 +1,15 @@
 import { Router } from 'express'
 import LinkHeader from 'http-link-header'
 import { URI } from 'uri-template-lite'
-import { routerToRfc6570 } from 'router-uri-convert'
 import pointer from 'jsonpointer'
+import logger from './util/logger'
 
+/**
+ * @param url
+ */
+function routerToRfc6570 (url) {
+  return url.replace(/:(\w*)/g, '{+$1}')
+}
 export class WayCharter {
   constructor () {
     this.router = Router()
@@ -15,7 +21,9 @@ export class WayCharter {
     const lowerCaseLoaderVaries = new Set(
       loaderVaries ? loaderVaries.map(header => header.toLowerCase()) : []
     )
+    logger.info({ path })
     const uriTemplate = routerToRfc6570(path)
+    logger.info({ uriTemplate })
     this.router.get(path, async function (request, response, next) {
       const links = new LinkHeader()
       const linkTemplates = new LinkHeader()

@@ -99,6 +99,7 @@ Feature: Collection
         And it will have a 'next' operation
         But it won't have a 'prev' operation
 
+    @wip
     Scenario: Collection with many items - fetch nth item and get unabridged
         Given a waycharter resource instance that's a collection with 16 item
         When we load the collection
@@ -391,7 +392,6 @@ Feature: Collection
         And we invoke the 'related' operation
         Then a collection with 16 items will be returned
 
-    @wip
     Scenario: Link To Collection Filter
         Given a collection of 10 items with a 'https://waychaser.io/rel/search' filter with the following parameters
             | parameter | value | itemsRemoved |

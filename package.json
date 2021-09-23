@@ -81,7 +81,6 @@
     "debug": "^4.2.0",
     "http-link-header": "^1.0.3",
     "jsonpointer": "^4.1.0",
-    "router-uri-convert": "^1.0.22",
     "uri-template-lite": "^20.5.0"
   },
   "peerDependencies": {
