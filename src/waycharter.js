@@ -1,8 +1,13 @@
 import { Router } from 'express'
-import LinkHeader from 'http-link-header'
 import { URI } from 'uri-template-lite'
 import pointer from 'jsonpointer'
-import logger from './util/logger'
+import { methodCanHaveBody } from './method-can-have-body'
+import { covertResourceLinks } from './convert-resource-links'
+import { buildFirstLink } from './collections/build-first-link'
+import { buildPreviousLink } from './collections/build-previous-link'
+import { buildNextLink } from './collections/build-next-link'
+import { builtItemLinks } from './collections/built-item-links'
+import { methodIsCacheable } from './method-is-cacheable'
 
 /**
  * @param url
@@ -21,16 +26,8 @@ export class WayCharter {
     const lowerCaseLoaderVaries = new Set(
       loaderVaries ? loaderVaries.map(header => header.toLowerCase()) : []
     )
-    logger.info({ path })
     const uriTemplate = routerToRfc6570(path)
-    logger.info({ uriTemplate })
     this.router.get(path, async function (request, response, next) {
-      const links = new LinkHeader()
-      const linkTemplates = new LinkHeader()
-      links.set({
-        rel: 'self',
-        uri: request.url
-      })
       const filteredHeaders = Object.keys(request.headers).reduce(
         (filtered, key) =>
           lowerCaseLoaderVaries.has(key)
@@ -44,37 +41,83 @@ export class WayCharter {
           filteredHeaders,
           request.url
         )
-        for (const link of resource.links || []) {
-          links.set(link)
-        }
-        response.header('link', links.toString())
-
-        if (resource.linkTemplates) {
-          for (const linkTemplate of resource.linkTemplates) {
-            linkTemplates.set(Object.assign({ uri: request.url }, linkTemplate))
-          }
-          response.header('link-template', linkTemplates.toString())
-        }
 
         if (loaderVaries) {
           response.header('vary', [...lowerCaseLoaderVaries])
         }
-        if (resource.status) {
-          response.status(resource.status)
-        }
-        if (resource.headers) {
-          for (const header in resource.headers) {
-            response.header(header, resource.headers[header])
+        sendResponse(resource, response, request.url, [
+          {
+            rel: 'self',
+            uri: request.url
           }
-        }
-        response.json(resource.body)
+        ])
       } catch (error) {
+        // next(error)
         console.error(error)
         response.status(500)
         response.json({})
       }
     })
     return {
+      pathTemplate: uriTemplate,
+      path: parameters => URI.expand(uriTemplate, parameters)
+    }
+  }
+
+  registerOperation ({
+    method,
+    path,
+    operation,
+    bodyParameters,
+    headerParameters
+  }) {
+    const upperCaseMethod = method.toUpperCase()
+    const lowerCaseMethod = method.toLowerCase()
+    const lowerCaseHeaderParameters =
+      headerParameters &&
+      new Set(headerParameters.map(header => header.toLowerCase()))
+    this.router[lowerCaseMethod](path, async (request, response, next) => {
+      try {
+        let filteredHeaders = request.headers
+        if (methodIsCacheable(upperCaseMethod) && headerParameters) {
+          response.header('vary', [...lowerCaseHeaderParameters])
+          filteredHeaders = {}
+          for (const headerName in request.headers) {
+            if (lowerCaseHeaderParameters.has(headerName)) {
+              filteredHeaders[headerName] = request.headers[headerName]
+            }
+          }
+        }
+
+        const resource = await operation({
+          parameters: {
+            ...request.params,
+            ...request.query,
+            ...(methodCanHaveBody(upperCaseMethod) && request.body)
+          },
+          requestHeaders: filteredHeaders,
+          requestUrl: request.url,
+          request,
+          response
+        })
+        sendResponse(resource, response, request.url)
+      } catch (error) {
+        // next(error)
+        console.error(error)
+        response.status(500)
+        response.json({})
+      }
+    })
+    const uriTemplate = routerToRfc6570(path)
+    const template = new URI.Template(uriTemplate)
+    const pathParameters = template.match(uriTemplate)
+    return {
+      method: upperCaseMethod,
+      ...(methodCanHaveBody(upperCaseMethod) && { bodyParameters }),
+      pathParameters,
+      ...(methodIsCacheable(upperCaseMethod) && {
+        headerParameters: lowerCaseHeaderParameters
+      }),
       pathTemplate: uriTemplate,
       path: parameters => URI.expand(uriTemplate, parameters)
     }
@@ -154,20 +197,24 @@ export class WayCharter {
           }
         }
 
-        const { body, arrayPointer, hasMore, headers } = await collectionLoader(
-          {
-            page: pageInt,
-            ...filteredParameters
-          }
-        )
+        const {
+          body,
+          arrayPointer,
+          hasMore,
+          headers,
+          itemOperations
+        } = await collectionLoader({
+          page: pageInt,
+          ...filteredParameters
+        })
         const array = arrayPointer ? pointer.get(body, arrayPointer) : body
         const { itemLinks, canonicalLinks } = builtItemLinks(
           array,
           arrayPointer,
           itemType,
-          selfUri
+          selfUri,
+          itemOperations
         )
-
         return {
           body,
           links: [
@@ -209,130 +256,34 @@ export class WayCharter {
   }
 }
 /**
- * @param hasMore
- * @param pageInt
- * @param collectionPath
- * @param otherParameters
+ * @param resource
+ * @param response
+ * @param requestUrl
+ * @param additionalLinks
  */
-function buildFirstLink (hasMore, pageInt, collectionPath, otherParameters) {
-  if (pageInt > 0 || hasMore) {
-    return Object.keys(otherParameters).length > 0
-      ? [
-          {
-            rel: 'first',
-            uri: `${collectionPath}?${new URLSearchParams({
-              ...otherParameters
-            }).toString()}`
-          }
-        ]
-      : [
-          {
-            rel: 'first',
-            uri: collectionPath
-          }
-        ]
-  } else {
-    return []
+function sendResponse (resource, response, requestUrl, additionalLinks = []) {
+  if (resource.links || additionalLinks.length > 0) {
+    const links = covertResourceLinks([
+      ...additionalLinks,
+      ...(resource.links || [])
+    ])
+    response.header('link', links.toString())
   }
-}
-
-/**
- * @param pageInt
- * @param collectionPath
- * @param otherParameters
- */
-function buildPreviousLink (pageInt, collectionPath, otherParameters) {
-  if (pageInt === 1) {
-    return Object.keys(otherParameters).length > 0
-      ? [
-          {
-            rel: 'prev',
-            uri: `${collectionPath}?${new URLSearchParams({
-              ...otherParameters
-            }).toString()}`
-          }
-        ]
-      : [
-          {
-            rel: 'prev',
-            uri: collectionPath
-          }
-        ]
-  } else if (pageInt > 1) {
-    return [
-      {
-        rel: 'prev',
-        uri: `${collectionPath}?${new URLSearchParams({
-          page: pageInt - 1,
-          ...otherParameters
-        }).toString()}`
-      }
-    ]
-  } else {
-    return []
+  if (resource.linkTemplates) {
+    const linkTemplates = covertResourceLinks(resource.linkTemplates)
+    response.header('link-template', linkTemplates.toString())
   }
-}
-
-/**
- * @param hasMore
- * @param pageInt
- * @param collectionPath
- * @param otherParameters
- */
-function buildNextLink (hasMore, pageInt, collectionPath, otherParameters) {
-  return hasMore
-    ? [
-        {
-          rel: 'next',
-          uri: `${collectionPath}?${new URLSearchParams({
-            page: pageInt + 1,
-            ...otherParameters
-          }).toString()}`
-        }
-      ]
-    : []
-}
-
-/**
- * @param array
- * @param arrayPointer
- * @param itemType
- * @param collectionPath
- * @param selfUri
- */
-function builtItemLinks (array, arrayPointer, itemType, selfUri) {
-  const itemLinks = []
-  const canonicalLinks = []
-  if (array.length === 1) {
-    itemLinks.push({
-      rel: 'item',
-      uri: `${selfUri}#${arrayPointer || ''}/0`
-    })
-    if (itemType) {
-      canonicalLinks.push({
-        rel: 'canonical',
-        uri: itemType.path(array[0]),
-        anchor: `#${arrayPointer || ''}/0`
-      })
-    }
-  } else if (array.length > 0) {
-    itemLinks.push({
-      rel: 'item',
-      uri: `${selfUri}#${arrayPointer || ''}/{[0..${array.length - 1}]}`
-    })
-    if (itemType) {
-      let pathTemplate = itemType.pathTemplate
-      const template = new URI.Template(itemType.pathTemplate)
-      const parameters = template.match(itemType.pathTemplate)
-      Object.keys(parameters).forEach(key => {
-        pathTemplate = pathTemplate.replace(parameters[key], `{this.${key}}`)
-      })
-      canonicalLinks.push({
-        rel: 'canonical',
-        uri: pathTemplate,
-        anchor: `#${arrayPointer || ''}/{[0..${array.length - 1}]}`
-      })
+  if (resource.status) {
+    response.status(resource.status)
+  }
+  if (resource.headers) {
+    for (const header in resource.headers) {
+      response.header(header, resource.headers[header])
     }
   }
-  return { itemLinks, canonicalLinks }
+  if (resource.body) {
+    response.json(resource.body)
+  } else {
+    response.end()
+  }
 }

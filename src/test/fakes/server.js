@@ -3,14 +3,13 @@ import { createServer } from 'http'
 import { API_PORT } from '../config'
 
 import express from 'express'
-import bodyParser from 'body-parser'
 import multer from 'multer'
 
 const upload = multer()
 
 export const app = express()
-app.use(bodyParser.json()) // support json encoded bodies
-app.use(bodyParser.urlencoded({ extended: true })) // support url encoded bodies
+app.use(express.json()) // support json encoded bodies
+app.use(express.urlencoded({ extended: true })) // support url encoded bodies
 app.use(upload.none()) // support multi-part bodies
 
 /* istanbul ignore next: only gets executed when there are test errors (at this stage) */

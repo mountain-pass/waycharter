@@ -99,7 +99,6 @@ Feature: Collection
         And it will have a 'next' operation
         But it won't have a 'prev' operation
 
-    @wip
     Scenario: Collection with many items - fetch nth item and get unabridged
         Given a waycharter resource instance that's a collection with 16 item
         When we load the collection

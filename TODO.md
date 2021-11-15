@@ -9,6 +9,8 @@
 - [x] filter collection
 - [x] collections with additional links
 - [x] Added support for path templates with parameters that start with [A-Z0-9] 
+- [ ] POST/PUT/DELETE/PATCH
+- [ ] Output diagram showing relationships between resources
 - [ ] path prefixes
 - [ ] collections with additional links
 - [ ] look at using registered resource for item in collections (i.e. pass in the itemType when registering the collection)
@@ -17,7 +19,6 @@
 - [ ] headers for static resource
 - [ ] remove class
 - [ ] caching
-- [ ] POST/PUT/DELETE/PATCH
 - [ ] described-by links possibly using automatic json schema from TS types
 
 

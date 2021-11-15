@@ -121,6 +121,143 @@ Given(
   }
 )
 
+Given(
+  'a resource collection with an {string} item operation that updates an item',
+  async function (operationRelation) {
+    createCollectionWithItemOperation.bind(this)({
+      operationRelation
+    })
+  }
+)
+
+Given(
+  'a resource collection with an {string} item operation with an object parameter list that updates an item',
+  async function (operationRelation) {
+    createCollectionWithItemOperation.bind(this)({
+      operationRelation,
+      bodyParameters: { foo: {} },
+      links: [randomLink({ parameters: { foo: {} } })]
+    })
+  }
+)
+
+Given(
+  'a unwrapped resource collection with an {string} item operation that updates an item',
+  async function (operationRelation) {
+    createCollectionWithItemOperation.bind(this)({
+      operationRelation,
+      noWrapper: true
+    })
+  }
+)
+
+Given(
+  'a unwrapped resource collection of {int} with an {string} item operation that updates an item',
+  async function (size, operationRelation) {
+    createCollectionWithItemOperation.bind(this)({
+      operationRelation,
+      noWrapper: true,
+      size
+    })
+  }
+)
+
+Given(
+  'a resource collection with an {string} {string} item operation with a {string} header param that updates an item',
+  async function (operationRelation, method, headerParameter) {
+    createCollectionWithItemOperation.bind(this)({
+      operationRelation,
+      method,
+      headerParameters: [headerParameter]
+    })
+  }
+)
+
+Given(
+  'a resource collection of {int} with an {string} item operation that updates an item',
+  async function (size, operationRelation) {
+    createCollectionWithItemOperation.bind(this)({ operationRelation, size })
+  }
+)
+
+Then('the first item will be updated', async function () {
+  expect(this.instances[0].body.updated).to.be.true()
+})
+
+Given(
+  'a resource collection with an {string} item operation that updates an item and returns it as a body',
+  async function (operationRelation) {
+    createCollectionWithItemOperation.bind(this)({
+      operationRelation,
+      returnBody: true
+    })
+  }
+)
+
+Then('the update response will be the updated body', async function () {
+  const body = await this.result.body()
+  expect(body.updated).to.be.true()
+})
+
+Given(
+  'a resource collection with an {string} item operation that updates an item and returns a header',
+  async function (operationRelation) {
+    createCollectionWithItemOperation.bind(this)({
+      operationRelation,
+      headers: { foo: 'bar' }
+    })
+  }
+)
+
+Then('the update response have the response header', async function () {
+  expect(this.result.response.headers.get('foo')).to.equal('bar')
+})
+
+Given(
+  'a resource collection with an {string} item operation that updates an item and returns a link',
+  async function (operationRelation) {
+    createCollectionWithItemOperation.bind(this)({
+      operationRelation,
+      links: [randomLink()]
+    })
+  }
+)
+
+Then('the update response have the link( template)', async function () {
+  const link = this.result.ops.find('foo')
+  expect(link).to.not.be.undefined()
+  expect(link.accept).to.equal('application/json')
+  expect(link.parameters[0]).to.equal('some-param')
+  expect(link.parameters[1]).to.equal('some-other-param')
+})
+
+Then('the operation will receive the header {string} {string}', async function (
+  headerName,
+  headerValue
+) {
+  expect(this.instances[0].body.requestHeaders).to.not.be.undefined()
+})
+
+Given(
+  'a resource collection with an {string} item operation that updates an item and returns a link template',
+  async function (operationRelation) {
+    createCollectionWithItemOperation.bind(this)({
+      operationRelation,
+      linkTemplates: [randomLink()]
+    })
+  }
+)
+
+Given(
+  'a resource collection with an {string} item operation that throws an error',
+  async function (operationRelation) {
+    createCollectionWithItemOperation.bind(this)({
+      operationRelation,
+      throwsError: true
+    })
+  }
+)
+
 Given('a collection of {int} items with a {string} filter', async function (
   length,
   filterRelationship
@@ -191,6 +328,59 @@ Given(
   }
 )
 
+function randomLink ({ parameters = ['some-param', 'some-other-param'] } = {}) {
+  return {
+    rel: 'foo',
+    uri: randomApiPath(),
+    accept: 'application/json',
+    parameters
+  }
+}
+
+function createCollectionWithItemOperation ({
+  operationRelation,
+  size = 10,
+  headers,
+  returnBody = false,
+  links,
+  linkTemplates,
+  method = 'PUT',
+  noWrapper = false,
+  throwsError = false,
+  headerParameters = ['bar'],
+  bodyParameters = ['foo']
+}) {
+  const setProductBaselineEndpoint = this.waycharter.registerOperation({
+    path: `${randomApiPath()}/:ID`,
+    method,
+    operation: async ({ parameters, requestHeaders, ...other }) => {
+      if (throwsError) {
+        throw new Error('Grrr!')
+      }
+      const found = this.instances.find(
+        instance => instance.body.ID === Number.parseInt(parameters.ID)
+      )
+      found.body.updated = true
+      found.body.requestHeaders = requestHeaders
+      return {
+        ...(!returnBody && { status: 204 }),
+        ...(returnBody && { body: found.body }),
+        headers,
+        links,
+        linkTemplates
+      }
+    },
+    bodyParameters,
+    headerParameters
+  })
+
+  createCollection.bind(this)(size, size, {
+    noWrapper,
+    independentlyRetrievable: false,
+    itemOperations: { [operationRelation]: setProductBaselineEndpoint }
+  })
+}
+
 function createSingletonWithLink (link) {
   this.previousPath = this.currentPath
   this.currentPath = createSingleton.bind(this)({
@@ -230,7 +420,8 @@ function createCollection (
     independentlyRetrievable = true,
     filters = [],
     headers = {},
-    itemHeaders = {}
+    itemHeaders = {},
+    itemOperations = {}
   } = {}
 ) {
   this.instances = createArrayOfItems(length)
@@ -277,6 +468,7 @@ function createCollection (
       return noWrapper
         ? {
             body: items,
+            itemOperations,
             hasMore: pageSize && page < this.instances.length / pageSize - 1,
             headers
           }
@@ -286,6 +478,7 @@ function createCollection (
               count: items.length,
               page
             },
+            itemOperations,
             arrayPointer: '/items',
             hasMore: pageSize && page < this.instances.length / pageSize - 1,
             headers
@@ -376,11 +569,19 @@ When('we load the singleton', async function () {
 })
 
 When('we invoke the {string} operation', async function (relationship) {
-  console.log({ ops: this.result.ops })
-  console.log({ item: await this.result.body() })
   this.result = await this.result.invoke(relationship)
-  console.log(this.result)
 })
+
+When(
+  'we invoke the {string} operation with the header {string} {string}',
+  async function (relationship, headerName, headerValue) {
+    this.result = await this.result.invoke(relationship, undefined, {
+      headers: {
+        [headerName]: headerValue
+      }
+    })
+  }
+)
 
 When('we invoke the {string} operation with', async function (
   relationship,
