@@ -1,3 +1,9 @@
+## <small>1.0.71 (2021-11-15)</small>
+
+* Merge pull request #267 from mountain-pass/dependabot/npm_and_yarn/cucumber/cucumber-7.3.1 ([c17912a](https://github.com/mountain-pass/waycharter/commit/c17912a)), closes [#267](https://github.com/mountain-pass/waycharter/issues/267)
+
+
+
 ## <small>1.0.70 (2021-11-15)</small>
 
 * chore(deps): updating jsonpointer to 5.0.0 ([38ff21f](https://github.com/mountain-pass/waycharter/commit/38ff21f))
