@@ -1,3 +1,9 @@
+## <small>1.0.70 (2021-11-15)</small>
+
+* chore(deps): updating jsonpointer to 5.0.0 ([38ff21f](https://github.com/mountain-pass/waycharter/commit/38ff21f))
+
+
+
 ## <small>1.0.69 (2021-09-23)</small>
 
 * fix(paths): fixed defect in path template parameters starting with an uppercase or digit ([075e534](https://github.com/mountain-pass/waycharter/commit/075e534))
