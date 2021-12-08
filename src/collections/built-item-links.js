@@ -101,8 +101,10 @@ function buildLink ({ rel, uri, anchor, endpoint, array, arrayPointer }) {
     rel,
     uri,
     anchor,
-    method: endpoint.method,
-    parameters: endpoint.parameters || endpoint.bodyParameters,
+    ...(endpoint.method && { method: endpoint.method }),
+    ...((endpoint.parameters || endpoint.bodyParameters) && {
+      parameters: endpoint.parameters || endpoint.bodyParameters
+    }),
     ...(methodCanHaveBody(endpoint.method) && {
       accept: [
         'application/x-www-form-urlencoded',
