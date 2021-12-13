@@ -493,6 +493,7 @@ function createCollection (
       }))
     })
   })
+  return this.currentType
 }
 
 Given(
@@ -552,7 +553,7 @@ When('we load the latter singleton', loadCurrent)
 
 When('we load the collection', loadCurrent)
 
-When('we load page {int} of the collection', async function (page) {
+When('we load page {string} of the collection', async function (page) {
   await loadCurrent.bind(this)()
   this.result = await this.waychaser.load(
     new URL(

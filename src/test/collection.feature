@@ -167,6 +167,8 @@ Feature: Collection
         And it will have a 'first' operation
         But it won't have a 'prev' operation
 
+
+
     Scenario: Static Collection with headers
         Given a waycharter resource instance that's a static collection with 16 items and the following headers
             | x-testing | foobar |
@@ -244,7 +246,7 @@ Feature: Collection
 
     Scenario: Collection - redirect to first page
         Given a waycharter resource instance that's a collection with 100 items and a page size of 16
-        When we load page 0 of the collection
+        When we load page "0" of the collection
         Then we will be redirected to the collection without a page number
         And the first 16 item summaries of the collection will be returned
         And it will have a 'next' operation
@@ -252,10 +254,18 @@ Feature: Collection
         But it won't have a 'prev' operation
 
 
-    Scenario: Collection - redirect to first page
+    Scenario: Collection - negative page #
         Given a waycharter resource instance that's a collection with 100 items and a page size of 16
-        When we load page -1 of the collection
+        When we load page "-1" of the collection
         Then a 400 bad request will be returned
+
+    @wip
+    Scenario: Collection - dodgy page #
+        Given a waycharter resource instance that's a collection with 100 items and a page size of 16
+        When we load page "invalid" of the collection
+        Then a 400 bad request will be returned
+
+
 
     Scenario: Collection - filter operation
         Given a collection of 10 items with a 'https://waychaser.io/rel/search' filter
@@ -400,3 +410,4 @@ Feature: Collection
         And we invoke the 'https://waychaser.io/rel/search' operation with
             | query | alpha |
         Then a collection with 5 items will be returned
+

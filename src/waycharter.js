@@ -39,7 +39,9 @@ export class WayCharter {
         const resource = await loader(
           { ...request.params, ...request.query },
           filteredHeaders,
-          request.url
+          request.url,
+          request,
+          response
         )
 
         if (loaderVaries) {
@@ -139,6 +141,7 @@ export class WayCharter {
   }
 
   registerCollection ({
+    itemEndpoint,
     itemPath,
     itemLoader,
     collectionPath,
@@ -146,6 +149,7 @@ export class WayCharter {
     filters = []
   }) {
     // TODO: error handling for itemPath set, but itemLoader isn't and visa-versa
+    // TODO: error handling if itemEndpoint is set, and itemPath or itemLoader is set
     // TODO: error handling for collectionPath not set
     // TODO: error handling for collectionLoader not set
     const itemType =
@@ -154,7 +158,7 @@ export class WayCharter {
             path: `${collectionPath}${itemPath}`,
             loader: itemLoader
           })
-        : undefined
+        : itemEndpoint
 
     const linkTemplates = []
     for (const filter of filters) {
@@ -168,7 +172,9 @@ export class WayCharter {
       loader: async (
         { page, ...otherParameters },
         filteredHeaders,
-        selfUri
+        selfUri,
+        request,
+        response
       ) => {
         // ${collectionPath}?page=0 should redirect to ${collectionPath}
         if (page === '0') {
@@ -179,16 +185,32 @@ export class WayCharter {
             }
           }
         }
-        // TODO: page is not a number
 
         // page should be >= 0
         const pageInt = Number.parseInt(page || '0')
-        if (page < 0) {
+
+        if (Number.isNaN(pageInt)) {
           return {
-            status: 400
+            status: 400,
+            body: {
+              error: "I don't understand what page you are trying to retrieve",
+              page
+            }
           }
         }
-        const filteredParameters = {}
+        if (page < 0) {
+          return {
+            status: 400,
+            body: {
+              error:
+                "You've asked for a negative page. I don't know what that means",
+              page
+            }
+          }
+        }
+        // we only want to include query params that are part of the filter,
+        // but we can include all path params
+        const filteredParameters = { ...request.params }
         for (const filter of filters) {
           for (const parameter of filter.parameters) {
             if (otherParameters[parameter] !== undefined) {
@@ -202,11 +224,18 @@ export class WayCharter {
           arrayPointer,
           hasMore,
           headers,
-          itemOperations
-        } = await collectionLoader({
-          page: pageInt,
-          ...filteredParameters
-        })
+          itemOperations,
+          status
+        } = await collectionLoader(
+          {
+            page: pageInt,
+            ...filteredParameters
+          },
+          filteredHeaders,
+          selfUri,
+          request,
+          response
+        )
         const array = arrayPointer ? pointer.get(body, arrayPointer) : body
         const { itemLinks, canonicalLinks } = builtItemLinks(
           array,
@@ -225,7 +254,8 @@ export class WayCharter {
             ...buildFirstLink(hasMore, pageInt, collectionPath, otherParameters)
           ],
           linkTemplates,
-          headers
+          headers,
+          status
         }
       }
     })

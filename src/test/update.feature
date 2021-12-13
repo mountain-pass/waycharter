@@ -13,7 +13,6 @@ Feature: Update
         And we invoke the 'update' operation
         Then the first item will be updated
 
-    @wip
     Scenario: Updatable Resource
         And a resource collection with an "update" item operation with an object parameter list that updates an item
         When we load the collection
