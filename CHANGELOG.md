@@ -1,3 +1,9 @@
+## <small>1.0.75 (2021-12-13)</small>
+
+* feat(collections): item endpoints can now be used when registering collections ([15fa46d](https://github.com/mountain-pass/waycharter/commit/15fa46d))
+
+
+
 ## <small>1.0.74 (2021-11-17)</small>
 
 * Merge pull request #357 from mountain-pass/dependabot/npm_and_yarn/snyk-1.763.0 ([ea63657](https://github.com/mountain-pass/waycharter/commit/ea63657)), closes [#357](https://github.com/mountain-pass/waycharter/issues/357)
