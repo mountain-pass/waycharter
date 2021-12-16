@@ -89,6 +89,18 @@ Feature: Collection
         And it will have a 'next' operation
         But it won't have a 'prev' operation
 
+    @wip
+    Scenario: Templated collection with many many items - next page then first page
+        Given a waycharter resource instance that's a collection templated with the parameter "collectionName" with 100 items and a page size of 16
+        When we load the collection with "collectionName" of "test"
+        And we invoke the 'next' operation
+        And we invoke the 'first' operation
+        Then the first 16 item summaries of the collection will be returned
+        And it will have a 'first' operation
+        And it will have a 'next' operation
+        But it won't have a 'prev' operation
+
+
     Scenario: Collection with many many items - next page then prev page
         Given a waycharter resource instance that's a collection with 1000 items and a page size of 16
         When we load the collection
@@ -259,7 +271,6 @@ Feature: Collection
         When we load page "-1" of the collection
         Then a 400 bad request will be returned
 
-    @wip
     Scenario: Collection - dodgy page #
         Given a waycharter resource instance that's a collection with 100 items and a page size of 16
         When we load page "invalid" of the collection

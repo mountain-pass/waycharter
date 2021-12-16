@@ -8,13 +8,8 @@ import { buildPreviousLink } from './collections/build-previous-link'
 import { buildNextLink } from './collections/build-next-link'
 import { builtItemLinks } from './collections/built-item-links'
 import { methodIsCacheable } from './method-is-cacheable'
+import { routerToRfc6570 } from './util/router-to-rfc6570'
 
-/**
- * @param url
- */
-function routerToRfc6570 (url) {
-  return url.replace(/:(\w*)/g, '{+$1}')
-}
 export class WayCharter {
   constructor () {
     this.router = Router()
@@ -152,6 +147,9 @@ export class WayCharter {
     // TODO: error handling if itemEndpoint is set, and itemPath or itemLoader is set
     // TODO: error handling for collectionPath not set
     // TODO: error handling for collectionLoader not set
+
+    // we need to handle collectionPath being parameterised
+
     const itemType =
       itemPath !== undefined && itemLoader !== undefined
         ? this.registerResourceType({
@@ -167,6 +165,7 @@ export class WayCharter {
         uri: `${collectionPath}{?${filter.parameters.join(',')}}`
       })
     }
+    const uriTemplate = routerToRfc6570(collectionPath)
     const type = this.registerResourceType({
       path: collectionPath,
       loader: async (
@@ -176,12 +175,13 @@ export class WayCharter {
         request,
         response
       ) => {
+        const expandedCollectionPath = URI.expand(uriTemplate, request.params)
         // ${collectionPath}?page=0 should redirect to ${collectionPath}
         if (page === '0') {
           return {
             status: 308,
             headers: {
-              location: collectionPath
+              location: expandedCollectionPath
             }
           }
         }
@@ -210,11 +210,11 @@ export class WayCharter {
         }
         // we only want to include query params that are part of the filter,
         // but we can include all path params
-        const filteredParameters = { ...request.params }
+        const filteredParameters = {}
         for (const filter of filters) {
           for (const parameter of filter.parameters) {
-            if (otherParameters[parameter] !== undefined) {
-              filteredParameters[parameter] = otherParameters[parameter]
+            if (request.query[parameter] !== undefined) {
+              filteredParameters[parameter] = request.query[parameter]
             }
           }
         }
@@ -229,7 +229,8 @@ export class WayCharter {
         } = await collectionLoader(
           {
             page: pageInt,
-            ...filteredParameters
+            ...filteredParameters,
+            ...request.params
           },
           filteredHeaders,
           selfUri,
@@ -249,9 +250,23 @@ export class WayCharter {
           links: [
             ...itemLinks,
             ...canonicalLinks,
-            ...buildNextLink(hasMore, pageInt, collectionPath, otherParameters),
-            ...buildPreviousLink(pageInt, collectionPath, otherParameters),
-            ...buildFirstLink(hasMore, pageInt, collectionPath, otherParameters)
+            ...buildNextLink(
+              hasMore,
+              pageInt,
+              expandedCollectionPath,
+              filteredParameters
+            ),
+            ...buildPreviousLink(
+              pageInt,
+              expandedCollectionPath,
+              filteredParameters
+            ),
+            ...buildFirstLink(
+              hasMore,
+              pageInt,
+              expandedCollectionPath,
+              filteredParameters
+            )
           ],
           linkTemplates,
           headers,

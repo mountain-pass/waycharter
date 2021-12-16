@@ -1,6 +1,8 @@
 import { expect } from 'chai'
 import { Given, When, Then } from '@cucumber/cucumber'
 import { randomApiPath } from './random-api-path'
+import { URI } from 'uri-template-lite'
+import { routerToRfc6570 } from '../util/router-to-rfc6570'
 
 function createSingleton ({ path, links, body }) {
   this.singleton = {
@@ -421,12 +423,16 @@ function createCollection (
     filters = [],
     headers = {},
     itemHeaders = {},
-    itemOperations = {}
+    itemOperations = {},
+    parameter
   } = {}
 ) {
   this.instances = createArrayOfItems(length)
 
   this.currentPath = randomApiPath()
+  if (parameter) {
+    this.currentPath += `/:${parameter}`
+  }
 
   this.currentType = this.waycharter.registerCollection({
     ...(independentlyRetrievable && {
@@ -502,6 +508,13 @@ Given(
 )
 
 Given(
+  "a waycharter resource instance that's a collection templated with the parameter {string} with {int} items and a page size of {int}",
+  async function (parameter, count, pageSize) {
+    createCollection.bind(this)(count, pageSize, { parameter })
+  }
+)
+
+Given(
   "a waycharter resource instance that's a collection with {int} item(s) without any wrapper",
   async function (count) {
     createCollection.bind(this)(count, undefined, { noWrapper: true })
@@ -543,8 +556,11 @@ function createArrayOfItems (length) {
   }))
 }
 
-async function loadCurrent () {
-  this.result = await load.bind(this)(this.currentPath, this.baseUrl)
+async function loadCurrent ({ parameters } = {}) {
+  this.result = await load.bind(this)(
+    URI.expand(routerToRfc6570(this.currentPath), parameters),
+    this.baseUrl
+  )
 }
 
 When('we load that resource instance', loadCurrent)
@@ -552,6 +568,13 @@ When('we load that resource instance', loadCurrent)
 When('we load the latter singleton', loadCurrent)
 
 When('we load the collection', loadCurrent)
+
+When('we load the collection with {string} of {string}', async function (
+  parameter,
+  value
+) {
+  await loadCurrent.bind(this)({ parameters: { [parameter]: value } })
+})
 
 When('we load page {string} of the collection', async function (page) {
   await loadCurrent.bind(this)()
