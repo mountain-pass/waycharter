@@ -1,3 +1,9 @@
+## <small>1.0.76 (2021-12-16)</small>
+
+* fix(collections): fixed first, next, prev links for templated collections ([3ed681a](https://github.com/mountain-pass/waycharter/commit/3ed681a))
+
+
+
 ## <small>1.0.75 (2021-12-13)</small>
 
 * feat(collections): item endpoints can now be used when registering collections ([15fa46d](https://github.com/mountain-pass/waycharter/commit/15fa46d))
