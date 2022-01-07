@@ -20,7 +20,7 @@ Feature: Create Resource
 
     Scenario: Create Non-Singleton
         Given a resource instance that's a singleton waycharter resource type
-        And a waycharter resource type accessed by 'id'
+        And a waycharter endpoint type accessed by 'id'
         And an instance of that type with the 'id' 'alpha'
         And the singleton has a 'related' link to that instance
         When we load the singleton
@@ -29,7 +29,7 @@ Feature: Create Resource
 
     Scenario: Create Non-Singleton - self
         Given a resource instance that's a singleton waycharter resource type
-        And a waycharter resource type accessed by 'id'
+        And a waycharter endpoint type accessed by 'id'
         And an instance of that type with the 'id' 'alpha'
         And the singleton has a 'related' link to that instance
         When we load the singleton

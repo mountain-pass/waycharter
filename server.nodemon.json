@@ -5,5 +5,5 @@
     "src/util/logger.js",
     "src/test/config.js"
   ],
-  "ext": "*.js"
+  "ext": "*.js, *.ts"
 }

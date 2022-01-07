@@ -52,12 +52,6 @@ updates:
           - 7.21.0
           - 7.22.0
           - 7.23.0
-      - dependency-name: "@babel/register"
-        versions:
-          - 7.13.14
-      - dependency-name: "@babel/cli"
-        versions:
-          - 7.13.14
       - dependency-name: "@mountainpass/waychaser"
         versions:
           - 3.0.29

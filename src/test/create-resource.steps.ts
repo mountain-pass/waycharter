@@ -1,15 +1,19 @@
+/* eslint-disable no-unused-expressions */
 import { expect } from 'chai'
 import { Given, When, Then } from '@cucumber/cucumber'
 import { randomApiPath } from './random-api-path'
 import { URI } from 'uri-template-lite'
 import { routerToRfc6570 } from '../util/router-to-rfc6570'
+import { EndPoint } from '../waycharter'
+import { ProblemDocument } from 'http-problem-details'
 
-function createSingleton ({ path, links, body }) {
+function createSingleton({ path, links, body }) {
   this.singleton = {
     body: body || { foo: 'bar' },
     links: links || []
   }
-  this.waycharter.registerStaticResource({
+  EndPoint.createStatic({
+    router: this.router,
     path,
     body: this.singleton.body,
     links: this.singleton.links
@@ -17,9 +21,9 @@ function createSingleton ({ path, links, body }) {
   return path
 }
 
-async function load (path, base) {
-  const result = await this.waychaser.load(new URL(path, base))
-  expect(result.response.ok).to.be.true()
+async function load(path, base) {
+  const result = await this.waychaser(new URL(path, base))
+  expect(result.response.ok).to.be.true
   return result
 }
 
@@ -52,14 +56,14 @@ Given(
 Given(
   "a singleton that has a link to that collection's {string} filter",
   async function (relationship) {
-    const link = this.currentType.additionalPaths.find(
+    const link = this.currentType.links.find(
       path => path.rel === relationship
     )
     createSingletonWithLink.bind(this)(link)
   }
 )
 
-Given('a waycharter resource type accessed by {string}', async function (
+Given('a waycharter endpoint type accessed by {string}', async function (
   indexParameter
 ) {
   this.previousPath = this.currentPath
@@ -67,23 +71,25 @@ Given('a waycharter resource type accessed by {string}', async function (
   this.instances = {}
   const path = this.currentPath
   this.currentTemplatePath = `${this.currentPath}/:${indexParameter}`
-  this.currentType = this.waycharter.registerResourceType({
+  this.currentType = EndPoint.create({
+    router: this.router,
     path: `${this.currentPath}/:${indexParameter}`,
-    loader: async parameters => {
-      console.log({ parameters })
-      console.log({ instances: this.instances })
-      console.log({
-        found: parameters[indexParameter] in this.instances
-      })
-      return parameters[indexParameter] in this.instances
-        ? this.instances[parameters[indexParameter]]
-        : {
-            status: 404,
-            body: {
-              error: 'Not Found',
-              path: `${path}/${parameters[indexParameter]}`
-            }
-          }
+    handler: async ({ pathParameters, response }) => {
+      if (pathParameters[indexParameter] in this.instances) {
+        response.chart(this.instances[pathParameters[indexParameter]])
+      }
+      else {
+        response.chartError({
+          status: 404,
+          body: new ProblemDocument({
+            type: 'https://waycharter.io/not-found',
+            title: 'Not Found',
+            detail: `no resource found at ${path}/${pathParameters[indexParameter]}`
+          },
+            { path: `${path}/${pathParameters[indexParameter]}` }
+          )
+        })
+      }
     }
   })
 })
@@ -103,21 +109,21 @@ Given('an instance of that type with the {string} {string}', async function (
 })
 
 Given(
-  "a waycharter resource instance that's an empty collection",
+  "a waycharter endpoint that's an empty collection",
   async function () {
     createCollection.bind(this)(0)
   }
 )
 
 Given(
-  "a waycharter resource instance that's an empty static collection",
+  "a waycharter endpoint that's an empty static collection",
   async function () {
     createStaticCollection.bind(this)(0)
   }
 )
 
 Given(
-  "a waycharter resource instance that's a collection with {int} item(s)",
+  "a waycharter endpoint that's a collection with {int} item(s)",
   async function (length) {
     createCollection.bind(this)(length)
   }
@@ -183,7 +189,7 @@ Given(
 )
 
 Then('the first item will be updated', async function () {
-  expect(this.instances[0].body.updated).to.be.true()
+  expect(this.instances[0].body.updated).to.be.true
 })
 
 Given(
@@ -197,8 +203,8 @@ Given(
 )
 
 Then('the update response will be the updated body', async function () {
-  const body = await this.result.body()
-  expect(body.updated).to.be.true()
+  const body = this.result.content
+  expect(body.updated).to.be.true
 })
 
 Given(
@@ -227,7 +233,7 @@ Given(
 
 Then('the update response have the link( template)', async function () {
   const link = this.result.ops.find('foo')
-  expect(link).to.not.be.undefined()
+  expect(link).to.not.be.undefined
   expect(link.accept).to.equal('application/json')
   expect(link.parameters[0]).to.equal('some-param')
   expect(link.parameters[1]).to.equal('some-other-param')
@@ -237,7 +243,7 @@ Then('the operation will receive the header {string} {string}', async function (
   headerName,
   headerValue
 ) {
-  expect(this.instances[0].body.requestHeaders).to.not.be.undefined()
+  expect(this.instances[0].body.requestHeaders).to.not.be.undefined
 })
 
 Given(
@@ -290,7 +296,6 @@ Given('a collection of {int} items and following item headers', async function (
 Given(
   'a collection of {int} items with a {string} filter with the following parameters',
   async function (length, filterRelationship, dataTable) {
-    console.log(dataTable.hashes())
     createCollection.bind(this)(length, undefined, {
       filters: [{ rel: filterRelationship, parameters: dataTable.hashes() }]
     })
@@ -300,7 +305,6 @@ Given(
 Given(
   'a collection of {int} items with a page size of {int} and with a {string} filter with the following parameters',
   async function (length, pageSize, filterRelationship, dataTable) {
-    console.log(dataTable.hashes())
     createCollection.bind(this)(length, pageSize, {
       filters: [{ rel: filterRelationship, parameters: dataTable.hashes() }]
     })
@@ -308,29 +312,29 @@ Given(
 )
 
 Given(
-  "a waycharter resource instance that's a static collection with {int} item(s)",
+  "a waycharter endpoint that's a static collection with {int} item(s)",
   async function (length) {
     createStaticCollection.bind(this)(length)
   }
 )
 
 Given(
-  "a waycharter resource instance that's a static collection with {int} items and the following headers",
+  "a waycharter endpoint that's a static collection with {int} items and the following headers",
   async function (length, headers) {
-    createStaticCollection.bind(this)(length, undefined, {
+    createStaticCollection.bind(this)(length, {
       headers: headers.rowsHash()
     })
   }
 )
 
 Given(
-  "a waycharter resource instance that's a static collection with {int} items with a wrapper",
+  "a waycharter endpoint that's a static collection with {int} items with a wrapper",
   async function (length) {
-    createStaticCollection.bind(this)(length, undefined, { wrapper: true })
+    createStaticCollection.bind(this)(length, { wrapper: true })
   }
 )
 
-function randomLink ({ parameters = ['some-param', 'some-other-param'] } = {}) {
+function randomLink({ parameters = ['some-param', 'some-other-param'] }: { parameters?: string[] | Record<string, {}> } = {}) {
   return {
     rel: 'foo',
     uri: randomApiPath(),
@@ -339,7 +343,7 @@ function randomLink ({ parameters = ['some-param', 'some-other-param'] } = {}) {
   }
 }
 
-function createCollectionWithItemOperation ({
+function createCollectionWithItemOperation({
   operationRelation,
   size = 10,
   headers,
@@ -353,7 +357,7 @@ function createCollectionWithItemOperation ({
   bodyParameters = ['foo']
 }) {
   const setProductBaselineEndpoint = this.waycharter.registerOperation({
-    path: `${randomApiPath()}/:ID`,
+    path: `${randomApiPath()} /: ID`,
     method,
     operation: async ({ parameters, requestHeaders, ...other }) => {
       if (throwsError) {
@@ -383,7 +387,7 @@ function createCollectionWithItemOperation ({
   })
 }
 
-function createSingletonWithLink (link) {
+function createSingletonWithLink(link) {
   this.previousPath = this.currentPath
   this.currentPath = createSingleton.bind(this)({
     path: randomApiPath(),
@@ -391,30 +395,41 @@ function createSingletonWithLink (link) {
   })
 }
 
-function summariseItem (item) {
+function summariseItem(item) {
   const { ID, title } = item
   return { ID, title }
 }
 
-function createStaticCollection (
+function createStaticCollection(
   length,
-  pageSize,
   { wrapper = false, headers = {} } = {}
 ) {
   this.instances = createArrayOfItems(length)
 
   this.currentPath = randomApiPath()
   const items = this.instances.map(item => item.body)
-  this.currentType = this.waycharter.registerStaticCollection({
-    collectionPath: this.currentPath,
-    collection: wrapper ? { items: items } : items,
+  this.currentType = EndPoint.createStaticCollection({
+    router: this.router,
+    path: this.currentPath,
+    body: wrapper ? { items: items } : items,
     arrayPointer: wrapper ? '/items' : undefined,
     headers,
-    pageSize
   })
 }
 
-function createCollection (
+
+type Item = {
+  ID: number, title: string, other: string
+}
+
+function createArrayOfItems(length): { body: Item }[] {
+  return [...Array.from({ length }).keys()].map(index => ({
+    body: { ID: index, title: 'foo', other: 'bar' }
+  }))
+}
+
+
+function createCollection(
   length,
   pageSize,
   {
@@ -424,7 +439,8 @@ function createCollection (
     headers = {},
     itemHeaders = {},
     itemOperations = {},
-    parameter
+    // eslint-disable-next-line unicorn/no-useless-undefined
+    parameter = undefined
   } = {}
 ) {
   this.instances = createArrayOfItems(length)
@@ -433,32 +449,41 @@ function createCollection (
   if (parameter) {
     this.currentPath += `/:${parameter}`
   }
-
-  this.currentType = this.waycharter.registerCollection({
-    ...(independentlyRetrievable && {
-      itemPath: '/:ID',
-      itemLoader: async parameters => {
-        return {
-          body: this.instances[parameters.ID].body,
+  const itemEndpoint = independentlyRetrievable && EndPoint.create<Item, never>({
+    router: this.router, path: this.currentPath + '/:ID',
+    handler: ({ pathParameters, response }) => {
+      if (typeof pathParameters.ID === 'string') {
+        const id = Number.parseInt(pathParameters.ID)
+        response.chart({
+          body: this.instances[id].body,
           headers: itemHeaders
-        }
+        })
       }
-    }),
-    collectionPath: this.currentPath,
-    collectionLoader: async ({ page, ...otherParameters }) => {
+      else {
+        response.chartError({ status: 400, body: new ProblemDocument({ title: "Bad request", detail: "ID is not a string" }) })
+      }
+    }
+  })
+
+  this.currentType = EndPoint.createCollection({
+    router: this.router,
+    itemEndpoint,
+    path: this.currentPath,
+    handler: async ({ page, queryParameters, response }) => {
+      console.log({ queryParameters })
       let instances = this.instances
       for (const filter of filters) {
         if (filter.parameters) {
           for (const parameter of filter.parameters) {
             console.log(
               `looking for ${parameter.parameter} of ${parameter.value} in`,
-              otherParameters
+              queryParameters
             )
             console.log({
               'otherParameters[parameter.parameter] === parameter.value':
-                otherParameters[parameter.parameter] === parameter.value
+                queryParameters[parameter.parameter] === parameter.value
             })
-            if (otherParameters[parameter.parameter] === parameter.value) {
+            if (queryParameters[parameter.parameter] === parameter.value) {
               instances = instances.slice(parameter.itemsRemoved)
             }
           }
@@ -471,30 +496,30 @@ function createCollection (
         .map(item => item.body)
         .map(item => (independentlyRetrievable ? summariseItem(item) : item))
 
-      return noWrapper
+      response.chartCollection(noWrapper
         ? {
-            body: items,
-            itemOperations,
-            hasMore: pageSize && page < this.instances.length / pageSize - 1,
-            headers
-          }
+          body: items,
+          // itemOperations,
+          hasMore: pageSize && page < this.instances.length / pageSize - 1,
+          headers
+        }
         : {
-            body: {
-              items,
-              count: items.length,
-              page
-            },
-            itemOperations,
-            arrayPointer: '/items',
-            hasMore: pageSize && page < this.instances.length / pageSize - 1,
-            headers
-          }
+          body: {
+            items,
+            count: items.length,
+            page
+          },
+          // itemOperations,
+          arrayPointer: '/items',
+          hasMore: pageSize && page < this.instances.length / pageSize - 1,
+          headers
+        })
     },
     ...(filters && {
       filters: filters.map(filter => ({
         rel: filter.rel,
         parameters: [
-          ...new Set(filter.parameters?.map(parameter => parameter.parameter))
+          ...new Set<string>(filter.parameters?.map(parameter => parameter.parameter))
         ]
       }))
     })
@@ -503,44 +528,39 @@ function createCollection (
 }
 
 Given(
-  "a waycharter resource instance that's a collection with {int} items and a page size of {int}",
-  createCollection
+  "a waycharter endpoint that's a collection with {int} items and a page size of {int}",
+  async function (count, pageSize) {
+    createCollection.bind(this)(count, pageSize)
+  }
 )
 
 Given(
-  "a waycharter resource instance that's a collection templated with the parameter {string} with {int} items and a page size of {int}",
+  "a waycharter endpoint that's a collection templated with the parameter {string} with {int} items and a page size of {int}",
   async function (parameter, count, pageSize) {
     createCollection.bind(this)(count, pageSize, { parameter })
   }
 )
 
 Given(
-  "a waycharter resource instance that's a collection with {int} item(s) without any wrapper",
+  "a waycharter endpoint that's a collection with {int} item(s) without any wrapper",
   async function (count) {
     createCollection.bind(this)(count, undefined, { noWrapper: true })
   }
 )
 
 Given(
-  "a waycharter resource instance that's a collection with {int} items without any wrapper and a page size of {int}",
+  "a waycharter endpoint that's a collection with {int} items without any wrapper and a page size of {int}",
   async function (count, pageSize) {
     createCollection.bind(this)(count, pageSize, { noWrapper: true })
   }
 )
 
 Given(
-  "a waycharter resource instance that's a collection with {int} items that aren't independently retrievable",
+  "a waycharter endpoint that's a collection with {int} items that aren't independently retrievable",
   async function (count) {
     createCollection.bind(this)(count, undefined, {
       independentlyRetrievable: false
     })
-  }
-)
-
-Given(
-  "a waycharter resource instance that's a static collection with {int} items and a page size of {int}",
-  async function (count, pageSize) {
-    createStaticCollection.bind(this)(count, pageSize)
   }
 )
 
@@ -550,24 +570,27 @@ Given('the singleton has a {string} link to that instance', async function (
   this.singleton.links.push({ rel: relationship, uri: this.currentPath })
 })
 
-function createArrayOfItems (length) {
-  return [...Array.from({ length }).keys()].map(index => ({
-    body: { ID: index, title: 'foo', other: 'bar' }
-  }))
-}
 
-async function loadCurrent ({ parameters } = {}) {
+// eslint-disable-next-line unicorn/no-useless-undefined
+async function loadCurrent({ parameters = undefined } = {}) {
+  const expandedUrl = URI.expand(routerToRfc6570(this.currentPath), parameters)
   this.result = await load.bind(this)(
-    URI.expand(routerToRfc6570(this.currentPath), parameters),
+    expandedUrl,
     this.baseUrl
   )
 }
 
-When('we load that resource instance', loadCurrent)
+When('we load that resource instance', async function () {
+  await loadCurrent.bind(this)()
+})
 
-When('we load the latter singleton', loadCurrent)
+When('we load the latter singleton', async function () {
+  await loadCurrent.bind(this)()
+})
 
-When('we load the collection', loadCurrent)
+When('we load the collection', async function () {
+  await loadCurrent.bind(this)()
+})
 
 When('we load the collection with {string} of {string}', async function (
   parameter,
@@ -578,18 +601,16 @@ When('we load the collection with {string} of {string}', async function (
 
 When('we load page {string} of the collection', async function (page) {
   await loadCurrent.bind(this)()
-  this.result = await this.waychaser.load(
+  this.result = await this.waychaser(
     new URL(
-      this.result.ops.find('next').uri.replace('=1', `=${page}`),
-      this.result.ops.find('next').baseUrl
+      this.result.ops.find('next').uri.replace('=1', `=${page} `),
+      this.baseUrl
     )
   )
-  console.log(this.result)
 })
 
 When('we load the singleton', async function () {
   this.result = await load.bind(this)(this.previousPath, this.baseUrl)
-  console.log(this.result)
 })
 
 When('we invoke the {string} operation', async function (relationship) {
@@ -611,9 +632,9 @@ When('we invoke the {string} operation with', async function (
   relationship,
   dataTable
 ) {
-  console.log({ ops: this.result.ops })
-  this.result = await this.result.invoke(relationship, dataTable.rowsHash())
-  console.log({ ops: this.result.ops })
+  const op = this.result.ops.find(relationship);
+  console.log({ query: dataTable.rowsHash() })
+  this.result = await op.invoke({ parameters: dataTable.rowsHash() })
 })
 
 When(
@@ -629,7 +650,7 @@ When(
   }
 )
 
-async function getNthItem (relationship, nth) {
+async function getNthItem(relationship, nth) {
   // in waychaser, we should provide a convenience function
   // so we can get "nested" resources as follows
   // this.result.nested(relationship)[nth - 1].invoke()
@@ -661,14 +682,13 @@ When(
 
 Then('it will have a {string} operation', async function (relationship) {
   // eslint-disable-next-line unicorn/no-array-callback-reference
-  console.log({ related: this.result.ops.find(relationship) })
   // eslint-disable-next-line unicorn/no-array-callback-reference
-  expect(this.result.ops.find(relationship)).to.not.be.undefined()
+  expect(this.result.ops.find(relationship)).to.not.be.undefined
 })
 
 Then("it won't have a {string} operation", async function (relationship) {
   // eslint-disable-next-line unicorn/no-array-callback-reference
-  expect(this.result.ops.find(relationship)).to.be.undefined()
+  expect(this.result.ops.find(relationship)).to.be.undefined
 })
 
 Then(
@@ -683,7 +703,7 @@ Then(
   'the {string} operation will return the previous singleton',
   async function (relationship) {
     const related = await this.result.invoke(relationship)
-    expect(related.response.ok).to.be.true()
+    expect(related.response.ok).to.be.true
     expect(related.response.url).to.equal(
       new URL(this.previousPath, this.baseUrl).toString()
     )
@@ -694,35 +714,28 @@ Then(
   'the {string} operation will return the instance with the {string} {string}',
   async function (relationship, indexParameter, indexParameterValue) {
     // eslint-disable-next-line unicorn/no-array-callback-reference
-    const operation = this.result.ops.find(relationship)
-    console.log({ operation })
     const related = await this.result.invoke(relationship)
     // const bodyAsTest = await related.response.text()
     expect(related.response.url).to.equal(
       new URL(this.currentPath, this.baseUrl).toString()
     )
-    console.log({ response: related.response })
-    console.log({ body: await related.body() })
-    expect(related.response.ok).to.be.true()
-    expect(await related.body()).to.deep.equal({
+    expect(related.response.ok).to.be.true
+    expect(related.content).to.deep.equal({
       [indexParameter]: indexParameterValue
     })
   }
 )
 
 Then('an empty collection will be returned', async function () {
-  expect(this.result.ops.find('item')).to.be.undefined()
+  expect(this.result.ops.find('item')).to.be.undefined
 })
 
 Then('the response will include the following header(s)', async function (
   dataTable
 ) {
   const headers = dataTable.rowsHash()
-  console.log({ headers })
-  console.log({ actualHeaders: this.result.response.headers })
 
   for (const name in headers) {
-    console.log({ name })
     expect(this.result.response.headers.get(name)).to.equal(headers[name])
   }
 })
@@ -730,6 +743,8 @@ Then('the response will include the following header(s)', async function (
 Then('a(n) collection with {int} item(s) will be returned', async function (
   length
 ) {
+  console.log(this.result.content)
+  console.log(this.result.ops)
   const items = await Promise.all(
     this.result.ops.filter('item').map(op => op.invoke())
   )
@@ -795,34 +810,34 @@ Then(
 )
 
 Then('that item summary will be returned', async function () {
-  expect(await this.result.body()).to.deep.equal(
+  expect(this.result.content).to.deep.equal(
     summariseItem(this.instances[0].body)
   )
 })
 
 Then('that unabridged item will be returned', async function () {
-  expect(await this.result.body()).to.deep.equal(this.instances[0].body)
+  expect(this.result.content).to.deep.equal(this.instances[0].body)
 })
 
 Then('the {int}(th) item summary will be returned', async function (nth) {
-  expect(await this.result.body()).to.deep.equal(
+  expect(this.result.content).to.deep.equal(
     summariseItem(this.instances[nth - 1].body)
   )
 })
 
 Then('the {int}(th) unabridged item will be returned', async function (nth) {
-  expect(await this.result.body()).to.deep.equal(this.instances[nth - 1].body)
+  expect(this.result.content).to.deep.equal(this.instances[nth - 1].body)
 })
 
-async function getItems () {
+async function getItems() {
   const resources = await Promise.all(
     this.result.ops.filter('item').map(op => op.invoke())
   )
-  const items = await Promise.all(resources.map(resource => resource.body()))
+  const items = resources.map(resource => resource.content)
   return items
 }
 
-async function checkItemsInCollection (
+async function checkItemsInCollection(
   start,
   count,
   { summarise = true } = {}
@@ -845,6 +860,5 @@ Then(
 )
 
 Then('a {int} bad request will be returned', async function (status) {
-  console.log(this.result)
   expect(this.result.response.status).to.equal(400)
 })

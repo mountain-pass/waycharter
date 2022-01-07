@@ -1,9 +1,9 @@
+// import {
+//   PendingError,
+//   stepDefinitionWrapper
+// } from '@windyroad/cucumber-js-throwables'
 import {
-  PendingError,
-  stepDefinitionWrapper
-} from '@windyroad/cucumber-js-throwables'
-import {
-  setDefinitionFunctionWrapper,
+  // setDefinitionFunctionWrapper,
   setWorldConstructor,
   Before,
   BeforeAll,
@@ -13,18 +13,18 @@ import {
 } from '@cucumber/cucumber'
 import chai from 'chai'
 import dirtyChai from 'dirty-chai'
-import logger from '../util/logger'
+import logger from './logger'
 import chaiAsPromised from 'chai-as-promised'
 import { WayCharter } from '../waycharter'
-import { WayChaser } from '@mountainpass/waychaser'
+import { waychaser } from '@mountainpass/waychaser'
 import { startServer, app, stopServer, getNewRouter } from './fakes/server'
 import { API_PORT } from './config'
-
+import { fetch } from "cross-fetch";
 chai.use(chaiAsPromised)
 chai.use(dirtyChai)
 
 global.expect = chai.expect
-global.PendingError = PendingError
+// global.PendingError = PendingError
 
 const DEFAULT_STEP_TIMEOUT = 90 * 1000
 
@@ -40,15 +40,13 @@ BeforeAll({ timeout: 240000 }, async function () {
   logger.info('END BeforeAll', Date.now())
 })
 
-function world () {
+function world() {
   logger.info('BEGIN world')
   // reset the fake API server, so we can set new routes
   this.router = getNewRouter()
   this.baseUrl = baseUrl
   this.app = app
-  this.waycharter = new WayCharter()
-  this.router.use(this.waycharter.router)
-  this.waychaser = new WayChaser()
+  this.waychaser = waychaser.defaults({ fetch })
 
   logger.info('END world')
   return ''
@@ -73,6 +71,6 @@ AfterAll({ timeout: 600000 }, async function () {
 
 setWorldConstructor(world)
 
-setDefinitionFunctionWrapper(stepDefinitionWrapper)
+// setDefinitionFunctionWrapper(stepDefinitionWrapper)
 
 setDefaultTimeout(DEFAULT_STEP_TIMEOUT)

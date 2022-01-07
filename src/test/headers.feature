@@ -6,7 +6,7 @@ Feature: Vary By Headers
     I want to be able to access and use the header in the resource loader
 
     Scenario: Vary By Headers
-        Given a waycharter resource that varies its response on headers as follows:
+        Given a waycharter endpoint that varies its response on headers as follows:
             | Header        | Value | Response |
             | Authorization | 123   | 456      |
             | Authorization | abc   | efg      |

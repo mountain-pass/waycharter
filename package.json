@@ -1,7 +1,7 @@
 {
   "name": "@mountainpass/waycharter",
-  "version": "1.0.77",
-  "description": "Express middleware creating for HATEOAS level 3 RESTful APIs that provide hypermedia controls",
+  "version": "2.0.0",
+  "description": "Express middleware creating for HATEOAS level 3 RESTful/Hypermedia APIs",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/mountain-pass/waycharter.git"
@@ -30,9 +30,9 @@
     "link-template-header"
   ],
   "main": "dist/waycharter.js",
-  "module": "src/waycharter.js",
+  "types": "dist/waycharter.d.ts",
   "engines": {
-    "node": ">=10.17.0"
+    "node": ">=14.17.0"
   },
   "config": {
     "DEV_API_PORT": 9000,
@@ -40,10 +40,9 @@
   },
   "scripts": {
     "env": "env",
-    "build": "npm-run-all --parallel build:*",
-    "build:main": "babel --delete-dir-on-start --source-maps true --verbose --ignore src/test --out-dir dist src",
+    "build": "tsc --project tsconfig.json",
     "prepack": "npm run build",
-    "lint:sh": "shellcheck **/*.sh",
+    "lint:sh": "shellcheck  **/*.sh",
     "lint:standardjs": "standard --verbose",
     "lint:js": "eslint .",
     "lint:js:fix": "npm run ${npm_lifecycle_event%:fix} -- --fix",
@@ -75,11 +74,13 @@
   },
   "files": [
     "/dist/**/*.js",
+    "/dist/**/*.d.ts",
     "/dist/**/*.js.map"
   ],
   "dependencies": {
     "debug": "^4.2.0",
     "http-link-header": "^1.0.3",
+    "http-problem-details": "^0.1.5",
     "jsonpointer": "^5.0.0",
     "uri-template-lite": "^20.5.0"
   },
@@ -87,26 +88,22 @@
     "express": "^4.x"
   },
   "devDependencies": {
-    "@babel/cli": "^7.6.2",
-    "@babel/core": "^7.12.3",
-    "@babel/node": "^7.6.2",
-    "@babel/preset-env": "^7.6.2",
-    "@babel/register": "^7.7.0",
     "@commitlint/cli": "^12.0.0",
     "@commitlint/config-conventional": "^12.0.0",
     "@cucumber/cucumber": "^7.0.0",
-    "@istanbuljs/nyc-config-babel": "^3.0.0",
-    "@mountainpass/waychaser": "^4.0.38",
-    "@windyroad/cucumber-js-throwables": "^1.0.4",
-    "babel-eslint": "^10.0.2",
-    "babel-plugin-istanbul": "^6.0.0",
-    "babel-polyfill": "^6.26.0",
-    "babel-preset-env": "^1.7.0",
+    "@mountainpass/waychaser": "file:../waychaser/mountainpass-waychaser-5.0.0.tgz",
+    "@types/chai": "^4.3.0",
+    "@types/cucumber": "^7.0.0",
+    "@types/express": "^4.17.13",
+    "@types/node": "^17.0.8",
+    "@types/uri-template-lite": "^19.12.1",
+    "@typescript-eslint/parser": "^5.10.1",
     "chai": "^4.2.0",
     "chai-as-promised": "^7.1.1",
     "concurrently": "^6.0.0",
     "conventional-changelog-cli": "^2.1.1",
     "conventional-recommended-bump": "^6.1.0",
+    "cross-fetch": "^3.1.5",
     "depcheck": "^1.2.0",
     "dirty-chai": "^2.0.1",
     "eslint": "^7.13.0",
@@ -147,6 +144,8 @@
     "snyk": "^1.431.1",
     "standard": "^16.0.3",
     "start-server-and-test": "^1.11.7",
+    "ts-node": "^10.4.0",
+    "typescript": "^4.5.5",
     "unique-names-generator": "^4.3.1"
   },
   "lint-staged": {
@@ -175,10 +174,13 @@
     }
   },
   "standard": {
-    "parser": "babel-eslint",
+    "parser": "@typescript-eslint/parser",
     "parserOptions": {
       "sourceType": "module"
     },
+    "globals": [
+      "Readonly"
+    ],
     "plugins": [
       "security",
       "unicorn",

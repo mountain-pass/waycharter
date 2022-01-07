@@ -1,14 +1,14 @@
 import { expect } from 'chai'
 import { Given, When, Then } from '@cucumber/cucumber'
 import { randomApiPath } from './random-api-path'
+import { EndPoint } from '../waycharter'
 
 Given(
-  'a waycharter resource instance that throws exceptions',
+  'a waycharter endpoint that throws exceptions',
   async function () {
     this.currentPath = randomApiPath()
-    this.waycharter.registerResourceType({
-      path: this.currentPath,
-      loader: async () => {
+    EndPoint.create({
+      router: this.router, path: this.currentPath, handler: () => {
         throw new Error('error')
       }
     })
@@ -16,7 +16,7 @@ Given(
 )
 
 // Given(
-//   'a waycharter resource that varies its response on headers as follows:',
+//   'a waycharter endpoint that varies its response on headers as follows:',
 //   async function (dataTable) {
 //     console.log(dataTable.hashes())
 //     const headersSettings = dataTable.hashes()
@@ -67,7 +67,7 @@ Given(
 // })
 
 When('we try to load that resource instance', async function () {
-  this.result = await this.waychaser.load(
+  this.result = await this.waychaser(
     new URL(this.currentPath, this.baseUrl)
   )
 })
@@ -76,14 +76,13 @@ When('we try to load the resource with the {string} {string}', async function (
   parameter,
   value
 ) {
-  this.result = await this.waychaser.load(
+  this.result = await this.waychaser(
     new URL(this.currentTemplatePath, this.baseUrl),
     { [parameter]: value }
   )
 })
 
 Then('a {int} response will be received', async function (expectedStatus) {
-  console.log({ response: this.result.response })
   expect(this.result.response.ok).to.be.false()
   expect(this.result.response.status).to.equal(expectedStatus)
 })

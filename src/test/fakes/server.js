@@ -1,26 +1,21 @@
-import logger from '../../util/logger'
+import logger from '../logger'
 import { createServer } from 'http'
 import { API_PORT } from '../config'
 
 import express from 'express'
 import multer from 'multer'
 
-const upload = multer()
+const upload = multer({})
 
 export const app = express()
 app.use(express.json()) // support json encoded bodies
 app.use(express.urlencoded({ extended: true })) // support url encoded bodies
 app.use(upload.none()) // support multi-part bodies
 
-/* istanbul ignore next: only gets executed when there are test errors (at this stage) */
-app.use(function (error, request, response, next) {
-  logger.error(error)
-  console.error(error)
-  next()
-})
+
 let router
 
-export function getNewRouter () {
+export function getNewRouter() {
   router = express.Router()
   return router
 }
@@ -31,14 +26,23 @@ app.use(function (request, response, next) {
 
 export let server
 
-export function stopServer () {
+export function stopServer() {
   if (server !== undefined) {
     server.close()
   }
 }
 
-export function startServer () {
+export function startServer() {
   stopServer()
+  app.use(function (error, request, response, next) {
+    console.log('eh', error)
+    if (response.headersSent) {
+      return next(error)
+    }
+    console.error(error)
+    response.status(500)
+    response.json({})
+  })
   server = createServer(app)
   return new Promise(resolve => {
     server.listen(API_PORT, function () {
