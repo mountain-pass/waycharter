@@ -92,7 +92,7 @@
     "@babel/node": "^7.6.2",
     "@babel/preset-env": "^7.6.2",
     "@babel/register": "^7.7.0",
-    "@commitlint/cli": "^12.0.0",
+    "@commitlint/cli": "^16.2.1",
     "@commitlint/config-conventional": "^12.0.0",
     "@cucumber/cucumber": "^7.0.0",
     "@istanbuljs/nyc-config-babel": "^3.0.0",
