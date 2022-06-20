@@ -5,7 +5,9 @@ import { randomApiPath } from './random-api-path'
 import { URI } from 'uri-template-lite'
 import { routerToRfc6570 } from '../util/router-to-rfc6570'
 import { EndPoint } from '../waycharter'
-import { ProblemDocument } from 'http-problem-details'
+import { WayChaserResponse } from '@mountainpass/waychaser'
+import { ProblemDocument } from '@mountainpass/problem-document'
+
 
 function createSingleton({ path, links, body }) {
   this.singleton = {
@@ -84,10 +86,9 @@ Given('a waycharter endpoint type accessed by {string}', async function (
           body: new ProblemDocument({
             type: 'https://waycharter.io/not-found',
             title: 'Not Found',
-            detail: `no resource found at ${path}/${pathParameters[indexParameter]}`
-          },
-            { path: `${path}/${pathParameters[indexParameter]}` }
-          )
+            detail: `no resource found at ${path}/${pathParameters[indexParameter]}`,
+            path: `${path}/${pathParameters[indexParameter]}`
+          })
         })
       }
     }
@@ -412,7 +413,7 @@ function createStaticCollection(
     router: this.router,
     path: this.currentPath,
     body: wrapper ? { items: items } : items,
-    arrayPointer: wrapper ? '/items' : undefined,
+    collectionPointer: wrapper ? '/items/{index}' : '/{index}',
     headers,
   })
 }
@@ -449,18 +450,18 @@ function createCollection(
   if (parameter) {
     this.currentPath += `/:${parameter}`
   }
-  const itemEndpoint = independentlyRetrievable && EndPoint.create<Item, never>({
-    router: this.router, path: this.currentPath + '/:ID',
+  const itemEndpoint = independentlyRetrievable && EndPoint.create({
+    router: this.router, path: this.currentPath + '/:index',
     handler: ({ pathParameters, response }) => {
-      if (typeof pathParameters.ID === 'string') {
-        const id = Number.parseInt(pathParameters.ID)
+      if (typeof pathParameters.index === 'string') {
+        const id = Number.parseInt(pathParameters.index)
         response.chart({
           body: this.instances[id].body,
           headers: itemHeaders
         })
       }
       else {
-        response.chartError({ status: 400, body: new ProblemDocument({ title: "Bad request", detail: "ID is not a string" }) })
+        response.chartError({ status: 400, body: new ProblemDocument({ title: "Bad request", detail: "`index` is not a string" }) })
       }
     }
   })
@@ -501,6 +502,7 @@ function createCollection(
           body: items,
           // itemOperations,
           hasMore: pageSize && page < this.instances.length / pageSize - 1,
+          collectionPointer: '/{index}',
           headers
         }
         : {
@@ -510,7 +512,7 @@ function createCollection(
             page
           },
           // itemOperations,
-          arrayPointer: '/items',
+          collectionPointer: '/items/{index}',
           hasMore: pageSize && page < this.instances.length / pageSize - 1,
           headers
         })
@@ -590,6 +592,8 @@ When('we load the latter singleton', async function () {
 
 When('we load the collection', async function () {
   await loadCurrent.bind(this)()
+  console.log({ result: this.result })
+  console.log({ allOps: this.result.allOperations })
 })
 
 When('we load the collection with {string} of {string}', async function (
@@ -651,28 +655,7 @@ When(
 )
 
 async function getNthItem(relationship, nth) {
-  // in waychaser, we should provide a convenience function
-  // so we can get "nested" resources as follows
-  // this.result.nested(relationship)[nth - 1].invoke()
-  // which would return all the resources with the given relationship
-  // the invoke needs to be customised for items, so that it passes the item
-  // as context to expand the uri
-  // OR....
-  // the item link points to a fragment, which is retrievable
-  // and waychaser is smart enough to provide the relevant links for that fragment
-  // based on the anchors
-  // so to get the items, you'd do something like
-  /*
-  const items = await Promise.all(resource.ops.filter('item').map(itemOp => itemOp.invoke()))
-  const item = await items[nth-1].invoke('unabridged')
-  */
-  // eslint-disable-next-line unicorn/no-array-callback-reference
-  const items = this.result.ops.filter(relationship)
-  this.result = await items[nth - 1].invoke()
-  /*
-    how do we iterated through the collection?
-    WHat if we gave the index a range and that range was automatically expanded by waychaser
-  */
+  this.result = await this.result.invoke(relationship, { parameters: { index: nth - 1 } })
 }
 
 When(
@@ -745,9 +728,7 @@ Then('a(n) collection with {int} item(s) will be returned', async function (
 ) {
   console.log(this.result.content)
   console.log(this.result.ops)
-  const items = await Promise.all(
-    this.result.ops.filter('item').map(op => op.invoke())
-  )
+  const items = await this.result.invokeAll('item')
   expect(items.length).to.equal(length)
 })
 
@@ -830,9 +811,7 @@ Then('the {int}(th) unabridged item will be returned', async function (nth) {
 })
 
 async function getItems() {
-  const resources = await Promise.all(
-    this.result.ops.filter('item').map(op => op.invoke())
-  )
+  const resources = await this.result.invokeAll('item')
   const items = resources.map(resource => resource.content)
   return items
 }
@@ -862,3 +841,63 @@ Then(
 Then('a {int} bad request will be returned', async function (status) {
   expect(this.result.response.status).to.equal(400)
 })
+
+
+Given('the following collection with items at {string}', async function (collectionPointer, documentString) {
+  this.currentPath = randomApiPath()
+  this.currentType = EndPoint.createStaticCollection({
+    router: this.router,
+    path: this.currentPath,
+    body: JSON.parse(documentString),
+    collectionPointer
+  })
+});
+
+Given('the following collection that canonically links to the above endpoint with items at {string}', async function (collectionPointer, documentString) {
+  this.currentPath = randomApiPath()
+  expect(this.currentType).to.not.be.undefined
+  this.currentType = EndPoint.createStaticCollection({
+    router: this.router,
+    path: this.currentPath,
+    body: JSON.parse(documentString),
+    itemEndpoint: this.currentType,
+    collectionPointer
+  })
+});
+
+Given('a waycharter endpoint at {string} that varies its response as follows', async function (path, dataTable) {
+  this.currentPath = path
+  this.currentType = EndPoint.create({
+    router: this.router, path, handler: async ({
+      pathParameters,
+      response,
+    }) => {
+      response.chart({
+        body: JSON.parse(dataTable.rowsHash()[pathParameters.item])
+      })
+    }
+  })
+});
+
+When('we load all the {string} operations', async function (relationship) {
+  this.result = await this.result.invokeAll(relationship)
+  for (const result of this.result) {
+    console.log({ result })
+    for (const op of result.ops) {
+      console.log({ op })
+    }
+  }
+});
+
+Then('{int} items will be returned', async function (count) {
+  expect(this.result.length).to.equal(count)
+  expect(this.result[0]).to.be.instanceOf(WayChaserResponse)
+});
+
+When('for each item we invoke the {string} operation', async function (relationship) {
+  this.result = await Promise.all(this.result.map(item => item.invoke(relationship)))
+});
+
+Then('the 2nd item will be', async function (documentString) {
+  expect(this.result[1].content).to.deep.equal(JSON.parse(documentString))
+});

@@ -1,6 +1,5 @@
 import express from 'express'
 import { URI } from 'uri-template-lite'
-import pointer from 'jsonpointer'
 import { covertResourceLinks } from './util/convert-resource-links'
 import { Link } from './link'
 import { buildFirstLink } from './collections/build-first-link'
@@ -21,7 +20,7 @@ import {
 } from './util/filter-parameters'
 import { unique } from './util/unique'
 import { Query } from 'express-serve-static-core'
-import { ProblemDocument } from 'http-problem-details'
+import { ProblemDocument } from '@mountainpass/problem-document'
 
 export type EmptyHandlerResponse = {
   links?: Array<Link>
@@ -36,7 +35,7 @@ export type HandlerResponse<ResponseBody> = EmptyHandlerResponse & {
 }
 
 export type CollectionHandlerResponse<ResponseBody> = HandlerResponse<ResponseBody> & {
-  arrayPointer?: string
+  collectionPointer: string
   hasMore?: boolean
 }
 
@@ -271,6 +270,7 @@ export class EndPoint<ResponseBody, ActionResponseBody> {
     filters,
     actions,
     itemActions,
+    itemEndpoint,
     ...collectionHandlerResponse
   }: Omit<CollectionEndPointParameters<ResponseBody, ActionResponseBody, CanonicalItemResponseBody, CanonicalItemActionResponseBody>, 'handler'> &
     Omit<CollectionHandlerResponse<ResponseBody>, 'hasMore'>): EndPoint<ResponseBody, ActionResponseBody> {
@@ -284,6 +284,7 @@ export class EndPoint<ResponseBody, ActionResponseBody> {
       },
       actions,
       itemActions,
+      itemEndpoint
     })
   }
 
@@ -329,7 +330,6 @@ export class EndPoint<ResponseBody, ActionResponseBody> {
         next: express.NextFunction
       ) => {
         try {
-          console.log({ request })
           const filteredHeaders = filterHeaders(
             request,
             response,
@@ -533,11 +533,9 @@ function sendCollectionHandlerResponse<ResponseBody, CanonicalItemResponseBody, 
   itemActions: ItemActions<CanonicalItemActionResponseBody>,
   itemEndpoint: EndPoint<CanonicalItemResponseBody, CanonicalItemActionResponseBody>,
 ) {
-  const { body, arrayPointer, hasMore, links, ...other } = resource
-  const array = arrayPointer ? pointer.get(body, arrayPointer) : body
+  const { body, collectionPointer, hasMore, links, ...other } = resource
   const { itemLinks, canonicalLinks } = builtItemLinks(
-    array,
-    arrayPointer,
+    collectionPointer,
     itemEndpoint,
     requestUrl,
     itemActions

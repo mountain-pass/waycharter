@@ -89,7 +89,6 @@ Feature: Collection
         And it will have a 'next' operation
         But it won't have a 'prev' operation
 
-    @wip
     Scenario: Templated collection with many many items - next page then first page
         Given a waycharter endpoint that's a collection templated with the parameter "collectionName" with 100 items and a page size of 16
         When we load the collection with "collectionName" of "test"
@@ -283,7 +282,6 @@ Feature: Collection
         When we load the collection
         And it will have a 'https://waychaser.io/rel/search' operation
 
-    @wip
     Scenario: Collection - filterable
         Given a collection of 10 items with a 'https://waychaser.io/rel/search' filter with the following parameters
             | parameter | value | itemsRemoved |
@@ -423,3 +421,110 @@ Feature: Collection
             | query | alpha |
         Then a collection with 5 items will be returned
 
+    Scenario: Explicit collections - array
+        Given the following collection with items at "/{index}"
+            """
+            [
+                {
+                    "id": "1",
+                    "name": "alpha"
+                },
+                {
+                    "id": "2",
+                    "name": "bravo"
+                },
+                {
+                    "id": "3",
+                    "name": "charlie"
+                }
+            ]
+            """
+        When we load the collection
+        And we load all the "item" operations
+        Then 3 items will be returned
+
+    @wip
+    Scenario: Explicit collections - array with canonical items
+        Given a waycharter endpoint at "/api/item/:item" that varies its response as follows
+            | item | body                           |
+            | 0    | {"id": "0", "name": "alpha"}   |
+            | 1    | {"id": "1", "name": "bravo"}   |
+            | 2    | {"id": "2", "name": "charlie"} |
+        And the following collection that canonically links to the above endpoint with items at "/{item}"
+            """
+            [
+                "a",
+                "b",
+                "c"
+            ]
+            """
+        When we load the collection
+        And we load all the "item" operations
+        And for each item we invoke the "canonical" operation
+        Then 3 items will be returned
+        And the 2nd item will be
+            """
+            {
+                "id": "1",
+                "name": "bravo"
+            }
+            """
+
+    @wip
+    Scenario: Explicit collections - map
+        Given the following collection with items at "/{index}"
+            """
+            {
+                "a": {
+                    "id": "1",
+                    "name": "alpha"
+                },
+                "b": {
+                    "id": "2",
+                    "name": "bravo"
+                },
+                "c": {
+                    "id": "3",
+                    "name": "charlie"
+                }
+            }
+            """
+        When we load the collection
+        And we load all the "item" operations
+        Then 3 items will be returned
+
+    @wip
+    Scenario: Explicit collections - map with canonical items
+        Given a waycharter endpoint at "/api/item/:item" that varies its response as follows
+            | item | body                           |
+            | a    | {"id": "0", "name": "alpha"}   |
+            | b    | {"id": "1", "name": "bravo"}   |
+            | c    | {"id": "2", "name": "charlie"} |
+        And the following collection that canonically links to the above endpoint with items at "/{item}"
+            """
+            {
+                "a": {
+                    "id": "1",
+                    "name": "alpha"
+                },
+                "b": {
+                    "id": "2",
+                    "name": "bravo"
+                },
+                "c": {
+                    "id": "3",
+                    "name": "charlie"
+                }
+            }
+            """
+        When we load the collection
+        And we load all the "item" operations
+        And for each item we invoke the "canonical" operation
+        Then 3 items will be returned
+        And the 2nd item will be
+            """
+            {
+                "id": "1",
+                "name": "bravo"
+            }
+            """

@@ -1,4 +1,3 @@
-@wip
 Feature: Create Endpoint
 
     So that I can create a HATEOAS API

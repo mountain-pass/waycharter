@@ -1,4 +1,4 @@
-import { ProblemDocument } from 'http-problem-details'
+import { ProblemDocument } from '@mountainpass/problem-document'
 import { EmptyHandlerResponse, HandlerResponse } from '../waycharter'
 
 /**
@@ -27,8 +27,7 @@ export function checkPage(
         body: new ProblemDocument({
           type: 'https://waycharter.io/bad-page',
           title: "Bad Page",
-          detail: `We don't understand what page '${page}' is that you are trying to retrieve`
-        }, {
+          detail: `We don't understand what page '${page}' is that you are trying to retrieve`,
           page
         }),
         headers: {
@@ -47,8 +46,7 @@ export function checkPage(
         body: new ProblemDocument({
           type: 'https://waycharter.io/bad-page',
           title: "Bad Page",
-          detail: `We don't understand what page '${page}' is that you are trying to retrieve`
-        }, {
+          detail: `We don't understand what page '${page}' is that you are trying to retrieve`,
           page
         }),
         headers: {
@@ -64,8 +62,7 @@ export function checkPage(
         body: new ProblemDocument({
           type: 'https://waycharter.io/bad-page',
           title: "Bad Page",
-          detail: `You've asked for a negative page '${page}'. We don't know what that means`
-        }, {
+          detail: `You've asked for a negative page '${page}'. We don't know what that means`,
           page
         }),
         headers: {

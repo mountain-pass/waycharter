@@ -78,9 +78,9 @@
     "/dist/**/*.js.map"
   ],
   "dependencies": {
+    "@mountainpass/problem-document": "0.0.46",
     "debug": "^4.2.0",
     "http-link-header": "^1.0.3",
-    "http-problem-details": "^0.1.5",
     "jsonpointer": "^5.0.0",
     "uri-template-lite": "^20.5.0"
   },
@@ -91,7 +91,7 @@
     "@commitlint/cli": "^12.0.0",
     "@commitlint/config-conventional": "^12.0.0",
     "@cucumber/cucumber": "^7.0.0",
-    "@mountainpass/waychaser": "file:../waychaser/mountainpass-waychaser-5.0.0.tgz",
+    "@mountainpass/waychaser": "^5.0.0",
     "@types/chai": "^4.3.0",
     "@types/cucumber": "^7.0.0",
     "@types/express": "^4.17.13",
