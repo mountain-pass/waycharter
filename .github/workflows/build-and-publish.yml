@@ -226,61 +226,61 @@ jobs:
           node-version: ${{ matrix.node-version }}
       - run: npm config set script-shell $(which bash)
       - run: npm ci
-      - run: npm run cover:node-api
+      - run: npm run test:node-api
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      - uses: actions/upload-artifact@v2
-        with:
-          name: code-coverage-report-node-${{ matrix.node-version }}
-          path: coverage/node-api
+      # - uses: actions/upload-artifact@v2
+      #   with:
+      #     name: code-coverage-report-node-${{ matrix.node-version }}
+      #     path: coverage/node-api
 
-  check-coverage:
-    if: "! contains(toJSON(github.event.commits.*.message), '[skip-ci]') && ! startsWith( github.head_ref, 'dependabot' )"
+  # check-coverage:
+  #   if: "! contains(toJSON(github.event.commits.*.message), '[skip-ci]') && ! startsWith( github.head_ref, 'dependabot' )"
 
-    needs:
-      - test-node-api
+  #   needs:
+  #     - test-node-api
 
-    runs-on: ubuntu-latest
+  #   runs-on: ubuntu-latest
 
-    defaults:
-      run:
-        shell: bash
+  #   defaults:
+  #     run:
+  #       shell: bash
 
-    steps:
-      - uses: actions/checkout@v2
+  #   steps:
+  #     - uses: actions/checkout@v2
 
-      - name: Cache NPM dependencies
-        uses: actions/cache@v1
-        with:
-          path: |
-            ~/.npm
-            node_modules
-          key: ${{ runner.OS }}-npm-cache-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.OS }}-npm-cache-
+  #     - name: Cache NPM dependencies
+  #       uses: actions/cache@v1
+  #       with:
+  #         path: |
+  #           ~/.npm
+  #           node_modules
+  #         key: ${{ runner.OS }}-npm-cache-${{ hashFiles('**/package-lock.json') }}
+  #         restore-keys: |
+  #           ${{ runner.OS }}-npm-cache-
 
-      - name: Use Node.js 14.x
-        uses: actions/setup-node@v1
-        with:
-          node-version: 14.x
+  #     - name: Use Node.js 14.x
+  #       uses: actions/setup-node@v1
+  #       with:
+  #         node-version: 14.x
 
-      - run: npm config set script-shell $(which bash)
-      - run: npm ci
-      - uses: actions/download-artifact@v2
-      - run: mkdir -p coverage
-      - run: |
-          for directory in $(ls -d code-coverage-report-*); do
-            mv "${directory}" "coverage/." 
-          done
-          ls -l coverage
-      - run: npm run report:cover
-      - uses: codacy/codacy-coverage-reporter-action@master
-        if: always()
-        continue-on-error: true
-        with:
-          project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
-          coverage-reports: coverage/full/lcov.info
+  #     - run: npm config set script-shell $(which bash)
+  #     - run: npm ci
+  #     - uses: actions/download-artifact@v2
+  #     - run: mkdir -p coverage
+  #     - run: |
+  #         for directory in $(ls -d code-coverage-report-*); do
+  #           mv "${directory}" "coverage/." 
+  #         done
+  #         ls -l coverage
+  #     - run: npm run report:cover
+  #     - uses: codacy/codacy-coverage-reporter-action@master
+  #       if: always()
+  #       continue-on-error: true
+  #       with:
+  #         project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
+  #         coverage-reports: coverage/full/lcov.info
 
 
   merge:
@@ -308,7 +308,7 @@ jobs:
   publish:
     needs:
       - check-secret
-      - check-coverage
+      - test-node-api
       - lint
       - audit
       - security
