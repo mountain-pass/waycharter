@@ -12,13 +12,12 @@
     "markdown"
   ],
   "extends": [
-    "standard",
-    "prettier-standard",
     "plugin:security/recommended",
     "plugin:unicorn/recommended",
     "plugin:jsdoc/recommended",
     "plugin:md/recommended",
-    "plugin:json/recommended"
+    "plugin:json/recommended",
+    "prettier"
   ],
   "env": {
     "browser": false,
