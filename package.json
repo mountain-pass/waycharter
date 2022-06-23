@@ -1,6 +1,6 @@
 {
   "name": "@mountainpass/waycharter",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Express middleware creating for HATEOAS level 3 RESTful/Hypermedia APIs",
   "repository": {
     "type": "git",
