@@ -1,3 +1,9 @@
+## 2.0.0 (2022-06-23)
+
+* build(lint): fixing linting issues ([0053c11](https://github.com/mountain-pass/waycharter/commit/0053c11))
+
+
+
 ## <small>1.0.76 (2021-12-16)</small>
 
 * fix(collections): fixed first, next, prev links for templated collections ([3ed681a](https://github.com/mountain-pass/waycharter/commit/3ed681a))
