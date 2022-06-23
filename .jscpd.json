@@ -1,9 +1,20 @@
 {
   "threshold": 0,
   "mode": "strict",
-  "reporters": ["html", "consoleFull", "console"],
+  "reporters": [
+    "html",
+    "consoleFull",
+    "console"
+  ],
   "pattern": "**/*",
   "gitignore": true,
-  "ignore": [".git/**"],
-  "format": ["javascript", "json", "bash"]
+  "ignore": [
+    ".git/**",
+    "src/test/**"
+  ],
+  "format": [
+    "javascript",
+    "json",
+    "bash"
+  ]
 }
