@@ -8,7 +8,7 @@ import { EmptyHandlerResponse, HandlerResponse } from '../waycharter'
 export function checkPage(
   page: string | import('qs').ParsedQs | string[] | import('qs').ParsedQs[],
   expandedPath: string
-): { pageInt: number } | { pageValidationError: HandlerResponse<ProblemDocument> } | { redirect: EmptyHandlerResponse } {
+): { page: number | string } | { pageValidationError: HandlerResponse<ProblemDocument> } | { redirect: EmptyHandlerResponse } {
   if (page === '0') {
     return {
       redirect: {
@@ -40,20 +40,7 @@ export function checkPage(
   const pageInt = Number.parseInt((page as string) || '0')
 
   if (Number.isNaN(pageInt)) {
-    return {
-      pageValidationError: {
-        status: 400,
-        body: new ProblemDocument({
-          type: 'https://waycharter.io/bad-page',
-          title: "Bad Page",
-          detail: `We don't understand what page '${page}' is that you are trying to retrieve`,
-          page
-        }),
-        headers: {
-          'content-type': 'application/problem+json'
-        }
-      }
-    }
+    return { page: page as string }
   }
   if (pageInt < 0) {
     return {
@@ -72,6 +59,6 @@ export function checkPage(
     }
   }
   return {
-    pageInt
+    page: pageInt
   }
 }

@@ -3,21 +3,24 @@ import { Query } from 'express-serve-static-core'
 /**
  * @param hasMore
  * @param page
+ * @param nextPage
  * @param collectionPath
  * @param otherParameters
  */
 export function buildNextLink(
   hasMore: boolean,
-  page: number,
+  page: number | string,
+  nextPage: string | undefined,
   collectionPath: string,
   otherParameters: Query
 ) {
+  const nextPageNumber = nextPage ?? typeof page === 'number' ? ((page as number) + 1).toFixed() : undefined
   return hasMore
     ? [
       {
         rel: 'next',
         uri: `${collectionPath}?${new URLSearchParams({
-          page: (page + 1).toFixed(),
+          page: nextPageNumber,
           ...otherParameters
         }).toString()}`
       }

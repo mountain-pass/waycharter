@@ -14,7 +14,7 @@ export type HandlerParameters<ResponseBody> = {
 export type Handler<ResponseBody> = (parameters: HandlerParameters<ResponseBody>) => Promise<void> | void
 
 export type CollectionHandlerParameters<ResponseBody> = HandlerParameters<ResponseBody> & {
-  page: number
+  page: number | string
 }
 
 export type CollectionHandler<ResponseBody> = (

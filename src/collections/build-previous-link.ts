@@ -3,11 +3,14 @@ import { Query } from 'express-serve-static-core'
 /**
  * @param pageInt
  * @param page
+ * @param prevPage
+ * @param previousPage
  * @param collectionPath
  * @param otherParameters
  */
 export function buildPreviousLink(
-  page: number,
+  page: number | string,
+  previousPage: string | undefined,
   collectionPath: string,
   otherParameters: Query
 ) {
@@ -27,12 +30,22 @@ export function buildPreviousLink(
           uri: collectionPath
         }
       ]
-  } else if (page > 1) {
+  } else if (typeof page === 'number' && page > 1) {
     return [
       {
         rel: 'prev',
         uri: `${collectionPath}?${new URLSearchParams({
           page: (page - 1).toFixed(),
+          ...otherParameters
+        }).toString()}`
+      }
+    ]
+  } else if (previousPage !== undefined) {
+    return [
+      {
+        rel: 'prev',
+        uri: `${collectionPath}?${new URLSearchParams({
+          page: previousPage,
           ...otherParameters
         }).toString()}`
       }

@@ -7,6 +7,7 @@ import { routerToRfc6570 } from '../util/router-to-rfc6570'
 import { EndPoint } from '../waycharter'
 import { WayChaserResponse } from '@mountainpass/waychaser'
 import { ProblemDocument } from '@mountainpass/problem-document'
+import assert from 'assert'
 
 
 function createSingleton({ path, links, body }) {
@@ -490,32 +491,40 @@ function createCollection(
           }
         }
       }
-      const pageInstances = pageSize
-        ? instances.slice(page * pageSize, (page + 1) * pageSize)
-        : instances
-      const items = pageInstances
-        .map(item => item.body)
-        .map(item => (independentlyRetrievable ? summariseItem(item) : item))
+      if (typeof page === 'number') {
+        const pageInstances = pageSize
+          ? instances.slice(page * pageSize, (page + 1) * pageSize)
+          : instances
+        const items = pageInstances
+          .map(item => item.body)
+          .map(item => (independentlyRetrievable ? summariseItem(item) : item))
 
-      response.chartCollection(noWrapper
-        ? {
-          body: items,
-          // itemOperations,
-          hasMore: pageSize && page < this.instances.length / pageSize - 1,
-          collectionPointer: '/{index}',
-          headers
-        }
-        : {
-          body: {
-            items,
-            count: items.length,
-            page
-          },
-          // itemOperations,
-          collectionPointer: '/items/{index}',
-          hasMore: pageSize && page < this.instances.length / pageSize - 1,
-          headers
+        response.chartCollection(noWrapper
+          ? {
+            body: items,
+            // itemOperations,
+            hasMore: pageSize && page < this.instances.length / pageSize - 1,
+            collectionPointer: '/{index}',
+            headers
+          }
+          : {
+            body: {
+              items,
+              count: items.length,
+              page
+            },
+            // itemOperations,
+            collectionPointer: '/items/{index}',
+            hasMore: pageSize && page < this.instances.length / pageSize - 1,
+            headers
+          })
+      }
+      else {
+        response.chart({
+          status: 400,
+          body: new ProblemDocument({ title: "Bad request", detail: "`page` is not a number" })
         })
+      }
     },
     ...(filters && {
       filters: filters.map(filter => ({

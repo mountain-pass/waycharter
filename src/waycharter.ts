@@ -37,6 +37,8 @@ export type HandlerResponse<ResponseBody> = EmptyHandlerResponse & {
 export type CollectionHandlerResponse<ResponseBody> = HandlerResponse<ResponseBody> & {
   collectionPointer: string
   hasMore?: boolean
+  prevPage?: string
+  nextPage?: string
 }
 
 /**
@@ -187,7 +189,7 @@ export class EndPoint<ResponseBody, ActionResponseBody> {
               resource,
               request.url,
               response,
-              pageCheckResult.pageInt,
+              pageCheckResult.page,
               expandedPath,
               filteredQueryParameters,
               itemActions,
@@ -196,7 +198,7 @@ export class EndPoint<ResponseBody, ActionResponseBody> {
           }
 
           handler({
-            page: pageCheckResult.pageInt,
+            page: pageCheckResult.page,
             pathParameters: request.params,
             queryParameters: filteredQueryParameters,
             requestHeaders,
@@ -273,7 +275,7 @@ export class EndPoint<ResponseBody, ActionResponseBody> {
     itemEndpoint,
     ...collectionHandlerResponse
   }: Omit<CollectionEndPointParameters<ResponseBody, ActionResponseBody, CanonicalItemResponseBody, CanonicalItemActionResponseBody>, 'handler'> &
-    Omit<CollectionHandlerResponse<ResponseBody>, 'hasMore'>): EndPoint<ResponseBody, ActionResponseBody> {
+    Omit<CollectionHandlerResponse<ResponseBody>, 'hasMore' | 'prevPage' | 'nextPage'>): EndPoint<ResponseBody, ActionResponseBody> {
     return EndPoint.createCollection({
       router,
       path,
@@ -517,6 +519,8 @@ export class EndPoint<ResponseBody, ActionResponseBody> {
  * @param requestUrl
  * @param response
  * @param pageInt
+ * @param pageCheckResult
+ * @param page
  * @param expandedPath
  * @param filteredParameters
  * @param itemActions
@@ -527,13 +531,13 @@ function sendCollectionHandlerResponse<ResponseBody, CanonicalItemResponseBody, 
   resource: CollectionHandlerResponse<ResponseBody>,
   requestUrl: string,
   response: express.Response<ResponseBody>,
-  pageInt: number,
+  page: number | string,
   expandedPath: string,
   filteredParameters: Query,
   itemActions: ItemActions<CanonicalItemActionResponseBody>,
   itemEndpoint: EndPoint<CanonicalItemResponseBody, CanonicalItemActionResponseBody>,
 ) {
-  const { body, collectionPointer, hasMore, links, ...other } = resource
+  const { body, collectionPointer, hasMore, prevPage, nextPage, links, ...other } = resource
   const { itemLinks, canonicalLinks } = builtItemLinks(
     collectionPointer,
     itemEndpoint,
@@ -545,9 +549,9 @@ function sendCollectionHandlerResponse<ResponseBody, CanonicalItemResponseBody, 
     links: [
       ...itemLinks,
       ...canonicalLinks,
-      ...buildNextLink(hasMore, pageInt, expandedPath, filteredParameters),
-      ...buildPreviousLink(pageInt, expandedPath, filteredParameters),
-      ...buildFirstLink(hasMore, pageInt, expandedPath, filteredParameters),
+      ...buildNextLink(hasMore, page, nextPage, expandedPath, filteredParameters),
+      ...buildPreviousLink(page, prevPage, expandedPath, filteredParameters),
+      ...buildFirstLink(expandedPath, filteredParameters),
       ...links || [],
     ],
     ...other
