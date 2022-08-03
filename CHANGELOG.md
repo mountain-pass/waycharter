@@ -1,3 +1,9 @@
+## <small>2.0.1 (2022-08-03)</small>
+
+* feat(collections): added support for non-numberic paging ([7ecead9](https://github.com/mountain-pass/waycharter/commit/7ecead9))
+
+
+
 ## 2.0.0 (2022-06-23)
 
 * build(lint): fixing linting issues ([0053c11](https://github.com/mountain-pass/waycharter/commit/0053c11))
