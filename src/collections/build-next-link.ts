@@ -15,7 +15,7 @@ export function buildNextLink(
   otherParameters: Query
 ) {
   const nextPageNumber = nextPage ?? typeof page === 'number' ? ((page as number) + 1).toFixed() : undefined
-  return hasMore
+  return hasMore || nextPage !== undefined
     ? [
       {
         rel: 'next',
