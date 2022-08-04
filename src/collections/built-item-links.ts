@@ -21,7 +21,6 @@ export function builtItemLinks<ItemResponseBody, CanonicalItemActionResponseBody
 ): {
   itemLinks: Link[], canonicalLinks: Link[]
 } {
-  console.log({ collectionPointer, itemEndPoint, selfUri, itemActions })
   const itemLinks = []
   const canonicalLinks = []
   itemLinks.push({
@@ -29,13 +28,6 @@ export function builtItemLinks<ItemResponseBody, CanonicalItemActionResponseBody
     uri: `#${collectionPointer}`
   })
   if (itemEndPoint) {
-    console.log({
-      linkTo: {
-        rel: 'canonical',
-        uri: itemEndPoint.pathTemplate,
-        anchor: `#${collectionPointer}`
-      }
-    })
     canonicalLinks.push({
       rel: 'canonical',
       uri: itemEndPoint.pathTemplate,
