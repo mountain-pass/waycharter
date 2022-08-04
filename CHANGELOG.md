@@ -1,3 +1,9 @@
+## <small>2.0.2 (2022-08-04)</small>
+
+* fix(collections): fixing nextPage links ([b34587a](https://github.com/mountain-pass/waycharter/commit/b34587a))
+
+
+
 ## <small>2.0.1 (2022-08-03)</small>
 
 * feat(collections): added support for non-numberic paging ([7ecead9](https://github.com/mountain-pass/waycharter/commit/7ecead9))
