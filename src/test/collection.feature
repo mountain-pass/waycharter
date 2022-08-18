@@ -254,11 +254,6 @@ Feature: Collection
         Then the 6th unabridged item will be returned
         And it won't have a 'canonical' operation
 
-    Scenario: Collection - negative page #
-        Given a waycharter endpoint that's a collection with 100 items and a page size of 16
-        When we load page "-1" of the collection
-        Then a 400 bad request will be returned
-
     Scenario: Collection - dodgy page #
         Given a waycharter endpoint that's a collection with 100 items and a page size of 16
         When we load page "invalid" of the collection
