@@ -1,3 +1,9 @@
+## <small>2.0.3 (2022-08-18)</small>
+
+* test(collections): removed no longer relevant test ([38d937b](https://github.com/mountain-pass/waycharter/commit/38d937b))
+
+
+
 ## <small>2.0.2 (2022-08-04)</small>
 
 * fix(collections): fixing nextPage links ([b34587a](https://github.com/mountain-pass/waycharter/commit/b34587a))
