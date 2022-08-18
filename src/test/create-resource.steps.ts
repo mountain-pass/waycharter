@@ -451,7 +451,7 @@ function createCollection(
   if (parameter) {
     this.currentPath += `/:${parameter}`
   }
-  const itemEndpoint = independentlyRetrievable && EndPoint.create({
+  const itemEndpoint = independentlyRetrievable ? EndPoint.create({
     router: this.router, path: this.currentPath + '/:index',
     handler: ({ pathParameters, response }) => {
       if (typeof pathParameters.index === 'string') {
@@ -465,7 +465,7 @@ function createCollection(
         response.chartError({ status: 400, body: new ProblemDocument({ title: "Bad request", detail: "`index` is not a string" }) })
       }
     }
-  })
+  }) : undefined
 
   this.currentType = EndPoint.createCollection({
     router: this.router,
@@ -491,19 +491,21 @@ function createCollection(
           }
         }
       }
-      if (typeof page === 'number') {
+      const pageNumber = Number.parseInt(page || '0')
+      if (!Number.isNaN(pageNumber)) {
         const pageInstances = pageSize
-          ? instances.slice(page * pageSize, (page + 1) * pageSize)
+          ? instances.slice(pageNumber * pageSize, (pageNumber + 1) * pageSize)
           : instances
         const items = pageInstances
           .map(item => item.body)
           .map(item => (independentlyRetrievable ? summariseItem(item) : item))
-
+        const hasMore = pageSize && pageNumber < this.instances.length / pageSize - 1;
         response.chartCollection(noWrapper
           ? {
             body: items,
             // itemOperations,
-            hasMore: pageSize && page < this.instances.length / pageSize - 1,
+            nextPage: hasMore ? (pageNumber + 1).toFixed() : undefined,
+            prevPage: pageNumber > 0 ? (pageNumber - 1).toFixed() : undefined,
             collectionPointer: '/{index}',
             headers
           }
@@ -515,14 +517,15 @@ function createCollection(
             },
             // itemOperations,
             collectionPointer: '/items/{index}',
-            hasMore: pageSize && page < this.instances.length / pageSize - 1,
+            nextPage: hasMore ? (pageNumber + 1).toFixed() : undefined,
+            prevPage: pageNumber > 0 ? (pageNumber - 1).toFixed() : undefined,
             headers
           })
       }
       else {
         response.chart({
           status: 400,
-          body: new ProblemDocument({ title: "Bad request", detail: "`page` is not a number" })
+          body: new ProblemDocument({ title: "Bad request", detail: `page '${page}' is not a number` })
         })
       }
     },
@@ -584,7 +587,7 @@ Given('the singleton has a {string} link to that instance', async function (
 
 // eslint-disable-next-line unicorn/no-useless-undefined
 async function loadCurrent({ parameters = undefined } = {}) {
-  const expandedUrl = URI.expand(routerToRfc6570(this.currentPath), parameters)
+  const expandedUrl = URI.expand(routerToRfc6570(this.currentPath), parameters ?? {})
   this.result = await load.bind(this)(
     expandedUrl,
     this.baseUrl

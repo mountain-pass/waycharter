@@ -34,7 +34,7 @@ export function stopServer() {
 
 export function startServer() {
   stopServer()
-  app.use(function (error, request, response, next) {
+  app.use(function (error, _request, response, next) {
     console.log('eh', error)
     if (response.headersSent) {
       return next(error)
