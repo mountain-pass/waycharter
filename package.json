@@ -85,7 +85,7 @@
     "express": "^4.x"
   },
   "devDependencies": {
-    "@commitlint/cli": "^12.0.0",
+    "@commitlint/cli": "^17.4.2",
     "@commitlint/config-conventional": "^12.0.0",
     "@cucumber/cucumber": "^7.0.0",
     "@mountainpass/waychaser": "^5.0.0",
