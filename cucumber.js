@@ -69,7 +69,7 @@ function generateConfig() {
     // snippetSyntax:
     //   './node_modules/@windyroad/cucumber-js-throwables/lib/custom-cucumber-syntax.js'
   }
-  const MODULES = '--require-module ts-node/register '
+  const MODULES = '--require-module tsx/cjs '
   const REQUIRE_GLOB = '--require src/test/**/*.js --require src/test/**/*.ts'
   const CONFIG = `${FEATURE_GLOB} --format-options '${JSON.stringify(
     FORMAT_OPTIONS

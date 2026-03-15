@@ -11,7 +11,7 @@ import {
   AfterAll,
   setDefaultTimeout
 } from '@cucumber/cucumber'
-import chai from 'chai'
+import { expect, use } from 'chai'
 import dirtyChai from 'dirty-chai'
 import logger from './logger'
 import chaiAsPromised from 'chai-as-promised'
@@ -19,10 +19,10 @@ import { waychaser } from '@mountainpass/waychaser'
 import { startServer, app, stopServer, getNewRouter } from './fakes/server'
 import { API_PORT } from './config'
 import { fetch } from "cross-fetch";
-chai.use(chaiAsPromised)
-chai.use(dirtyChai)
+use(chaiAsPromised)
+use(dirtyChai)
 
-globalThis.expect = chai.expect
+globalThis.expect = expect
 // global.PendingError = PendingError
 
 const DEFAULT_STEP_TIMEOUT = 90 * 1000
