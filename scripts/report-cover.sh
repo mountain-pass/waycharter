@@ -2,7 +2,7 @@
 
 : "${npm_lifecycle_event?This script should be run from npm}"
     
-scripts/merge-coverage.js 
+npx ts-node scripts/merge-coverage.ts
 
 nyc \
     report \

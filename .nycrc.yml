@@ -6,6 +6,8 @@ exclude:
   - "dist/**/*.js"
   - "scripts/**/*.js"
   - "coverage/**/*.js"
+  - "src/test/fakes/**/*.js"
+  - "src/util/method-can-have-body.js"
 check-coverage: true
 statements: 100
 lines: 100
