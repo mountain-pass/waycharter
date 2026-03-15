@@ -104,7 +104,6 @@ type CollectionEndPointParameters<ResponseBody, ActionResponseBody, CanonicalIte
     parameters: Array<string>
   }>
   itemActions?: ItemActions<CanonicalItemActionResponseBody>
-  // eslint-disable-next-line no-use-before-define
   itemEndpoint?: EndPoint<CanonicalItemResponseBody, CanonicalItemActionResponseBody>
 }
 

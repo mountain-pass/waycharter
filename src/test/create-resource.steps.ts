@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-expressions */
 import { expect } from 'chai'
 import { Given, When, Then } from '@cucumber/cucumber'
 import { randomApiPath } from './random-api-path'
@@ -658,7 +657,7 @@ When(
   async function (relationship) {
     this.result = await this.result.invoke(relationship)
     while (
-      // eslint-disable-next-line unicorn/no-array-callback-reference
+    
       this.result.ops.find(relationship) // eslint-disable-line unicorn/prefer-array-some
     ) {
       this.result = await this.result.invoke(relationship)
@@ -676,13 +675,13 @@ When(
 )
 
 Then('it will have a {string} operation', async function (relationship) {
-  // eslint-disable-next-line unicorn/no-array-callback-reference
-  // eslint-disable-next-line unicorn/no-array-callback-reference
+
+
   expect(this.result.ops.find(relationship)).to.not.be.undefined
 })
 
 Then("it won't have a {string} operation", async function (relationship) {
-  // eslint-disable-next-line unicorn/no-array-callback-reference
+
   expect(this.result.ops.find(relationship)).to.be.undefined
 })
 
@@ -708,7 +707,7 @@ Then(
 Then(
   'the {string} operation will return the instance with the {string} {string}',
   async function (relationship, indexParameter, indexParameterValue) {
-    // eslint-disable-next-line unicorn/no-array-callback-reference
+  
     const related = await this.result.invoke(relationship)
     // const bodyAsTest = await related.response.text()
     expect(related.response.url).to.equal(

@@ -1,21 +1,12 @@
 {
   "exclude": {
     "@cucumber/cucumber": "On v9 - max version supporting Node 16 (CI tests on 16/18/20); v10+ requires Node 18+",
-    "@types/chai": "Existing outdated dependency - v5 requires chai v5+",
-    "@types/express": "Existing outdated dependency - v5 requires express v5",
-    "chai": "Existing outdated dependency - v6 is ESM-only breaking change",
-    "chai-as-promised": "Existing outdated dependency - v8 requires chai v5+",
-    "dirty-chai": "Existing outdated dependency - major version bump",
+    "@types/express": "v5 requires express v5 - tied to express 5 migration",
     "lint-staged": "On v16.x which is newer than npm latest tag (15.x) - intentional upgrade from PR #460",
     "nyc": "On v18.x which is newer than npm latest tag (17.x) - intentional upgrade from PR #456",
-    "eslint": "Existing outdated dependency - v9+ requires flat config migration",
-    "eslint-config-prettier": "Existing outdated dependency - tied to eslint 9+ migration",
-    "eslint-plugin-jsdoc": "Existing outdated dependency - tied to eslint 9+ migration",
-    "eslint-plugin-json": "Existing outdated dependency - tied to eslint 9+ migration",
-    "eslint-plugin-markdown": "Existing outdated dependency - tied to eslint 9+ migration",
-    "eslint-plugin-security": "Existing outdated dependency - tied to eslint 9+ migration",
-    "eslint-plugin-unicorn": "Existing outdated dependency - tied to eslint 9+ migration",
-    "@typescript-eslint/parser": "Existing outdated dependency - tied to eslint 9+ migration",
-    "express": "Existing outdated dependency - v5 is a major breaking change"
+    "express": "v5 is a major breaking change affecting peer dependencies",
+    "eslint": "v10 removes legacy plugin support - requires eslint-plugin-import-x and other replacements",
+    "@eslint/js": "v10 requires eslint 10 flat config only - separate migration",
+    "globals": "v17 is tied to eslint 10 migration"
   }
 }
