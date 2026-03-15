@@ -7,6 +7,8 @@
     "chai": "Existing outdated dependency - v6 is ESM-only breaking change",
     "chai-as-promised": "Existing outdated dependency - v8 requires chai v5+",
     "dirty-chai": "Existing outdated dependency - major version bump",
+    "lint-staged": "On v16.x which is newer than npm latest tag (15.x) - intentional upgrade from PR #460",
+    "nyc": "On v18.x which is newer than npm latest tag (17.x) - intentional upgrade from PR #456",
     "eslint": "Existing outdated dependency - v9+ requires flat config migration",
     "eslint-config-prettier": "Existing outdated dependency - tied to eslint 9+ migration",
     "eslint-plugin-jsdoc": "Existing outdated dependency - tied to eslint 9+ migration",
