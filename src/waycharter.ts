@@ -1,5 +1,5 @@
 import express from 'express'
-import { URI } from 'uri-template-lite'
+import Template from 'uri-template-lite'
 import { covertResourceLinks } from './util/convert-resource-links'
 import { Link } from './link'
 import { buildFirstLink } from './collections/build-first-link'
@@ -498,7 +498,7 @@ export class EndPoint<ResponseBody, ActionResponseBody> {
 
   path(parameters?: { [key: string]: unknown }): string {
     return parameters
-      ? URI.expand(this.pathTemplate, parameters)
+      ? Template.expand(this.pathTemplate, parameters)
       : this.pathTemplate
   }
 

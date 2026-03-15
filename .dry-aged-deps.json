@@ -3,7 +3,6 @@
     "@cucumber/cucumber": "Existing outdated dependency - needs migration to v12",
     "@types/chai": "Existing outdated dependency - v5 requires chai v5+",
     "@types/express": "Existing outdated dependency - v5 requires express v5",
-    "@types/uri-template-lite": "Pinned to 19.12.1 - v19.12.4 has incorrect type defs (drops URI export that exists at runtime)",
     "chai": "Existing outdated dependency - v6 is ESM-only breaking change",
     "chai-as-promised": "Existing outdated dependency - v8 requires chai v5+",
     "dirty-chai": "Existing outdated dependency - major version bump",
@@ -17,7 +16,6 @@
     "eslint-plugin-security": "Existing outdated dependency - tied to eslint 9+ migration",
     "eslint-plugin-unicorn": "Existing outdated dependency - tied to eslint 9+ migration",
     "@typescript-eslint/parser": "Existing outdated dependency - tied to eslint 9+ migration",
-    "express": "Existing outdated dependency - v5 is a major breaking change",
-    "uri-template-lite": "Existing outdated dependency - major version bump"
+    "express": "Existing outdated dependency - v5 is a major breaking change"
   }
 }
