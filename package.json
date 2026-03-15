@@ -90,8 +90,8 @@
     "@types/lodash": "4.14.202"
   },
   "devDependencies": {
-    "@commitlint/cli": "^12.0.0",
-    "@commitlint/config-conventional": "^12.0.0",
+    "@commitlint/cli": "^20.4.4",
+    "@commitlint/config-conventional": "^20.4.4",
     "@cucumber/cucumber": "^7.3.2",
     "@mountainpass/waychaser": "^5.0.26",
     "@types/chai": "^4.3.0",
