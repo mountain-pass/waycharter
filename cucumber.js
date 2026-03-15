@@ -5,7 +5,7 @@ const fs = require('fs')
 const FAIL_FAST = process.env.CI ? '' : '--fail-fast'
 const NO_STRICT = process.env.NO_STRICT || ''
 
-const PUBLISH = '--publish-quiet'
+const PUBLISH = ''
 
 /* istanbul ignore next: branch only taken when retry is enabled */
 const RETRY = process.env.RETRY ? `--retry ${process.env.RETRY || 5}` : ''
