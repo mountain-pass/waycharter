@@ -5,7 +5,7 @@ import { ParsedQs } from 'qs'
  * @param page
  */
 export function checkPage(
-  page: string | ParsedQs | string[] | ParsedQs[] | undefined
+  page: string | ParsedQs | string[] | ParsedQs[] | (string | ParsedQs)[] | undefined
 ): { page?: string } | { pageValidationError: HandlerResponse<ProblemDocument> } {
   return typeof page === 'string' || typeof page === 'undefined' ? { page } : {
     pageValidationError: {

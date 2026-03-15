@@ -3,6 +3,7 @@
     "@cucumber/cucumber": "Existing outdated dependency - needs migration to v12",
     "@types/chai": "Existing outdated dependency - v5 requires chai v5+",
     "@types/express": "Existing outdated dependency - v5 requires express v5",
+    "@types/uri-template-lite": "Pinned to 19.12.1 - v19.12.4 has incorrect type defs (drops URI export that exists at runtime)",
     "chai": "Existing outdated dependency - v6 is ESM-only breaking change",
     "chai-as-promised": "Existing outdated dependency - v8 requires chai v5+",
     "dirty-chai": "Existing outdated dependency - major version bump",
