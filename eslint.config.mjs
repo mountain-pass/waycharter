@@ -4,7 +4,6 @@ import security from "eslint-plugin-security";
 import unicornPlugin from "eslint-plugin-unicorn";
 import promise from "eslint-plugin-promise";
 import jsdocPlugin from "eslint-plugin-jsdoc";
-import markdown from "eslint-plugin-markdown";
 import md from "eslint-plugin-md";
 import json from "eslint-plugin-json";
 import chaiFriendly from "eslint-plugin-chai-friendly";
@@ -53,7 +52,6 @@ export default [
       unicorn: unicornPlugin,
       promise,
       jsdoc: jsdocPlugin,
-      markdown,
       n,
       "@eslint-community/eslint-comments": eslintComments,
       prettier: prettierPlugin,
