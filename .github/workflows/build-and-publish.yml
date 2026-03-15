@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Cancel Previous Runs
-        uses: styfle/cancel-workflow-action@0.7.0
+        uses: styfle/cancel-workflow-action@0.12.1
         with:
           access_token: ${{ github.token }}
 
@@ -29,7 +29,7 @@ jobs:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         run: |
           echo "SECRETS_SET: ${{ env.SNYK_TOKEN != '' }}"
-          echo "::set-output name=SECRETS_SET::${{ env.SNYK_TOKEN != '' }}"
+          echo "SECRETS_SET=${{ env.SNYK_TOKEN != '' }}" >> $GITHUB_OUTPUT
 
   lint:
     if: "! contains(toJSON(github.event.commits.*.message), '[skip-ci]')"
@@ -41,10 +41,10 @@ jobs:
         shell: bash
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
       - name: Cache NPM dependencies
-        uses: actions/cache@v1
+        uses: actions/cache@v4
         with:
           path: |
             ~/.npm
@@ -53,10 +53,10 @@ jobs:
           restore-keys: |
             ${{ runner.OS }}-npm-cache-
 
-      - name: Use Node.js 14.x
-        uses: actions/setup-node@v1
+      - name: Use Node.js 18.x
+        uses: actions/setup-node@v4
         with:
-          node-version: 14.x
+          node-version: 18.x
       - run: npm config set script-shell $(which bash)
       - run: npm ci
       - run: npm run lint
@@ -71,10 +71,10 @@ jobs:
         shell: bash
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
       - name: Cache NPM dependencies
-        uses: actions/cache@v1
+        uses: actions/cache@v4
         with:
           path: |
             ~/.npm
@@ -83,17 +83,47 @@ jobs:
           restore-keys: |
             ${{ runner.OS }}-npm-cache-
 
-      - name: Use Node.js 14.x
-        uses: actions/setup-node@v1
+      - name: Use Node.js 18.x
+        uses: actions/setup-node@v4
         with:
-          node-version: 14.x
+          node-version: 18.x
       - run: npm config set script-shell $(which bash)
       - run: npm ci
       - run: npm run duplication
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v4
         with:
           name: duplication-report
           path: report
+
+  dry-aged-deps:
+    if: "! contains(toJSON(github.event.commits.*.message), '[skip-ci]') && ! startsWith( github.head_ref, 'dependabot' )"
+
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Cache NPM dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.npm
+            node_modules
+          key: ${{ runner.OS }}-npm-cache-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.OS }}-npm-cache-
+
+      - name: Use Node.js 18.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18.x
+      - run: npm config set script-shell $(which bash)
+      - run: npm ci
+      - run: npm run dry-aged-deps
 
   audit:
     if: "! contains(toJSON(github.event.commits.*.message), '[skip-ci]') && ! startsWith( github.head_ref, 'dependabot' )"
@@ -105,10 +135,10 @@ jobs:
         shell: bash
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
       - name: Cache NPM dependencies
-        uses: actions/cache@v1
+        uses: actions/cache@v4
         with:
           path: |
             ~/.npm
@@ -117,11 +147,11 @@ jobs:
           restore-keys: |
             ${{ runner.OS }}-npm-cache-
 
-      - name: Use Node.js 14.x
-        uses: actions/setup-node@v1
+      - name: Use Node.js 18.x
+        uses: actions/setup-node@v4
         with:
-          node-version: 14.x
-      - run: npm audit --production
+          node-version: 18.x
+      - run: npm audit --omit=dev
 
   security:
     needs:
@@ -137,10 +167,10 @@ jobs:
       SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
       - name: Cache NPM dependencies
-        uses: actions/cache@v1
+        uses: actions/cache@v4
         with:
           path: |
             ~/.npm
@@ -149,10 +179,10 @@ jobs:
           restore-keys: |
             ${{ runner.OS }}-npm-cache-
 
-      - name: Use Node.js 14.x
-        uses: actions/setup-node@v1
+      - name: Use Node.js 18.x
+        uses: actions/setup-node@v4
         with:
-          node-version: 14.x
+          node-version: 18.x
       - run: npm config set script-shell $(which bash)
       - run: npm ci
       # We've seen situations where snyk is unavailable
@@ -174,10 +204,10 @@ jobs:
         shell: bash
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
       - name: Cache NPM dependencies
-        uses: actions/cache@v1
+        uses: actions/cache@v4
         with:
           path: |
             ~/.npm
@@ -186,10 +216,10 @@ jobs:
           restore-keys: |
             ${{ runner.OS }}-npm-cache-
 
-      - name: Use Node.js 14.x
-        uses: actions/setup-node@v1
+      - name: Use Node.js 18.x
+        uses: actions/setup-node@v4
         with:
-          node-version: 14.x
+          node-version: 18.x
       - run: npm config set script-shell $(which bash)
       - run: npm ci
       - run: npm run build
@@ -201,17 +231,17 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [12.x, 14.x, 16.x]
+        node-version: [16.x, 18.x, 20.x]
 
     defaults:
       run:
         shell: bash
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
       - name: Cache NPM dependencies
-        uses: actions/cache@v1
+        uses: actions/cache@v4
         with:
           path: |
             ~/.npm
@@ -221,7 +251,7 @@ jobs:
             ${{ runner.OS }}-npm-cache-
 
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
       - run: npm config set script-shell $(which bash)
@@ -230,7 +260,7 @@ jobs:
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      # - uses: actions/upload-artifact@v2
+      # - uses: actions/upload-artifact@v4
       #   with:
       #     name: code-coverage-report-node-${{ matrix.node-version }}
       #     path: coverage/node-api
@@ -248,10 +278,10 @@ jobs:
   #       shell: bash
 
   #   steps:
-  #     - uses: actions/checkout@v2
+  #     - uses: actions/checkout@v4
 
   #     - name: Cache NPM dependencies
-  #       uses: actions/cache@v1
+  #       uses: actions/cache@v4
   #       with:
   #         path: |
   #           ~/.npm
@@ -261,7 +291,7 @@ jobs:
   #           ${{ runner.OS }}-npm-cache-
 
   #     - name: Use Node.js 14.x
-  #       uses: actions/setup-node@v1
+  #       uses: actions/setup-node@v4
   #       with:
   #         node-version: 14.x
 
@@ -292,6 +322,7 @@ jobs:
       - security
       - build
       - duplication
+      - dry-aged-deps
     if: |
       needs.check-secret.outputs.SECRETS_SET == 'true' &&
       startsWith( github.head_ref, 'dependabot' ) &&
@@ -314,6 +345,7 @@ jobs:
       - security
       - build
       - duplication
+      - dry-aged-deps
     if: |
       needs.check-secret.outputs.SECRETS_SET == 'true' &&
       github.ref == 'refs/heads/main' && 
@@ -327,10 +359,10 @@ jobs:
         shell: bash
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
       - name: Cache NPM dependencies
-        uses: actions/cache@v1
+        uses: actions/cache@v4
         with:
           path: |
             ~/.npm
@@ -339,9 +371,9 @@ jobs:
           restore-keys: |
             ${{ runner.OS }}-npm-cache-
 
-      - uses: actions/setup-node@v1
+      - uses: actions/setup-node@v4
         with:
-          node-version: 14.x
+          node-version: 18.x
           registry-url: https://registry.npmjs.org/
       - name: Publish and Tag
         run: |
@@ -383,7 +415,7 @@ jobs:
       - name: Create Release
         if: ${{ env.PACKAGE_VERSION != '' }}
         id: create_release
-        uses: actions/create-release@v1
+        uses: actions/create-release@v1.1.4
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
         with:
@@ -396,7 +428,7 @@ jobs:
       - name: Upload Release Asset
         if: ${{ env.PACKAGE_VERSION != '' }}
         id: upload-release-asset
-        uses: actions/upload-release-asset@v1
+        uses: actions/upload-release-asset@v1.0.2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
