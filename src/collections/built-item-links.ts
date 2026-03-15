@@ -1,4 +1,4 @@
-import { URI } from 'uri-template-lite'
+import Template from 'uri-template-lite'
 import { toLinks } from '../to-links'
 import { ItemActions } from '../action'
 import { EndPoint } from '../waycharter'

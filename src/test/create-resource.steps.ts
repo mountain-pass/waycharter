@@ -2,7 +2,7 @@
 import { expect } from 'chai'
 import { Given, When, Then } from '@cucumber/cucumber'
 import { randomApiPath } from './random-api-path'
-import { URI } from 'uri-template-lite'
+import Template from 'uri-template-lite'
 import { routerToRfc6570 } from '../util/router-to-rfc6570'
 import { EndPoint } from '../waycharter'
 import { WayChaserResponse } from '@mountainpass/waychaser'
@@ -587,7 +587,7 @@ Given('the singleton has a {string} link to that instance', async function (
 
 // eslint-disable-next-line unicorn/no-useless-undefined
 async function loadCurrent({ parameters = undefined } = {}) {
-  const expandedUrl = URI.expand(routerToRfc6570(this.currentPath), parameters ?? {})
+  const expandedUrl = Template.expand(routerToRfc6570(this.currentPath), parameters ?? {})
   this.result = await load.bind(this)(
     expandedUrl,
     this.baseUrl
