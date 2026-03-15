@@ -68,7 +68,8 @@
     "change-log": "conventional-changelog -i CHANGELOG.md -s",
     "release-notes": "conventional-changelog -u -o RELEASE.md",
     "get-release-type": "conventional-recommended-bump -p conventionalcommits",
-    "wait-for-browser-stack": "scripts/${npm_lifecycle_event}.js"
+    "wait-for-browser-stack": "scripts/${npm_lifecycle_event}.js",
+    "prepare": "husky"
   },
   "files": [
     "/dist/**/*.js",
@@ -126,12 +127,12 @@
     "express": "^4.17.1",
     "fs-extra": "^11.3.4",
     "humanize-duration": "^3.33.2",
-    "husky": "^6.0.0",
+    "husky": "^9.1.7",
     "imagemin-lint-staged": "^0.5.1",
     "istanbul": "^0.4.5",
     "jscpd": "^4.0.8",
     "jsdoc": "^4.0.5",
-    "lint-staged": "^11.2.6",
+    "lint-staged": "^16.4.0",
     "markdownlint": "^0.40.0",
     "multer": "^1.4.4",
     "nodemon": "^3.1.14",
@@ -147,28 +148,9 @@
     "unique-names-generator": "^4.7.1"
   },
   "lint-staged": {
-    "*.{js,md}": [
-      "eslint --fix",
-      "git add"
-    ],
-    "*.{sh}": [
-      "shellcheck",
-      "git add"
-    ],
-    "*.{json,css,md,yaml,yml,html,less,scss}": [
-      "prettier --write",
-      "git add"
-    ],
-    "*.{png,jpeg,jpg,gif,svg}": [
-      "imagemin-lint-staged",
-      "git add"
-    ]
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged",
-      "pre-push": "npm run pre-push",
-      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
-    }
+    "*.{js,md}": "eslint --fix",
+    "*.{sh}": "shellcheck",
+    "*.{json,css,md,yaml,yml,html,less,scss}": "prettier --write",
+    "*.{png,jpeg,jpg,gif,svg}": "imagemin-lint-staged"
   }
 }
