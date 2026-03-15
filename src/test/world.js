@@ -22,7 +22,7 @@ import { fetch } from "cross-fetch";
 chai.use(chaiAsPromised)
 chai.use(dirtyChai)
 
-global.expect = chai.expect
+globalThis.expect = chai.expect
 // global.PendingError = PendingError
 
 const DEFAULT_STEP_TIMEOUT = 90 * 1000
