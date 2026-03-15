@@ -11,11 +11,11 @@
     "markdown"
   ],
   "extends": [
-    "plugin:security/recommended",
+    "plugin:security/recommended-legacy",
     "plugin:unicorn/recommended",
     "plugin:jsdoc/recommended",
     "plugin:md/recommended",
-    "plugin:json/recommended",
+    "plugin:json/recommended-legacy",
     "prettier"
   ],
   "env": {
@@ -48,11 +48,11 @@
       ],
       "extends": [
         "plugin:chai-friendly/recommended",
-        "plugin:security/recommended",
+        "plugin:security/recommended-legacy",
         "plugin:unicorn/recommended",
         "plugin:jsdoc/recommended",
         "plugin:md/recommended",
-        "plugin:json/recommended",
+        "plugin:json/recommended-legacy",
         "prettier"
       ],
       "globals": {
