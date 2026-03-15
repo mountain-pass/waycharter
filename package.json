@@ -93,7 +93,7 @@
     "@babel/preset-env": "^7.29.0",
     "@commitlint/cli": "^20.4.4",
     "@commitlint/config-conventional": "^20.4.4",
-    "@cucumber/cucumber": "^7.3.2",
+    "@cucumber/cucumber": "^9.6.0",
     "@istanbuljs/nyc-config-babel": "^3.0.0",
     "@mountainpass/waychaser": "^5.0.29",
     "@types/chai": "^4.3.0",

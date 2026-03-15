@@ -1,6 +1,6 @@
 {
   "exclude": {
-    "@cucumber/cucumber": "Existing outdated dependency - needs migration to v12",
+    "@cucumber/cucumber": "On v9 - max version supporting Node 16 (CI tests on 16/18/20); v10+ requires Node 18+",
     "@types/chai": "Existing outdated dependency - v5 requires chai v5+",
     "@types/express": "Existing outdated dependency - v5 requires express v5",
     "chai": "Existing outdated dependency - v6 is ESM-only breaking change",
