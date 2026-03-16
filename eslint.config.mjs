@@ -5,7 +5,7 @@ import unicornPlugin from "eslint-plugin-unicorn";
 import promise from "eslint-plugin-promise";
 import jsdocPlugin from "eslint-plugin-jsdoc";
 import markdown from "@eslint/markdown";
-import json from "eslint-plugin-json";
+import json from "@eslint/json";
 import chaiFriendly from "eslint-plugin-chai-friendly";
 import prettierConfig from "eslint-config-prettier";
 import prettierPlugin from "eslint-plugin-prettier";
@@ -30,7 +30,15 @@ export default [
   },
 
   // JSON files
-  json.configs.recommended,
+  {
+    files: ["**/*.json"],
+    ignores: ["package-lock.json"],
+    plugins: { json },
+    language: "json/json",
+    rules: {
+      "json/no-duplicate-keys": "error",
+    },
+  },
 
   // Base config for JS/TS files
   {
