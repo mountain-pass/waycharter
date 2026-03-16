@@ -8,7 +8,7 @@
 - [x] for collections include redirect to first page if page param is undefined
 - [x] filter collection
 - [x] collections with additional links
-- [x] Added support for path templates with parameters that start with [A-Z0-9] 
+- [x] Added support for path templates with parameters that start with \[A-Z0-9\]
 - [x] look at using registered resource for item in collections (i.e. pass in the itemType when registering the collection)
 - [ ] Error checking on unbound parameters in collection item endpoints
 - [ ] POST/PUT/DELETE/PATCH

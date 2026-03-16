@@ -4,14 +4,13 @@ import security from "eslint-plugin-security";
 import unicornPlugin from "eslint-plugin-unicorn";
 import promise from "eslint-plugin-promise";
 import jsdocPlugin from "eslint-plugin-jsdoc";
-import md from "eslint-plugin-md";
+import markdown from "@eslint/markdown";
 import json from "eslint-plugin-json";
 import chaiFriendly from "eslint-plugin-chai-friendly";
 import prettierConfig from "eslint-config-prettier";
 import prettierPlugin from "eslint-plugin-prettier";
 import n from "eslint-plugin-n";
 import eslintComments from "@eslint-community/eslint-plugin-eslint-comments";
-import markdownParser from "markdown-eslint-parser";
 
 export default [
   // Global ignores (replaces .eslintignore)
@@ -137,22 +136,14 @@ export default [
   // Markdown files
   {
     files: ["**/*.md"],
+    language: "markdown/gfm",
     plugins: {
-      md,
-    },
-    languageOptions: {
-      parser: markdownParser,
+      markdown,
     },
     rules: {
-      "unicorn/filename-case": "off",
-      "md/remark": [
-        "error",
-        {
-          plugins: {
-            "remark-lint-maximum-line-length": ["error", 80],
-          },
-        },
-      ],
+      "markdown/no-empty-links": "warn",
+      "markdown/no-missing-label-refs": "error",
+      "markdown/heading-increment": "error",
     },
   },
 ];
