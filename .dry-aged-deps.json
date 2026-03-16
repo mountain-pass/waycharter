@@ -1,11 +1,7 @@
 {
   "exclude": {
-    "@cucumber/cucumber": "On v9 - max version supporting Node 16 (CI tests on 16/18/20); v10+ requires Node 18+",
     "@types/express": "v5 requires express v5 - tied to express 5 migration",
-    "lint-staged": "On v16.x which is newer than npm latest tag (15.x) - intentional upgrade from PR #460",
-    "nyc": "On v18.x which is newer than npm latest tag (17.x) - intentional upgrade from PR #456",
     "express": "v5 is a major breaking change affecting peer dependencies",
-    "eslint": "v10 removes legacy plugin support - requires eslint-plugin-import-x and other replacements",
-    "globals": "v17 is tied to eslint 10 migration"
+    "eslint": "v10 removes legacy plugin support - requires eslint-plugin-import-x and other replacements"
   }
 }
