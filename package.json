@@ -107,7 +107,7 @@
     "depcheck": "^1.4.7",
     "dirty-chai": "^3.0.0",
     "dry-aged-deps": "^2.6.0",
-    "eslint": "^9.39.4",
+    "eslint": "^10.0.3",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-chai-friendly": "^1.1.0",
     "eslint-plugin-jsdoc": "^62.8.0",
