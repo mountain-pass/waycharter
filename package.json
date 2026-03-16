@@ -85,7 +85,6 @@
   "peerDependencies": {
     "express": "^4.x"
   },
-  "overrides": {},
   "devDependencies": {
     "@babel/preset-env": "^7.29.0",
     "@commitlint/cli": "^20.5.0",
@@ -138,7 +137,7 @@
   },
   "lint-staged": {
     "*.{js,md}": "eslint --fix",
-    "*.{sh}": "shellcheck",
+    "*.sh": "shellcheck",
     "*.{json,css,md,yaml,yml,html,less,scss}": "prettier --write"
   }
 }
