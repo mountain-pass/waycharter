@@ -97,7 +97,7 @@
     "@eslint-community/eslint-plugin-eslint-comments": "^4.7.1",
     "@eslint/js": "^9.39.4",
     "@istanbuljs/nyc-config-babel": "^3.0.0",
-    "@mountainpass/waychaser": "^5.0.41",
+    "@mountainpass/waychaser": "^5.0.43",
     "@types/chai": "^5.2.3",
     "@types/express": "^4.17.13",
     "@types/node": "^25.5.0",
@@ -128,7 +128,6 @@
     "globals": "^17.4.0",
     "humanize-duration": "^3.33.2",
     "husky": "^9.1.7",
-    "imagemin-lint-staged": "^0.5.1",
     "istanbul": "^0.4.5",
     "jscpd": "^4.0.8",
     "jsdoc": "^4.0.5",
@@ -152,7 +151,6 @@
   "lint-staged": {
     "*.{js,md}": "eslint --fix",
     "*.{sh}": "shellcheck",
-    "*.{json,css,md,yaml,yml,html,less,scss}": "prettier --write",
-    "*.{png,jpeg,jpg,gif,svg}": "imagemin-lint-staged"
+    "*.{json,css,md,yaml,yml,html,less,scss}": "prettier --write"
   }
 }
