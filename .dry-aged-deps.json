@@ -6,7 +6,6 @@
     "nyc": "On v18.x which is newer than npm latest tag (17.x) - intentional upgrade from PR #456",
     "express": "v5 is a major breaking change affecting peer dependencies",
     "eslint": "v10 removes legacy plugin support - requires eslint-plugin-import-x and other replacements",
-    "@eslint/js": "v10 requires eslint 10 flat config only - separate migration",
     "globals": "v17 is tied to eslint 10 migration"
   }
 }
