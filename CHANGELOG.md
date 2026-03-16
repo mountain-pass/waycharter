@@ -1,3 +1,6 @@
+## <small>2.0.19 (2026-03-16)</small>
+
+* Merge pull request #481 from mountain-pass/claude/install-dependencies-Ns1V5 ([66b69c4](https://github.com/mountain-pass/waycharter/commit/66b69c4)), closes [#481](https://github.com/mountain-pass/waycharter/issues/481)
 ## <small>2.0.18 (2026-03-16)</small>
 
 * Merge pull request #480 from mountain-pass/claude/install-dependencies-Ns1V5 ([9979489](https://github.com/mountain-pass/waycharter/commit/9979489)), closes [#480](https://github.com/mountain-pass/waycharter/issues/480)
