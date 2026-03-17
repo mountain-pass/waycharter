@@ -1,7 +1,5 @@
 {
   "exclude": {
-    "@types/express": "v5 requires express v5 - tied to express 5 migration",
-    "express": "v5 is a major breaking change affecting peer dependencies",
     "eslint-plugin-promise": "v7.2.1 peer dep says eslint ^7-9, but works fine with eslint 10 (issue #616)"
   }
 }
