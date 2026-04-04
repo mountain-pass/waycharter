@@ -1,3 +1,6 @@
+## <small>2.0.26 (2026-04-04)</small>
+
+* fix: prev link should not include page=0 on page 1 ([6ad7880](https://github.com/mountain-pass/waycharter/commit/6ad7880))
 ## <small>2.0.25 (2026-04-04)</small>
 
 * chore: update minor dev deps and add dry-aged exclusions ([0d89bbd](https://github.com/mountain-pass/waycharter/commit/0d89bbd))
