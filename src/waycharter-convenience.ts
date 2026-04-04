@@ -110,13 +110,12 @@ export class WayCharter {
         const itemLinks: Link[] = []
         const canonicalLinks: Link[] = []
         if (Array.isArray(body)) {
-          for (let index = 0; index < body.length; index++) {
+          for (const [index, item] of body.entries()) {
             itemLinks.push({ rel: 'item', uri: `#/${index}` })
             if (itemPathTemplate) {
-              const itemData = body[index] as Record<string, unknown>
               canonicalLinks.push({
                 rel: 'canonical',
-                uri: Template.expand(itemPathTemplate, itemData),
+                uri: Template.expand(itemPathTemplate, item as Record<string, unknown>),
                 anchor: `#/${index}`
               })
             }
