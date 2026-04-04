@@ -1,3 +1,6 @@
+## <small>2.0.28 (2026-04-04)</small>
+
+* chore: trigger publish of v2.0.28 ([47c8491](https://github.com/mountain-pass/waycharter/commit/47c8491))
 ## <small>2.0.26 (2026-04-04)</small>
 
 * fix: prev link should not include page=0 on page 1 ([6ad7880](https://github.com/mountain-pass/waycharter/commit/6ad7880))
