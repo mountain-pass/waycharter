@@ -91,9 +91,18 @@ export class WayCharter {
       handler: async ({ page, queryParameters, response }) => {
         const pageInt = Number.parseInt(page || '0')
         const result = await collectionLoader({ page: pageInt, ...queryParameters })
-        const { hasMore, ...rest } = result
+        const { hasMore, links: loaderLinks, ...rest } = result
+        const previousLinks: Link[] = []
+        if (pageInt === 1) {
+          const queryString = new URLSearchParams(queryParameters as Record<string, string>).toString()
+          previousLinks.push({
+            rel: 'prev',
+            uri: queryString ? `${collectionPath}?${queryString}` : collectionPath
+          })
+        }
         response.chartCollection({
           ...rest,
+          links: [...(loaderLinks || []), ...previousLinks],
           collectionPointer: '/{index}',
           nextPage: hasMore ? String(pageInt + 1) : undefined,
           prevPage: pageInt > 1 ? String(pageInt - 1) : undefined,
