@@ -1,3 +1,6 @@
 {
-  "exclude": {}
+  "exclude": {
+    "eslint-plugin-unicorn": "v64 is a major version bump, needs separate migration",
+    "typescript": "v6 is a major version bump, needs separate migration (see waychaser TS6 experience)"
+  }
 }
