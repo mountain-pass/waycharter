@@ -507,6 +507,8 @@ export class EndPoint<ResponseBody, ActionResponseBody> {
   }
 }
 
+export { WayCharter } from './waycharter-convenience'
+
 
 /**
  * @param resource
