@@ -96,7 +96,7 @@ export class WayCharter {
           ...rest,
           collectionPointer: '/{index}',
           nextPage: hasMore ? String(pageInt + 1) : undefined,
-          prevPage: pageInt > 0 ? String(pageInt - 1) : undefined,
+          prevPage: pageInt > 1 ? String(pageInt - 1) : undefined,
         })
       }
     })
