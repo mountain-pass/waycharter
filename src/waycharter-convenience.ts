@@ -1,4 +1,5 @@
 import express from 'express'
+import Template from 'uri-template-lite'
 import { EndPoint, HandlerResponse } from './waycharter'
 import { Link } from './link'
 
@@ -112,9 +113,10 @@ export class WayCharter {
           for (let index = 0; index < body.length; index++) {
             itemLinks.push({ rel: 'item', uri: `#/${index}` })
             if (itemPathTemplate) {
+              const itemData = body[index] as Record<string, unknown>
               canonicalLinks.push({
                 rel: 'canonical',
-                uri: itemPathTemplate,
+                uri: Template.expand(itemPathTemplate, itemData),
                 anchor: `#/${index}`
               })
             }
