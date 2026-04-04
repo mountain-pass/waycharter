@@ -1,3 +1,6 @@
+## <small>2.0.29 (2026-04-04)</small>
+
+* fix: include filter links in convenience class collection responses ([1deea17](https://github.com/mountain-pass/waycharter/commit/1deea17))
 ## <small>2.0.28 (2026-04-04)</small>
 
 * chore: trigger publish of v2.0.28 ([47c8491](https://github.com/mountain-pass/waycharter/commit/47c8491))
