@@ -135,7 +135,7 @@
     "snyk": "^1.1303.2",
     "ts-node": "^10.9.2",
     "tsx": "^4.21.0",
-    "typescript": "^5.9.3",
+    "typescript": "^6.0.2",
     "unique-names-generator": "^4.7.1"
   },
   "lint-staged": {
