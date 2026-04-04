@@ -66,9 +66,10 @@ export class WayCharter {
     collectionLoader,
     filters = []
   }: RegisterCollectionConfig<ItemBody, CollectionBody>): CollectionRegistrationResult {
-    let itemEndpoint: EndPoint<ItemBody, void> | undefined
+    // Register item endpoint if provided
+    let itemPathTemplate: string | undefined
     if (itemPath !== undefined && itemLoader !== undefined) {
-      itemEndpoint = EndPoint.create<ItemBody>({
+      const itemEndpoint = EndPoint.create<ItemBody>({
         router: this.router,
         path: `${collectionPath}${itemPath}`,
         handler: async ({ pathParameters, response }) => {
@@ -76,6 +77,7 @@ export class WayCharter {
           response.chart(result)
         }
       })
+      itemPathTemplate = itemEndpoint.pathTemplate
     }
 
     const additionalPaths: Link[] = filters.map(f => ({
@@ -83,29 +85,70 @@ export class WayCharter {
       uri: `${collectionPath}{?${f.parameters.join(',')}}`
     }))
 
-    const collectionEndpoint = EndPoint.createCollection<CollectionBody, ItemBody>({
+    // Use EndPoint.create (not createCollection) so we can generate
+    // per-item links like v1 did, instead of v2's template links
+    const collectionEndpoint = EndPoint.create<CollectionBody>({
       router: this.router,
       path: collectionPath,
-      filters,
-      itemEndpoint,
-      handler: async ({ page, queryParameters, response }) => {
+      handler: async ({ queryParameters, response }) => {
+        const page = typeof queryParameters.page === 'string' ? queryParameters.page : undefined
         const pageInt = Number.parseInt(page || '0')
-        const result = await collectionLoader({ page: pageInt, ...queryParameters })
+        // Filter query params to only those in filters (exclude 'page')
+        const filteredQuery: Record<string, string> = {}
+        const allowedParameters = new Set(filters.flatMap(f => f.parameters))
+        for (const [key, value] of Object.entries(queryParameters)) {
+          if (allowedParameters.has(key) && typeof value === 'string') {
+            filteredQuery[key] = value
+          }
+        }
+        const result = await collectionLoader({ page: pageInt, ...filteredQuery })
         const { hasMore, links: loaderLinks, ...rest } = result
-        const previousLinks: Link[] = []
+        const body = rest.body
+
+        // Build per-item links (v1 style: #/0, #/1, etc.)
+        const itemLinks: Link[] = []
+        const canonicalLinks: Link[] = []
+        if (Array.isArray(body)) {
+          for (let index = 0; index < body.length; index++) {
+            itemLinks.push({ rel: 'item', uri: `#/${index}` })
+            if (itemPathTemplate) {
+              canonicalLinks.push({
+                rel: 'canonical',
+                uri: itemPathTemplate,
+                anchor: `#/${index}`
+              })
+            }
+          }
+        }
+
+        // Build pagination links
+        const queryString = new URLSearchParams(filteredQuery).toString()
+        const paginationLinks: Link[] = [ {
+          rel: 'first',
+          uri: queryString ? `${collectionPath}?${queryString}` : collectionPath
+        }]
+        if (hasMore) {
+          const nextParameters = new URLSearchParams({ page: String(pageInt + 1), ...filteredQuery }).toString()
+          paginationLinks.push({ rel: 'next', uri: `${collectionPath}?${nextParameters}` })
+        }
         if (pageInt === 1) {
-          const queryString = new URLSearchParams(queryParameters as Record<string, string>).toString()
-          previousLinks.push({
+          paginationLinks.push({
             rel: 'prev',
             uri: queryString ? `${collectionPath}?${queryString}` : collectionPath
           })
+        } else if (pageInt > 1) {
+          const previousParameters = new URLSearchParams({ page: String(pageInt - 1), ...filteredQuery }).toString()
+          paginationLinks.push({ rel: 'prev', uri: `${collectionPath}?${previousParameters}` })
         }
-        response.chartCollection({
+
+        response.chart({
           ...rest,
-          links: [...(loaderLinks || []), ...previousLinks],
-          collectionPointer: '/{index}',
-          nextPage: hasMore ? String(pageInt + 1) : undefined,
-          prevPage: pageInt > 1 ? String(pageInt - 1) : undefined,
+          links: [
+            ...itemLinks,
+            ...canonicalLinks,
+            ...paginationLinks,
+            ...(loaderLinks || []),
+          ],
         })
       }
     })
