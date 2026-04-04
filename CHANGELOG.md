@@ -1,3 +1,6 @@
+## <small>2.0.25 (2026-04-04)</small>
+
+* chore: update minor dev deps and add dry-aged exclusions ([0d89bbd](https://github.com/mountain-pass/waycharter/commit/0d89bbd))
 ## <small>2.0.24 (2026-03-17)</small>
 
 * Merge pull request #489 from mountain-pass/claude/install-dependencies-Ns1V5 ([379556c](https://github.com/mountain-pass/waycharter/commit/379556c)), closes [#489](https://github.com/mountain-pass/waycharter/issues/489)
