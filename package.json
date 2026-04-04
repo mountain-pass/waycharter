@@ -58,6 +58,7 @@
     "report:cover": "scripts/report-cover.sh",
     "check:cover:local": "npm run clean:cover && npm run cover:node-api && npm run report:cover",
     "sync-readme-version": "scripts/sync-readme-version.sh",
+    "push:watch": "bash scripts/push-and-watch.sh",
     "pre-push": "npm run check:cover:local && npm run duplication && npm run dry-aged-deps && npm run lint",
     "npm-check-unused": "depcheck",
     "do-publish": "npm publish mountainpass-waycharter-${npm_package_version}.tgz --access public",

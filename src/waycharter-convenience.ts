@@ -10,14 +10,14 @@ type V1CollectionLoaderResult<T> = HandlerResponse<T> & {
 
 type RegisterResourceTypeConfig<T> = {
   path: string
-  loader: (params: Record<string, unknown>) => Promise<V1LoaderResult<T>>
+  loader: (parameters: Record<string, unknown>) => Promise<V1LoaderResult<T>>
 }
 
 type RegisterCollectionConfig<ItemBody, CollectionBody> = {
   itemPath?: string
-  itemLoader?: (params: Record<string, unknown>) => Promise<V1LoaderResult<ItemBody>>
+  itemLoader?: (parameters: Record<string, unknown>) => Promise<V1LoaderResult<ItemBody>>
   collectionPath: string
-  collectionLoader: (params: Record<string, unknown>) => Promise<V1CollectionLoaderResult<CollectionBody>>
+  collectionLoader: (parameters: Record<string, unknown>) => Promise<V1CollectionLoaderResult<CollectionBody>>
   filters?: Array<{ rel: string; parameters: string[] }>
 }
 
@@ -30,7 +30,7 @@ type RegisterStaticResourceConfig<T> = {
 
 type RegistrationResult = {
   pathTemplate: string
-  path: (params?: Record<string, unknown>) => string
+  path: (parameters?: Record<string, unknown>) => string
 }
 
 type CollectionRegistrationResult = RegistrationResult & {
@@ -55,7 +55,7 @@ export class WayCharter {
     })
     return {
       pathTemplate: endpoint.pathTemplate,
-      path: (params?) => endpoint.path(params)
+      path: (parameters) => endpoint.path(parameters)
     }
   }
 
@@ -104,7 +104,7 @@ export class WayCharter {
     return {
       additionalPaths,
       pathTemplate: collectionEndpoint.pathTemplate,
-      path: (params?) => collectionEndpoint.path(params)
+      path: (parameters) => collectionEndpoint.path(parameters)
     }
   }
 
@@ -118,7 +118,7 @@ export class WayCharter {
     })
     return {
       pathTemplate: endpoint.pathTemplate,
-      path: (params?) => endpoint.path(params)
+      path: (parameters) => endpoint.path(parameters)
     }
   }
 }
