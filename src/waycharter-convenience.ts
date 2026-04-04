@@ -147,6 +147,7 @@ export class WayCharter {
             ...itemLinks,
             ...canonicalLinks,
             ...paginationLinks,
+            ...additionalPaths,
             ...(loaderLinks || []),
           ],
         })
